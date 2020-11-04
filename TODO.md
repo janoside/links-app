@@ -1,0 +1,3 @@
+- homepage: public quotes sorted by date?
+- post link
+	- twitter
