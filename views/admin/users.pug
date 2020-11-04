@@ -1,0 +1,32 @@
+extends adminLayout
+
+block adminContent
+	h1 Users
+	hr
+
+	include ../shared/pagination.pug
+
+	table.table.table-striped
+		thead
+			tr
+				th #
+				th ID
+				th Username
+				th Roles
+				th Created At
+				th Updated At
+		
+		tbody
+			each user, userIndex in users
+				tr.text-monospace
+					th #{(offset + userIndex + 1).toLocaleString()}
+					td
+						span.dotted-bottom(data-toggle="tooltip", title=user._id) #{utils.ellipsizeFront(user._id.toLocaleString(), 8)}
+					td
+						a(href=`/admin/user/${user.username}`) #{user.username}
+					td #{user.roles ? user.roles : "-"}
+					td #{utils.formatDate(user.createdAt)}
+					td #{utils.formatDate(user.updatedAt)}
+
+
+			

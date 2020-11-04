@@ -1,0 +1,39 @@
+{
+	"name": "quotes.cool",
+	"version": "1.0.0",
+	"description": "A cool quotes app.",
+	"main": "app.js",
+	"dependencies": {
+		"cookie-parser": "~1.4.4",
+		"debug": "4.2.0",
+		"dotenv": "8.2.0",
+		"express": "~4.17.1",
+		"express-async-handler": "1.1.4",
+		"express-session": "1.17.1",
+		"http-errors": "~1.6.3",
+		"luxon": "1.25.0",
+		"marked": "1.2.2",
+		"mongodb": "3.6.2",
+		"morgan": "~1.9.1",
+		"pug": "3.0.0",
+		"simple-git": "2.21.0"
+	},
+	"devDependencies": {},
+	"scripts": {
+		"start": "node --trace-deprecation ./bin/main.js",
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/janoside/quotes.cool.git"
+	},
+	"keywords": [
+		"quotes"
+	],
+	"author": "Dan Janosik",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/janoside/quotes.cool/issues"
+	},
+	"homepage": "https://github.com/janoside/quotes.cool#readme"
+}

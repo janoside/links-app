@@ -1,0 +1,24 @@
+extends adminLayout
+
+block adminContent
+	h1 Admin
+	hr
+
+	table.table.table-striped
+		tr
+			th App Version
+			td.text-monospace #{global.appVersion}
+
+		tr
+			th Sourcecode Version
+			td.text-monospace #{global.sourcecodeVersion}
+		
+		tr
+			th Sourcecode Date
+			td.text-monospace #{global.sourcecodeDate}
+		
+		tr
+			th App Startup
+			td.text-monospace #{utils.formatDate(new Date(global.appStartTime))}
+
+			

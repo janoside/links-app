@@ -1,0 +1,14 @@
+extends layout
+
+block content
+	h1.mb-3 #{global.appConfig.siteName}
+	p Welcome to #{global.appConfig.siteName}
+
+	hr
+
+	if (session.username)
+		h3 Welcome!
+
+	else
+		.col-md-4
+			include ./shared/login-form.pug

@@ -1,0 +1,23 @@
+nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
+	.container
+		a.navbar-brand(href="/") #{global.appConfig.siteName}
+		button.navbar-toggler(type="button", data-toggle="collapse", data-target="#navbarNav", aria-controls="navbarNav")
+			span.navbar-toggler-icon
+		
+		div.collapse.navbar-collapse#navbarNav
+			ul.navbar-nav.mr-auto
+				li.nav-item.active
+					a.nav-link(href="/") Home
+			
+			if (session.username)
+				ul.navbar-nav
+					li.nav-item.dropdown
+						a#navbarDropdown.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false") #{session.username}
+						.dropdown-menu(aria-labelledby="navbarDropdown")
+							a.dropdown-item(href="/settings") Settings
+
+							if (session.user && session.user.roles.includes("admin"))
+								a.dropdown-item(href="/admin") Admin
+
+							.dropdown-divider
+							a.dropdown-item(href="/logout") Logout

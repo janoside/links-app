@@ -1,0 +1,34 @@
+extends adminLayout
+
+block adminContent
+	h1 User: #{user.username}
+	hr
+
+	.mb-4
+		table.table.table-striped
+			tr
+				th Username
+				td.text-monospace #{user.username}
+
+			tr
+				th Roles
+				td.text-monospace
+					if (user.roles)
+						| #{user.roles}
+					else
+						| -
+			
+			tr
+				th Created At
+				td.text-monospace #{utils.formatDate(user.createdAt)}
+			
+			tr
+				th Updated At
+				td.text-monospace #{utils.formatDate(user.updatedAt)}
+	
+
+	hr
+	
+	.col-md-3
+		a.btn.btn-danger.btn-block(href=`/admin/user/${user.username}/delete`) Delete User
+			

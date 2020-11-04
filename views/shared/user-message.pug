@@ -1,0 +1,8 @@
+if (userMessageMarkdown)
+	.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
+		.user-message-markdown
+			| !{marked(userMessageMarkdown)}
+
+if (userMessage)
+	.alert(class=(userMessageType ? `alert-${userMessageType}` : "alert-warning"), role="alert")
+		span #{userMessage}
