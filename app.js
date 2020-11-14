@@ -68,9 +68,13 @@ const sessionCookieConfig = {
 	}
 };
 
+// Helpful reference for production: nginx HTTPS proxy:
+// https://gist.github.com/nikmartin/5902176
 debugLog(`Session cookie config: ${JSON.stringify(sessionCookieConfig)}`);
 
+expressApp.enable("trust proxy");
 expressApp.set("trust proxy", 1); // trust first proxy, needed for {cookie:{secure:true}} below
+
 expressApp.use(session(sessionCookieConfig));
 
 expressApp.use(logger('dev'));
