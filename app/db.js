@@ -180,11 +180,6 @@ async function findObjects(collectionName, query, options={}, returnAsArray=true
 	return new Promise((resolve, reject) => {
 		let collection = db.collection(collectionName);
 
-		// wrap _id
-		if (query.hasOwnProperty("_id")) {
-			query._id = new MongoObjectID(query._id);
-		}
-
 		var cursor = collection.find(query, options);
 
 		if (returnAsArray) {

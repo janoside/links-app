@@ -93,7 +93,7 @@ function quoteFromTextRepresentation(importChunk, user) {
 	const lines = importChunk.split(/\n/);
 
 	const quote = {
-		userId: user._id,
+		userId: user._id.toString(),
 		username: user.username,
 		speakers: [],
 		speakerContexts: [],
@@ -127,6 +127,9 @@ function quoteFromTextRepresentation(importChunk, user) {
 
 			quote.tags = line.split(",").map((item) => {
 				return item.trim();
+				
+			}).filter((item) => {
+				return item.trim().length > 0;
 			});
 
 		} else if (line.trim().startsWith("=")) {

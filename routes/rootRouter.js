@@ -162,7 +162,8 @@ router.post("/new-quote", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/quote/:quoteId", asyncHandler(async (req, res, next) => {
-	const quote = await db.findObject("quotes", {_id:req.params.quoteId});
+	const quoteId = req.params.quoteId;
+	const quote = await db.findObject("quotes", {_id:ObjectID(quoteId)});
 
 	res.locals.quote = quote;
 
@@ -170,7 +171,8 @@ router.get("/quote/:quoteId", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
-	const quote = await db.findObject("quotes", {_id:req.params.quoteId});
+	const quoteId = req.params.quoteId;
+	const quote = await db.findObject("quotes", {_id:ObjectID(quoteId)});
 
 	res.locals.quote = quote;
 	res.locals.quoteTextRepresentation = app.quoteToTextRepresentation(quote);
@@ -179,7 +181,8 @@ router.get("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/quote/:quoteId/raw", asyncHandler(async (req, res, next) => {
-	const quote = await db.findObject("quotes", {_id:req.params.quoteId});
+	const quoteId = req.params.quoteId;
+	const quote = await db.findObject("quotes", {_id:ObjectID(quoteId)});
 
 	res.locals.quote = quote;
 
@@ -199,7 +202,7 @@ router.post("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
 	}
 
 	const quotesCollection = await db.getCollection("quotes");
-	const updateResult = await quotesCollection.updateOne({_id:ObjectID(req.params.quoteId)}, {$set: updatedQuote});
+	const updateResult = await quotesCollection.updateOne({_id:ObjectID(quoteId)}, {$set: updatedQuote});
 
 	req.session.userMessage = updateResult.result.ok == 1 ? "Quote saved." : ("Status unknown: " + JSON.stringify(updateResult));
 	req.session.userMessageType = "success";
@@ -208,7 +211,8 @@ router.post("/quote/:quoteId/edit", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/quote/:quoteId/delete", asyncHandler(async (req, res, next) => {
-	const quote = await db.findObject("quotes", {_id:req.params.quoteId});
+	const quoteId = req.params.quoteId;
+	const quote = await db.findObject("quotes", {_id:ObjectID(quoteId)});
 
 	res.locals.quote = quote;
 
@@ -216,7 +220,8 @@ router.get("/quote/:quoteId/delete", asyncHandler(async (req, res, next) => {
 }));
 
 router.post("/quote/:quoteId/delete", asyncHandler(async (req, res, next) => {
-	const quote = await db.findObject("quotes", {_id:req.params.quoteId});
+	const quoteId = req.params.quoteId;
+	const quote = await db.findObject("quotes", {_id:ObjectID(quoteId)});
 
 	const result = await db.deleteObject("quotes", {_id:quote._id});
 
@@ -507,8 +512,8 @@ router.get("/list/:listId", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/list/:listId/:quoteId", asyncHandler(async (req, res, next) => {
-	const list = await db.findObject("quoteLists", {_id:req.params.listId});
-	const quote = await db.findObject("quotes", {_id:req.params.quoteId});
+	const list = await db.findObject("quoteLists", {_id:ObjectID(req.params.listId)});
+	const quote = await db.findObject("quotes", {_id:ObjectID(req.params.quoteId)});
 
 	res.locals.list = list;
 	res.locals.quote = quote;
