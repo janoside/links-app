@@ -53,18 +53,22 @@ expressApp.onStartup = function() {
 };
 
 // view engine setup
-expressApp.set('views', path.join(__dirname, 'views'));
-expressApp.set('view engine', 'pug');
+expressApp.set("views", path.join(__dirname, "views"));
+expressApp.set("view engine", "pug");
 
-expressApp.disable('x-powered-by');
+expressApp.disable("x-powered-by");
 
-expressApp.set('trust proxy', 1); // trust first proxy, needed for {cookie:{secure:true}} below
-expressApp.use(session({
+const sessionCookieConfig = {
 	secret: appConfig.cookiePassword,
 	resave: false,
 	saveUninitialized: true,
 	cookie: { secure: appConfig.secureSite }
-}));
+};
+
+debugLog(`Session cookie config: ${JSON.stringify(sessionCookieConfig)}`);
+
+expressApp.set("trust proxy", 1); // trust first proxy, needed for {cookie:{secure:true}} below
+expressApp.use(session(sessionCookieConfig));
 
 expressApp.use(logger('dev'));
 expressApp.use(express.json());
