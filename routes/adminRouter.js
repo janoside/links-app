@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-var app = require("../app/main.js");
+var app = require("../app/app.js");
 var db = require("../app/db.js");
 var debugLog = require("debug")("app:rootRouter");
 const asyncHandler = require("express-async-handler");

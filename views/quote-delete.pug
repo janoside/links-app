@@ -1,0 +1,16 @@
+extends layout
+
+block content
+
+	.container.mt-5
+		div(style="margin: auto; max-width: 450px; width: 100%;")
+			include shared/quote-card.pug
+
+			hr.mt-4
+
+			h6 Are you sure you want to delete this quote?
+
+			form(method="post")
+				button.btn.btn-danger.mr-3(type="submit") Yes, delete
+			
+				a.btn.btn-primary(href=`/quote/${quote._id}`) No, don't delete

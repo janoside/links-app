@@ -1,0 +1,13 @@
+extends layout
+
+block content
+	h1 #{quotes.length.toLocaleString()} Quote
+		| #{quotes.length != 1 ? "s" : ""} 
+		| in 
+		span.badge.badge-primary
+			i.fas.fa-list.mr-2
+			| #{list.name}
+
+	.card-columns
+		each quote, quoteIndex in quotes
+			include shared/quote-card.pug

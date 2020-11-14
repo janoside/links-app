@@ -1,0 +1,15 @@
+extends layout
+
+block content
+
+	.container.mt-5
+		div(style="margin: auto; max-width: 450px; width: 100%;")
+			if (list)
+				h5.mb-3
+					a.badge.badge-primary(href=`/list/${list._id}`)
+						i.fas.fa-list.mr-1
+						| #{list.name}
+					
+					|  &raquo;
+			
+			include shared/quote-card.pug

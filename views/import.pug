@@ -1,0 +1,28 @@
+extends layout
+
+block content
+	h1.mb-3 Import
+	hr
+
+	if (quotes)
+
+		pre
+			code #{JSON.stringify(quotes, null, 4)}
+
+	else
+
+		form(method="post", action="/import")
+			fieldset.form-group
+				input.form-control(name="name", type="text", placeholder="import name")
+
+			fieldset.form-group
+				textarea#text.form-control(name="content", rows="15", placeholder="content")
+			
+			fieldset.form-group
+				label(for="public")
+					input.mr-2(id="public", name="public", type="checkbox")
+					| Make quotes in this import publically visible?
+					br
+					span.ml-4 (this will NOT override quote-specific visibility flags)
+
+			button.btn.btn-primary.btn-block(type="submit") Import

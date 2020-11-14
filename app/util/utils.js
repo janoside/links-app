@@ -1,4 +1,5 @@
 const { DateTime } = require("luxon");
+const debugLog = require("debug")("app:utils");
 
 
 // safely handles circular references
@@ -18,8 +19,8 @@ JSON.safeStringify = (obj, indent = 2) => {
 	return retVal;
 };
 
-function formatDate(date) {
-	return DateTime.fromJSDate(date).toFormat("yyyy-MM-dd h:mma").toLocaleLowerCase();
+function formatDate(date, formatStr="yyyy-MM-dd h:mma") {
+	return DateTime.fromJSDate(date).toFormat(formatStr).replace("AM", "am").replace("PM", "pm");
 }
 
 function randomString(length, chars="aA#") {
@@ -83,6 +84,25 @@ function yearMillis() {
 	return parseInt(dayMillis() * 365.2422);
 }
 
+function toUrlString(str) {
+	return str.replace(" ", "-");
+}
+
+function objectProperties(obj) {
+	const props = [];
+	for (const prop in obj) {
+		if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+			props.push(prop);
+		}
+	}
+
+	return props;
+}
+
+function objectHasProperty(obj, prop) {
+	return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
 
 module.exports = {
 	formatDate: formatDate,
@@ -92,5 +112,8 @@ module.exports = {
 	dayMillis: dayMillis,
 	weekMillis: weekMillis,
 	monthMillis: monthMillis,
-	yearMillis: yearMillis
+	yearMillis: yearMillis,
+	toUrlString: toUrlString,
+	objectProperties: objectProperties,
+	objectHasProperty: objectHasProperty
 };

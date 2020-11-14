@@ -1,4 +1,5 @@
 const MongoClient = require("mongodb").MongoClient;
+const MongoObjectID = require("mongodb").ObjectID;
 const appConfig = require("./config.js");
 const debug = require("debug");
 const crypto = require("crypto");
@@ -17,7 +18,7 @@ var db = null;
  
 // Use connect method to connect to the server
 MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
-	debugLog(`Connected successfully to database`);
+	debugLog(`Success: Connected to database`);
  
 	db = client.db(dbName);
 
@@ -42,9 +43,11 @@ MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
 					debugLog("Admin user already exists.");
 				}
 			}).catch((err) => {
+				debugLog(err);
 				console.log(err);
 			});
 		} catch (e) {
+			debugLog(e);
 			console.log(e);
 		}
 	})();
@@ -56,7 +59,7 @@ async function setupSchema(db) {
 			name: "users",
 			indexes: [
 				{
-					name:"username_1",
+					name: "username_1",
 					key: { "username":1 },
 					properties: { unique:true }
 				},
@@ -65,10 +68,63 @@ async function setupSchema(db) {
 					key: { "roles":1 }
 				}
 			]
+		},
+		{
+			name: "quotes",
+			indexes: [
+				{
+					name: "userId_1_visibility_1",
+					key: { "userId": 1, "visibility": 1 }
+				},
+				{
+					name: "username_1_visibility_1",
+					key: { "username": 1, "visibility": 1 }
+				},
+				{
+					name: "date_1",
+					key: { "date": 1 }
+				},
+				{
+					name: "speakers_1",
+					key: { "speakers": 1}
+				},
+				{
+					name: "linkSite_1",
+					key: { "linkSite": 1}
+				},
+				{
+					name: "tags_1",
+					key: { "tags": 1}
+				}
+			]
+		},
+		{
+			name: "quoteLists",
+			indexes: [
+				{
+					name: "userId_1",
+					key: { "userId": 1 }
+				},
+				{
+					name: "username_1",
+					key: { "username": 1 }
+				},
+				{
+					name: "name_1",
+					key: { "name": 1 }
+				},
+				{
+					name: "date_1",
+					key: { "date": 1 }
+				}
+			]
 		}
-	]
+	];
+
 	const existingCollections = await db.listCollections().toArray();
-	const existingCollectionNames = collections.map(c => c.name);
+	const existingCollectionNames = existingCollections.map(c => c.name);
+
+	debugLog("Existing collections: " + JSON.stringify(existingCollectionNames));
 
 	collections.forEach(async (collection) => {
 		if (!existingCollectionNames.includes(collection.name)) {
@@ -85,10 +141,10 @@ async function setupSchema(db) {
 }
 
 async function setupCollectionIndexes(collectionName, neededIndexes) {
-	var usersExistingIndexNames = await getCollectionIndexes("users");
+	var existingIndexNames = await getCollectionIndexes(collectionName);
 
 	neededIndexes.forEach((neededIndex) => {
-		if (!usersExistingIndexNames.includes(neededIndex.name)) {
+		if (!existingIndexNames.includes(neededIndex.name)) {
 			debugLog(`setupSchema: ${collectionName}.index[${neededIndex.name}] being created`);
 
 			db.collection(collectionName).createIndex( neededIndex.key, neededIndex.properties);
@@ -115,31 +171,19 @@ async function getCollectionIndexes(collectionName) {
 }
 
 async function findObject(collectionName, query, options={}) {
-	return new Promise((resolve, reject) => {
-		let collection = db.collection(collectionName);
+	var objects = await findObjects(collectionName, query, options);
 
-		collection.find(query, options).toArray((err, results) => {
-			if (err) {
-				reject(err);
-
-			} else {
-				if (results.length == 1) {
-					resolve(results[0]);
-
-				} else if (results.length == 0) {
-					resolve(null);
-
-				} else {
-					reject("More than 1 result for findObject query.");
-				}
-			}
-		});
-	});
+	return objects[0];
 }
 
 async function findObjects(collectionName, query, options={}, returnAsArray=true) {
 	return new Promise((resolve, reject) => {
 		let collection = db.collection(collectionName);
+
+		// wrap _id
+		if (query.hasOwnProperty("_id")) {
+			query._id = new MongoObjectID(query._id);
+		}
 
 		var cursor = collection.find(query, options);
 
@@ -156,6 +200,12 @@ async function findObjects(collectionName, query, options={}, returnAsArray=true
 			resolve(cursor);
 		}
 	});
+}
+
+async function insertObject(collectionName, document) {
+	var insertedObjects = await insertObjects(collectionName, [document]);
+
+	return insertedObjects[0];
 }
 
 async function insertObjects(collectionName, documents) {
@@ -175,9 +225,14 @@ async function insertObjects(collectionName, documents) {
 				reject(err);
 
 			} else {
-				debugLog(`${collectionName}: inserted ${documents.length} document(s)`);
+				var insertedObjects = [];
+				for (var i = 0; i < result.ops.length; i++) {
+					insertedObjects.push(result.ops[i]);
+				}
 
-				resolve(result);
+				debugLog(`${collectionName}: inserted ${result.ops.length} document(s)`);
+
+				resolve(insertedObjects);
 			}
 		});
 	});
@@ -187,9 +242,9 @@ async function deleteObject(collectionName, query) {
 	return new Promise(async (resolve, reject) => {
 		let collection = db.collection(collectionName);
 
-		await collection.deleteOne(query);
+		var result = await collection.deleteOne(query);
 
-		resolve();
+		resolve(result);
 	});
 }
 
@@ -204,6 +259,7 @@ module.exports = {
 	getCollection: getCollection,
 	findObject: findObject,
 	findObjects: findObjects,
+	insertObject: insertObject,
 	insertObjects: insertObjects,
 	deleteObject: deleteObject
 }

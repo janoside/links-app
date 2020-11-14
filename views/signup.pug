@@ -1,0 +1,14 @@
+extends layout
+
+block content
+	h1 Signup
+	hr
+
+	.alert.alert-warning
+		.alert-body
+			| Please note - this site doesn't currently support password resets, so don't forget your password!
+
+	.row.mt-5
+		.col-md-3.col-lg-3
+		.col-md-6.col-lg-6
+			include ./shared/signup-form.pug

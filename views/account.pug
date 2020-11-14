@@ -1,0 +1,32 @@
+extends layout
+
+block content
+	h1 My Account
+	hr
+
+	.card.mb-3
+		.card-body
+			h3 My Lists
+			
+			h5
+				ul
+					each list in lists
+						li.mb-2
+							a(href=`/list/${list._id}`) #{list.name}
+
+	.card
+		.card-body
+			h3 My Imports
+			
+			h5
+				ul
+					each item in importData
+						if (item._id)
+							li.mb-2
+								if (item.name)
+									a(href=`/import/${item._id}`) #{item.name}
+								else
+									a(href=`/import/${item._id}`) #{item._id}
+								
+								span.badge.badge-secondary.ml-2 #{item.count.toLocaleString()}
+						

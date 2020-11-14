@@ -1,0 +1,21 @@
+extends layout
+
+block content
+	h1 My Imports
+	hr
+
+	h5
+		ul
+			each item in importData
+				if (item._id)
+					li.mb-2
+						if (item.name)
+							a(href=`/import/${item._id}`) #{item.name}
+						else
+							a(href=`/import/${item._id}`) #{item._id}
+						
+						span.badge.badge-secondary.ml-2 #{item.count.toLocaleString()}
+
+	if (false)
+		pre
+			code #{JSON.stringify(importData, null, 4)}

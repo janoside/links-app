@@ -9,7 +9,7 @@ var marked = require("marked");
 var simpleGit = require("simple-git");
 const { DateTime } = require("luxon");
 const utils = require("./app/util/utils.js");
-const app = require("./app/main.js");
+const app = require("./app/app.js");
 
 var debugLog = require("debug")("app:app");
 
@@ -30,7 +30,7 @@ process.on("unhandledRejection", (reason, p) => {
 });
 
 expressApp.onStartup = function() {
-	global.appStartTime = new Date().getTime();
+	global.appStartDate = new Date();
 
 	if (global.sourcecodeVersion == null && fs.existsSync('.git')) {
 		simpleGit(".").log(["-n 1"], function(err, log) {

@@ -1,0 +1,11 @@
+extends layout
+
+block content
+	h1 #{quotes.length} Quote
+		| #{quotes.length != 1 ? "s" : ""}
+		|  from 
+		span.badge.badge-primary #{speaker}
+
+	.card-columns
+		each quote, quoteIndex in quotes
+			include shared/quote-card.pug

@@ -1,0 +1,21 @@
+extends layout
+
+block content
+	h1 My #{tagsData.length.toLocaleString()} Tag
+		| #{tagsData.length != 1 ? "s" : ""}
+	
+	hr
+
+	if (tagsData)
+		each item in tagsData
+			a.btn.btn-primary.mr-2.mb-2(href=`/tag/${item._id}`)
+				i.fas.fa-tag.mr-2
+				| #{item._id} 
+				span.badge.badge-light #{item.count.toLocaleString()}
+
+		if (false)
+			pre
+				code #{JSON.stringify(tagsData, null, 4)}
+	
+	else
+		| No tags

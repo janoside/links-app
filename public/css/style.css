@@ -1,0 +1,59 @@
+body {
+	font: 14px "Montserrat", "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+.dotted-bottom {
+	border-bottom: dotted 1px #ccc;
+}
+
+.card-columns {
+	@include media-breakpoint-only(md) {
+		column-count: 2;
+	}
+	@include media-breakpoint-only(lg) {
+		column-count: 2;
+	}
+	@include media-breakpoint-only(xl) {
+		column-count: 2;
+	}
+}
+
+.speaker-non-link {
+	font-weight: bold;
+}
+
+.quote-body em {
+	/* optional different color for italic content inside quotes */
+}
+
+.quote-body h6 {
+	margin-bottom: 0;
+}
+
+.quote-body p {
+	margin-bottom: 0.75rem;
+}
+
+.quote-body .blockquote-footer {
+	margin-bottom: 0.75rem;
+}
+
+.quote-body em::before {
+	content: "\2732";
+}
+
+.quote-body em::after {
+	content: "\2732";
+}
+
+.blockquote-footer {
+	font-size: 100%;
+}
+
+.underlined-link {
+	text-decoration: underline;
+}
+
+.underlined-link:hover {
+	text-decoration: none;
+}

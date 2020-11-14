@@ -1,29 +1,34 @@
 - quote
 	- fields
-		- text
-		- owner_id
-		- public?
-		- speaker
+		- text/parts
+		- userId
+		- username
+		- visibility
+		- speakers
+		- speakerContexts
 		- link
-		- link_site
+		- linkSite
 		- tags
-		
+		- importId (random uuid?)
+		- importIndex (chronology in import)
+		- importName
 		
 	- indexes
-		- speaker (for distinct)
-		- link_site (for distinct/stats)
+		- speakers (for distinct)
+		- linkSite (for distinct/stats)
 		- tags (for distinct/search)
-		- owner_id+public
+		- userId+visibility
+		- importId+importIndex
 
-- quote_list
+- quoteList
 	- fields
 		- name
-		- owner_id
-		- public?
-		- quote_ids
-		- tags
+		- userId
+		- username
+		- tagsAnd/tagsOr
+		- speakersAnd/speakersOr
+		- excludedQuoteIds
 	
 	- indexes
 		- name (for search)
-		- owner_id+public
-		- tags (for distinct/search)
+		- userId
