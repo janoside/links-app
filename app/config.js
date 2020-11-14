@@ -4,6 +4,7 @@ var debug = require("debug");
 debug.enable(process.env.DEBUG || "app:*");
 
 global.appConfig = {
+	siteDomain: process.env.SITE_DOMAIN || "localhost",
 	siteName: process.env.SITE_NAME || "UnknownSite",
 	secureSite: process.env.SECURE_SITE == "true",
 	cookiePassword: process.env.COOKIE_PASSWORD || "c-is-for-cookie",

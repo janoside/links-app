@@ -62,7 +62,10 @@ const sessionCookieConfig = {
 	secret: appConfig.cookiePassword,
 	resave: false,
 	saveUninitialized: true,
-	cookie: { secure: appConfig.secureSite }
+	cookie: {
+		secure: appConfig.secureSite,
+		domain: appConfig.siteDomain
+	}
 };
 
 debugLog(`Session cookie config: ${JSON.stringify(sessionCookieConfig)}`);
