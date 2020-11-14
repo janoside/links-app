@@ -1,0 +1,56 @@
+## http://domain.com redirects to https://domain.com
+server {
+	if ($host = quotes.cool) {
+		return 301 https://$host$request_uri;
+	} # managed by Certbot
+
+
+	server_name quotes.cool;
+	listen 80;
+	#listen [::]:80 ipv6only=on;
+
+	location / {
+		return 301 https://quotes.cool$request_uri;
+	}
+}
+
+## Serves httpS://domain.com
+server {
+	server_name quotes.cool;
+	listen 443 ssl http2;
+	#listen [::]:443 ssl http2 ipv6only=on;
+
+#		ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+#		ssl_ciphers 'EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH';
+#		ssl_prefer_server_ciphers on;
+#		ssl_session_cache shared:SSL:10m;
+#		ssl_dhparam /etc/ssl/certs/dhparam.pem;
+
+	location / {
+		proxy_pass http://localhost:3000;
+		proxy_http_version 1.1;
+		proxy_set_header Upgrade $http_upgrade;
+		proxy_set_header Connection 'upgrade';
+		proxy_set_header Host $host;
+		proxy_cache_bypass $http_upgrade;
+
+		# ref: https://gist.github.com/nikmartin/5902176
+		# THESE ARE IMPORTANT
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		# This is what tells Connect that your session can be considered secure, 
+		# even though the protocol node.js sees is only HTTP:		
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_set_header Host $http_host;
+		proxy_set_header X-NginX-Proxy true;
+		proxy_read_timeout 5m;
+		proxy_connect_timeout 5m;
+		proxy_redirect off;
+	}
+		
+	include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+	ssl_certificate /etc/letsencrypt/live/quotes.cool/fullchain.pem; # managed by Certbot
+	ssl_certificate_key /etc/letsencrypt/live/quotes.cool/privkey.pem; # managed by Certbot
+}
