@@ -7,7 +7,7 @@ block content
 
 		.card.mb-3
 			.card-body
-				- var buttons = [[`/${session.username}/quotes`, "My Quotes", "fas fa-stream", quoteCount], ["/tags", "My Tags", "fas fa-tag", tagCount]];
+				- var buttons = [[`/${session.username}/quotes`, "My Quotes", "fas fa-stream", quoteCount], ["/tags", "My Tags", "fas fa-tag", tagCount], ["/speakers", "People", "fas fa-user-friends", speakerCount]];
 
 				.d-none.d-md-block
 					each item in buttons

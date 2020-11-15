@@ -23,7 +23,15 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			{ $sort: { count: -1 }}
 		]).toArray();
 
+		const speakersData = await quotesCollection.aggregate([
+			{ $match: { userId: req.session.user._id.toString() } },
+			{ $unwind: "$speakers" },
+			{ $group: { _id: "$speakers", count: { $sum: 1 } } },
+			{ $sort: { count: -1, _id: 1 }}
+		]).toArray();
+
 		res.locals.tagCount = tagsData.length;
+		res.locals.speakerCount = speakersData.length;
 	}
 
 	res.render("index");
@@ -410,6 +418,20 @@ router.get("/tags", asyncHandler(async (req, res, next) => {
 	res.locals.tagsData = tagsData;
 	
 	res.render("tags");
+}));
+
+router.get("/speakers", asyncHandler(async (req, res, next) => {
+	const quotesCollection = await db.getCollection("quotes");
+	const speakersData = await quotesCollection.aggregate([
+		{ $match: { userId: req.session.user._id.toString() } },
+		{ $unwind: "$speakers" },
+		{ $group: { _id: "$speakers", count: { $sum: 1 } } },
+		{ $sort: { count: -1 }}
+	]).toArray();
+
+	res.locals.speakersData = speakersData;
+	
+	res.render("speakers");
 }));
 
 router.get("/new-list", asyncHandler(async (req, res, next) => {
