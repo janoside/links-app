@@ -2,6 +2,7 @@ TODO
 - /year/2003
 - quote sort order on all quote lists
 - /random/RANDOM_LIST_ID
+- create example quotes on signup to demonstrate format
 
 MAYBE
 - frequently used tags selection when creating quote

@@ -95,6 +95,14 @@ async function setupSchema(db) {
 				{
 					name: "tags_1",
 					key: { "tags": 1}
+				},
+				{
+					name: "importDate_1_importIndex_1",
+					key: { "importDate": 1, "importIndex": 1 }
+				},
+				{
+					name: "importDate_1_importIndex_1_date_1",
+					key: { "importDate": 1, "importIndex": 1, "date": 1 }
 				}
 			]
 		},

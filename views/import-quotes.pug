@@ -38,6 +38,7 @@ block content
 
 	h3 Quotes
 
-	.card-columns
+	.grid
 		each quote, quoteIndex in quotes
-			include shared/quote-card.pug
+			.grid-item.col-xl-12.col-sm-6
+				include shared/quote-card.pug

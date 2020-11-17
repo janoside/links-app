@@ -242,7 +242,11 @@ router.post("/quote/:quoteId/delete", asyncHandler(async (req, res, next) => {
 
 router.get("/:username/quotes", asyncHandler(async (req, res, next) => {
 	const user = await db.findObject("users", {username:req.params.username});
-	const quotes = await db.findObjects("quotes", {userId:user._id.toString()});
+	const quotes = await db.findObjects("quotes", {
+		userId:user._id.toString()
+	}, {
+		sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
+	});
 
 	res.locals.user = user;
 	res.locals.quotes = quotes;
@@ -262,6 +266,8 @@ router.get("/tag/:tag", asyncHandler(async (req, res, next) => {
 			},
 			{ tags: tag }
 		]
+	}, {
+		sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
 	});
 
 	res.locals.tag = tag;
@@ -282,6 +288,8 @@ router.get("/speaker/:speaker", asyncHandler(async (req, res, next) => {
 			},
 			{ speakers: speaker }
 		]
+	}, {
+		sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
 	});
 
 	res.locals.speaker = speaker;
@@ -306,7 +314,7 @@ router.post("/import", asyncHandler(async (req, res, next) => {
 
 router.get("/import/:importId", asyncHandler(async (req, res, next) => {
 	const importId = req.params.importId;
-	const quotes = await db.findObjects("quotes", {importId:importId});
+	const quotes = await db.findObjects("quotes", {importId:importId}, {sort:[["importIndex", 1]]});
 	const quotesCollection = await db.getCollection("quotes");
 	const uniqueSpeakers = await quotesCollection.distinct("speakers", {importId:importId});
 	
@@ -357,22 +365,7 @@ router.post("/import/:importId/delete", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/imports", asyncHandler(async (req, res, next) => {
-	const quotesCollection = await db.getCollection("quotes");
-	const importData = await quotesCollection.aggregate([
-		{
-			$match: { userId: req.session.user._id.toString() }
-		},
-		{
-			$group: {
-				_id: "$importId",
-				count: { $sum: 1 },
-				name: { $first: "$importName" }
-			}
-		},
-		{
-			$sort: { count: -1 }
-		}
-	]).toArray();
+	const importData = await app.getImports(req.session.user);
 
 	res.locals.importData = importData;
 
@@ -398,6 +391,8 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 				]
 			}
 		]
+	}, {
+		sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
 	});
 	
 	res.locals.query = query;
@@ -544,6 +539,24 @@ router.get("/list/:listId/:quoteId", asyncHandler(async (req, res, next) => {
 	res.locals.noSpeakerLinks = true;
 
 	res.render("quote");
+}));
+
+// export all quotes for current user
+router.get("/export", asyncHandler(async (req, res, next) => {
+	const quotes = await db.findObjects("quotes", {
+		userId:req.session.user._id.toString()
+	}, {
+		sort: [["date", -1], ["importDate", -1], ["importIndex", -1]]
+	});
+
+	var exportContent = "";
+	quotes.forEach((quote) => {
+		exportContent += app.quoteToTextRepresentation(quote);
+		exportContent += "\n\n";
+	});
+	
+	res.setHeader("content-type", "text/plain");
+	res.send(exportContent);
 }));
 
 module.exports = router;

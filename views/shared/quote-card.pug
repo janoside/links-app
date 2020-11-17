@@ -2,6 +2,7 @@
 
 .card.shadow-sm.mb-3
 	.card-body
+		h6 #{quote.importIndex}
 		.quote-body
 			if (quote.text)
 				h6
@@ -63,8 +64,12 @@
 			.float-right
 				if (quote.date)
 					i.far.fa-clock.mr-1
-					| #{utils.formatDate(quote.date, "MMM d, ")}
-					a.text-reset.underlined-link(href=`/year/${utils.formatDate(quote.date, "yyyy")}`) #{utils.formatDate(quote.date, "yyyy")}
+					| #{utils.formatDate(quote.date, "MMM d, yyyy")}
+					
+					// TODO implement year pages
+					if (false)
+						a.text-reset.underlined-link(href=`/year/${utils.formatDate(quote.date, "yyyy")}`) #{utils.formatDate(quote.date, "yyyy")}
+					
 					if (utils.formatDate(quote.date, "HH:mm:ss") != "00:00:00")
 						|  - #{utils.formatDate(quote.date, "h:mma").toLowerCase()}
 				
@@ -77,7 +82,7 @@
 								a.dropdown-item(href=`/quote/${quote._id}/edit`)
 									i.far.fa-edit.mr-2
 									| Edit this quote
-								a.dropdown-item(href=`/quote/${quote._id}/raw`)
+								a.dropdown-item(href=`/quote/${quote._id}/raw`, target="_blank")
 									i.fas.fa-info-circle.mr-2
 									| View raw data
 								a.dropdown-item.text-danger(href=`/quote/${quote._id}/delete`)

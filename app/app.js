@@ -47,10 +47,12 @@ async function importQuotesFromText(importName, importText, public, user) {
 	chunks.forEach((chunk, chunkIndex) => {
 		const quote = quoteFromTextRepresentation(chunk, user);
 
-		quote.importName = importName;
-		quote.importId = importId;
-		quote.importIndex = chunkIndex;
-		quote.importDate = DateTime.utc();
+		if (!quote.importName) {
+			quote.importName = importName;
+			quote.importId = importId;
+			quote.importIndex = chunkIndex;
+			quote.importDate = importDate;
+		}
 		
 		if (!utils.objectHasProperty("visibility")) {
 			// set default visibility based on passed-in "public" param
@@ -127,7 +129,7 @@ function quoteFromTextRepresentation(importChunk, user) {
 
 			quote.tags = line.split(",").map((item) => {
 				return item.trim();
-				
+
 			}).filter((item) => {
 				return item.trim().length > 0;
 			});
@@ -148,6 +150,21 @@ function quoteFromTextRepresentation(importChunk, user) {
 
 			quote.link = line;
 			quote.linkSite = new URL(line).hostname;
+
+		} else if (line.trim().startsWith("import:")) {
+			// import data (from past import)
+
+			// trim and move past "import:"
+			line = line.trim().substring("import:".length).trim();
+
+			const parts = line.split("/").map((item) => {
+				return item.trim();
+			});
+
+			quote.importName = parts[0];
+			quote.importId = parts[1];
+			quote.importIndex = parseInt(parts[2]);
+			quote.importDate = DateTime.fromFormat(parts[3], "yyyy-MM-dd HH:mm:ss.SSS");
 
 		} else if (line.trim().startsWith("-")) {
 			// speaker
@@ -237,7 +254,32 @@ function quoteToTextRepresentation(quote) {
 		lines.push("url:" + quote.link);
 	}
 
+	if (quote.importName) {
+		lines.push("import:" + quote.importName + "/" + quote.importId + "/" + quote.importIndex + "/" + utils.formatDate(quote.importDate, "yyyy-MM-dd HH:mm:ss.SSS"));
+	}
+
 	return lines.join("\n");
+}
+
+async function getImports(user) {
+	const quotesCollection = await db.getCollection("quotes");
+	const importData = await quotesCollection.aggregate([
+		{
+			$match: { userId: user._id.toString() }
+		},
+		{
+			$group: {
+				_id: "$importId",
+				count: { $sum: 1 },
+				name: { $first: "$importName" }
+			}
+		},
+		{
+			$sort: { count: -1 }
+		}
+	]).toArray();
+
+	return importData;
 }
 
 async function createList(user, name, tagsAnd, tagsOr, speakersAnd, speakersOr, excludedQuoteIds) {
@@ -265,5 +307,6 @@ module.exports = {
 	importQuotesFromText: importQuotesFromText,
 	quoteFromTextRepresentation: quoteFromTextRepresentation,
 	quoteToTextRepresentation: quoteToTextRepresentation,
-	createList: createList
+	createList: createList,
+	getImports: getImports
 }

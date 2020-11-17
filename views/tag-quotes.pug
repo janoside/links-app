@@ -7,7 +7,8 @@ block content
 		span.badge.badge-primary
 			i.fas.fa-tag.mr-2
 			| #{tag}
-
-	.card-columns
+	
+	.grid
 		each quote, quoteIndex in quotes
-			include shared/quote-card.pug
+			.grid-item.col-xl-4.col-sm-6
+				include shared/quote-card.pug

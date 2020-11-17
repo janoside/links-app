@@ -4,9 +4,30 @@ block content
 	h1 My Account
 	hr
 
-	.card.mb-3
+	.card.mb-2
 		.card-body
-			h3 My Lists
+			h5.mb-0 Tools
+			hr
+
+			- var buttons = [["/export", "Export All", "fas fa-download", "Export all of your quotes"]];
+
+			.d-none.d-md-block
+				each item in buttons
+					a.btn.btn-primary.mr-2(href=item[0], title=item[3], data-toggle="tooltip", target="_blank")
+						i.mr-2(class=item[2])
+						| #{item[1]}
+
+				
+			.d-md-none
+				each item in buttons
+					a.btn.btn-primary.btn-block(href=item[0], title=item[3], data-toggle="tooltip", target="_blank")
+						i.mr-2(class=item[2])
+						| #{item[1]}
+
+	.card.mb-2
+		.card-body
+			h5 My Lists
+			hr
 			
 			h5
 				ul
@@ -16,8 +37,9 @@ block content
 
 	.card
 		.card-body
-			h3 My Imports
-			
+			h5 My Imports
+			hr
+
 			h5
 				ul
 					each item in importData
