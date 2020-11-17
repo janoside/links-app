@@ -14,6 +14,9 @@ global.appConfig = {
 		port: process.env.DB_PORT || "27017",
 		name: process.env.DB_NAME || "dbname",
 
+		username: process.env.DB_USERNAME,
+		password: process.env.DB_PASSWORD,
+
 		adminUser: {
 			username: process.env.ADMIN_USERNAME || "admin",
 			password: process.env.ADMIN_PASSWORD || "admin"

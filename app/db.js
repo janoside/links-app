@@ -9,15 +9,29 @@ const utils = require("./util/utils.js");
 var debugLog = debug("app:db");
  
 // Connection URL
-const url = `mongodb://${appConfig.db.host}:${appConfig.db.port}'`
+var connectionUrl;
+
+if (appConfig.db.username.trim().length > 0) {
+	connectionUrl = `mongodb://${appConfig.db.username}:${appConfig.db.password}@${appConfig.db.host}:${appConfig.db.port}`;
+
+} else {
+	connectionUrl = `mongodb://${appConfig.db.host}:${appConfig.db.port}`;
+}
+
  
 // Database Name
 const dbName = appConfig.db.name;
 
 var db = null;
+
+debugLog(`Connecting to database: ${appConfig.db.host}:${appConfig.db.port}`);
  
 // Use connect method to connect to the server
-MongoClient.connect(url, { useUnifiedTopology: true }, (err, client) => {
+MongoClient.connect(connectionUrl, { useUnifiedTopology: true }, (err, client) => {
+	if (err) {
+		debugLog(`Error connecting to DB: ${err}`);
+	}
+
 	debugLog(`Success: Connected to database`);
  
 	db = client.db(dbName);
