@@ -566,7 +566,7 @@ router.get("/export", asyncHandler(async (req, res, next) => {
 	const quotes = await db.findObjects("quotes", {
 		userId:req.session.user._id.toString()
 	}, {
-		sort: [["date", -1], ["importDate", -1], ["importIndex", -1]]
+		sort: [["importDate", 1], ["importIndex", 1], ["date", 1]]
 	});
 
 	var exportContent = "";
