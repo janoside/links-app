@@ -170,8 +170,20 @@ router.post("/new-quote", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/quote/:quoteId", asyncHandler(async (req, res, next) => {
+	if (!req.session.user) {
+		res.redirect("/");
+
+		return;
+	}
+
 	const quoteId = req.params.quoteId;
 	const quote = await db.findObject("quotes", {_id:ObjectID(quoteId)});
+
+	if (req.session.username != quote.username) {
+		res.redirect("/");
+
+		return;
+	}
 
 	res.locals.quote = quote;
 
@@ -241,7 +253,15 @@ router.post("/quote/:quoteId/delete", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/:username/quotes", asyncHandler(async (req, res, next) => {
-	const user = await db.findObject("users", {username:req.params.username});
+	const username = req.params.username;
+
+	if (!req.session.user || !req.session.username == username) {
+		res.redirect("/");
+
+		return;
+	}
+
+	const user = await db.findObject("users", {username:username});
 	const quotes = await db.findObjects("quotes", {
 		userId:user._id.toString()
 	}, {
