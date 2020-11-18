@@ -32,6 +32,14 @@
 	  # uncomment the `security:` prompt
 	  # add the line `authorization: "enabled"` (indented 2 spaces) underneath `security:`
 	  service mongod restart
+	  
+	  # verify authentication is enabled
+	  mongo   # launches mongo shell
+	  
+	  mongo > show databases; # should return no results since default mongo user has no permissions
+	  mongo > exit
+	  
+	  mongo -u admin -p
 
 
 ### Cleanup
