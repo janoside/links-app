@@ -51,6 +51,7 @@
 	  
 	  git clone git@github.com:janoside/quotes.cool.git
 	  cd quotes.cool
+	  npm i
 	  pm2 start bin/main.js --name quotes
 	  
 	  wget "https://raw.githubusercontent.com/janoside/quotes.cool/master/docs/nginx-config.txt"
