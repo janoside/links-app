@@ -10,8 +10,8 @@
 	  # install misc tools
 	  apt install net-tools iotop ncdu
 	  
-	  # install npm
-	  apt install npm
+	  # install npm, nginx, certbot
+	  apt install npm nginx certbot python3-certbot-nginx
 	  
 	  # install mongodb
 	  # ref: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
@@ -52,6 +52,14 @@
 	  git clone git@github.com:janoside/quotes.cool.git
 	  cd quotes.cool
 	  pm2 start bin/main.js --name quotes
+	  
+	  wget "https://raw.githubusercontent.com/janoside/quotes.cool/master/docs/nginx-config.txt"
+	  mv nginx-config.txt /etc/nginx/sites-available/quotes.cool
+	  cd /etc/nginx/sites-enabled/
+	  certbot -d quotes.cool
+	  ln -s ../sites-available/quotes.cool .
+	  unlink default
+	  service nginx restart
 
 
 ### Cleanup
