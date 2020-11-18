@@ -40,6 +40,17 @@
 	  mongo > exit
 	  
 	  mongo -u admin -p
+	  
+	  # install pm2
+	  npm install -g pm2
+	  
+	  ssh-keygen -b 4096
+	  
+	  # upload ~/.ssh/id_rsa.pub to github
+	  
+	  git clone git@github.com:janoside/quotes.cool.git
+	  cd quotes.cool
+	  pm2 start bin/main.js --name quotes
 
 
 ### Cleanup
