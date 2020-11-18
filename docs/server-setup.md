@@ -4,7 +4,7 @@
 
 * Start with Ubuntu 20.04 image
 
-      apt update
+	  apt update
 	  apt upgrade
 	  
 	  # install misc tools
@@ -22,6 +22,7 @@
 	  systemctl start mongod
 	  
 	  # configure admin user and enable authentication
+	  # ref: https://www.digitalocean.com/community/tutorials/how-to-secure-mongodb-on-ubuntu-20-04
 	  mongo   # launches mongo shell
 	  
 	  mongo > use admin
