@@ -81,6 +81,7 @@
 	  # edit backup.sh - enter credentials for "backups" db user
 	  
 	  crontab -e
+	  # configuration helper: https://crontab.guru/
 	  # add line like below (run every 3 hrs, 17-min after the hour)
 	  # 17 */3 * * * /root/backup.sh > /root/backup.log 2>&1
 
