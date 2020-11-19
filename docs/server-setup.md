@@ -28,6 +28,7 @@
 	  
 	  mongo > use admin
 	  mongo > db.createUser({user: "admin", pwd: passwordPrompt(), roles: [{ role: "userAdminAnyDatabase", db: "admin" }, { role: "readWriteAnyDatabase", db: "admin" }, { role: "dbAdminAnyDatabase", db: "admin" }, { role: "clusterAdmin", db: "admin" }]})
+	  mongo > db.createUser({user: "backups", pwd: passwordPrompt(), roles: [{ role: "readAnyDatabase", db: "admin" }]})
 	  mongo > exit
 	  
 	  vim /etc/mongod.conf
@@ -75,6 +76,13 @@
 	  ./aws/install
 	  aws --version
 	  aws configure # enter AWS credentials
+	  
+	  wget "https://raw.githubusercontent.com/janoside/quotes.cool/master/docs/backup.sh"
+	  # edit backup.sh - enter credentials for "backups" db user
+	  
+	  crontab -e
+	  # add line like below (run every 3 hrs, 17-min after the hour)
+	  # 17 */3 * * * /root/backup.sh > /root/backup.log 2>&1
 
 
 ### Cleanup
