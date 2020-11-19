@@ -27,7 +27,7 @@ mkdir -p $DEST
 echo "Backing up $HOST/$DBNAME to s3://$BUCKET_WITH_PREFIX/ on $TIME";
 
 # Dump from mongodb host into backup directory
-mongodump -h $HOST -d $DBNAME -o $DEST -u admin -p XXX
+mongodump -h $HOST -d $DBNAME -o $DEST --authenticationDatabase admin -u backups -p BACKUPS_USER_PASSWORD
 
 # Create tar of backup directory
 tar czfv $TAR -C $DEST .
