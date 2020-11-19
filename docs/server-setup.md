@@ -8,7 +8,7 @@
 	  apt upgrade
 	  
 	  # install misc tools
-	  apt install net-tools iotop ncdu
+	  apt install net-tools iotop ncdu unzip
 	  
 	  # install npm, nginx, certbot
 	  apt install npm nginx certbot python3-certbot-nginx
@@ -23,10 +23,11 @@
 	  
 	  # configure admin user and enable authentication
 	  # ref: https://www.digitalocean.com/community/tutorials/how-to-secure-mongodb-on-ubuntu-20-04
+	  # ref2 (for 4 superuser roles): https://stackoverflow.com/questions/22638258/create-superuser-in-mongo
 	  mongo   # launches mongo shell
 	  
 	  mongo > use admin
-	  mongo > db.createUser({user: "admin", pwd: passwordPrompt(), roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]})
+	  mongo > db.createUser({user: "admin", pwd: passwordPrompt(), roles: [{ role: "userAdminAnyDatabase", db: "admin" }, { role: "readWriteAnyDatabase", db: "admin" }, { role: "dbAdminAnyDatabase", db: "admin" }, { role: "clusterAdmin", db: "admin" }]})
 	  mongo > exit
 	  
 	  vim /etc/mongod.conf
@@ -61,6 +62,19 @@
 	  ln -s ../sites-available/quotes.cool .
 	  unlink default
 	  service nginx restart
+	  
+### Backups
+
+	  Ref: https://www.cloudsavvyit.com/6059/how-to-set-up-automated-mongodb-backups-to-s3/
+	  
+	  # Install AWS CLI
+	  # ref: https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html
+	  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+	  unzip awscliv2.zip
+	  rm awscliv2.zip
+	  ./aws/install
+	  aws --version
+	  aws configure # enter AWS credentials
 
 
 ### Cleanup
