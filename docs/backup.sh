@@ -1,5 +1,3 @@
-export HOME=/home/ubuntu/
-
 HOST=localhost
 
 # DB name
@@ -7,9 +5,6 @@ DBNAME=quotes
 
 # S3 bucket name
 BUCKET_WITH_PREFIX=quotes.cool/backups
-
-# Linux user account
-USER=root
 
 # Current time
 TIME=`/bin/date +%d-%m-%Y-%T`
@@ -24,7 +19,7 @@ TAR=$DEST/$TIME.tgz
 mkdir -p $DEST
 
 # Log
-echo "Backing up $HOST/$DBNAME to s3://$BUCKET_WITH_PREFIX/ on $TIME";
+echo "Backing up $HOST/$DBNAME to s3://$BUCKET_WITH_PREFIX/ at $TIME";
 
 # Dump from mongodb host into backup directory
 mongodump -h $HOST -d $DBNAME -o $DEST --authenticationDatabase admin -u backups -p BACKUPS_USER_PASSWORD
