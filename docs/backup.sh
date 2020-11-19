@@ -1,3 +1,6 @@
+# need to know where home is in order to find ~/.aws/credentials
+export HOME=/root
+
 HOST=localhost
 
 # DB name
@@ -28,7 +31,7 @@ mongodump -h $HOST -d $DBNAME -o $DEST --authenticationDatabase admin -u backups
 tar czfv $TAR -C $DEST .
 
 # Upload tar to s3
-aws s3 cp $TAR s3://$BUCKET_WITH_PREFIX/
+/usr/local/bin/aws s3 cp $TAR s3://$BUCKET_WITH_PREFIX/
 
 # Remove tar file locally
 rm -f $TAR
