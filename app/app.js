@@ -282,13 +282,14 @@ async function getImports(user) {
 	return importData;
 }
 
-async function createList(user, name, tagsAnd, tagsOr, speakersAnd, speakersOr, excludedQuoteIds) {
+async function createList(user, name, tagsAnd, tagsOr, excludedTagsOr, speakersAnd, speakersOr, excludedQuoteIds) {
 	const quoteList = {
 		userId: user._id.toString(),
 		username: user.username,
 		name: name,
 		tagsAnd: tagsAnd,
 		tagsOr: tagsOr,
+		excludedTagsOr,
 		speakersAnd: speakersAnd,
 		speakersOr: speakersOr,
 		excludedQuoteIds: excludedQuoteIds,

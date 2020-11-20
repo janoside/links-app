@@ -30,8 +30,11 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			{ $sort: { count: -1, _id: 1 }}
 		]).toArray();
 
+		const lists = await db.findObjects("quoteLists", { userId: req.session.user._id.toString() });
+
 		res.locals.tagCount = tagsData.length;
 		res.locals.speakerCount = speakersData.length;
+		res.locals.lists = lists;
 	}
 
 	res.render("index");
@@ -427,7 +430,7 @@ router.get("/tags", asyncHandler(async (req, res, next) => {
 		{ $match: { userId: req.session.user._id.toString() } },
 		{ $unwind: "$tags" },
 		{ $group: { _id: "$tags", count: { $sum: 1 } } },
-		{ $sort: { count: -1 }}
+		{ $sort: { count: -1, _id: 1 }}
 	]).toArray();
 
 	res.locals.tagsData = tagsData;
@@ -441,7 +444,7 @@ router.get("/speakers", asyncHandler(async (req, res, next) => {
 		{ $match: { userId: req.session.user._id.toString() } },
 		{ $unwind: "$speakers" },
 		{ $group: { _id: "$speakers", count: { $sum: 1 } } },
-		{ $sort: { count: -1 }}
+		{ $sort: { count: -1, _id: 1 }}
 	]).toArray();
 
 	res.locals.speakersData = speakersData;
@@ -470,6 +473,13 @@ router.post("/new-list", asyncHandler(async (req, res, next) => {
 		return item.trim().length > 0;
 	});
 
+	const excludedTagsOr = req.body.excludedTagsOr.split(",").map((item) => {
+		return item.trim();
+
+	}).filter((item) => {
+		return item.trim().length > 0;
+	});
+
 	const speakersAnd = req.body.speakersAnd.split(",").map((item) => {
 		return item.trim();
 
@@ -487,7 +497,7 @@ router.post("/new-list", asyncHandler(async (req, res, next) => {
 	// just use this default, we will modify it later
 	const excludedQuoteIds = [];
 
-	const list = await app.createList(req.session.user, name, tagsAnd, tagsOr, speakersAnd, speakersOr, excludedQuoteIds);
+	const list = await app.createList(req.session.user, name, tagsAnd, tagsOr, excludedTagsOr, speakersAnd, speakersOr, excludedQuoteIds);
 
 	res.redirect(`/list/${list._id.toString()}`);
 }));
@@ -515,6 +525,10 @@ router.get("/list/:listId", asyncHandler(async (req, res, next) => {
 		});
 
 		queryAnds.push({ $or: orTags });
+	}
+
+	if (list.excludedTagsOr && list.excludedTagsOr.length > 0) {
+		queryAnds.push({ tags: { $nin: list.excludedTagsOr } });
 	}
 
 	if (list.speakersAnd.length > 0) {

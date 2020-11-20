@@ -20,6 +20,10 @@ block content
 		fieldset.form-group
 			label(for="tagsOr") Include quotes that have ANY of these tags
 			input#tagsOr.form-control(name="tagsOr", placeholder="tags, comma-separated (a quote will be included if it has ANY of these)")
+		
+		fieldset.form-group
+			label(for="tagsOr") Exclude quotes that have ANY of these tags
+			input#excludedTagsOr.form-control(name="excludedTagsOr", placeholder="tags, comma-separated (a quote will be excluded if it has ANY of these)")
 
 		h5.mt-4 Speakers
 
