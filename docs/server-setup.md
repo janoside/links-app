@@ -8,7 +8,7 @@
 	  apt upgrade
 	  
 	  # install misc tools
-	  apt install net-tools iotop ncdu
+	  apt install net-tools iotop ncdu unzip
 	  
 	  # install npm, nginx, certbot
 	  apt install npm nginx certbot python3-certbot-nginx
@@ -23,10 +23,12 @@
 	  
 	  # configure admin user and enable authentication
 	  # ref: https://www.digitalocean.com/community/tutorials/how-to-secure-mongodb-on-ubuntu-20-04
+	  # ref2 (for 4 superuser roles): https://stackoverflow.com/questions/22638258/create-superuser-in-mongo
 	  mongo   # launches mongo shell
 	  
 	  mongo > use admin
-	  mongo > db.createUser({user: "admin", pwd: passwordPrompt(), roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]})
+	  mongo > db.createUser({user: "admin", pwd: passwordPrompt(), roles: [{ role: "userAdminAnyDatabase", db: "admin" }, { role: "readWriteAnyDatabase", db: "admin" }, { role: "dbAdminAnyDatabase", db: "admin" }, { role: "clusterAdmin", db: "admin" }]})
+	  mongo > db.createUser({user: "backups", pwd: passwordPrompt(), roles: [{ role: "readAnyDatabase", db: "admin" }]})
 	  mongo > exit
 	  
 	  vim /etc/mongod.conf
@@ -51,6 +53,7 @@
 	  
 	  git clone git@github.com:janoside/quotes.cool.git
 	  cd quotes.cool
+	  npm i
 	  pm2 start bin/main.js --name quotes
 	  
 	  wget "https://raw.githubusercontent.com/janoside/quotes.cool/master/docs/nginx-config.txt"
@@ -60,6 +63,27 @@
 	  ln -s ../sites-available/quotes.cool .
 	  unlink default
 	  service nginx restart
+	  
+### Backups
+
+	  Ref: https://www.cloudsavvyit.com/6059/how-to-set-up-automated-mongodb-backups-to-s3/
+	  
+	  # Install AWS CLI
+	  # ref: https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html
+	  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+	  unzip awscliv2.zip
+	  rm awscliv2.zip
+	  ./aws/install
+	  aws --version
+	  aws configure # enter AWS credentials
+	  
+	  wget "https://raw.githubusercontent.com/janoside/quotes.cool/master/docs/backup.sh"
+	  # edit backup.sh - enter credentials for "backups" db user
+	  
+	  crontab -e
+	  # configuration helper: https://crontab.guru/
+	  # add line like below (run every 3 hrs, 17-min after the hour)
+	  # 17 */3 * * * /root/backup.sh > /root/backup.log 2>&1
 
 
 ### Cleanup
