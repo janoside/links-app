@@ -10,7 +10,7 @@ DBNAME=quotes
 BUCKET_WITH_PREFIX=quotes.cool/backups
 
 # Current time
-TIME=`/bin/date +%d-%m-%Y-%T`
+TIME=`/bin/date +%Y-%m-%d-%T`
 
 # Backup directory
 DEST=/root/quotes.cool-mongodb-backups/
