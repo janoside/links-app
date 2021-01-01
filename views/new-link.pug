@@ -1,0 +1,17 @@
+extends layout
+
+block content
+	h1.mb-3 New Link
+	hr
+
+	form(method="post", action="/new-link")
+		fieldset.form-group
+			input#url.form-control(name="url", placeholder="url")
+
+		fieldset.form-group
+			input#desc.form-control(name="desc", placeholder="desc")
+
+		fieldset.form-group
+			input#tags.form-control(name="tags", placeholder="tags")
+
+		button.btn.btn-primary.btn-block(type="submit") Save

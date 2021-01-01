@@ -1,0 +1,17 @@
+extends layout
+
+block content
+	h1 Edit
+	hr
+
+	form(method="post", action=`/link/${link._id}/edit`)
+		fieldset.form-group
+			input#url.form-control(name="url", placeholder="url" value=link.url)
+
+		fieldset.form-group
+			input#desc.form-control(name="desc", placeholder="desc", value=link.desc)
+
+		fieldset.form-group
+			input#tags.form-control(name="tags", placeholder="tags", value=link.tags.join(","))
+
+		button.btn.btn-primary.btn-block(type="submit") Save

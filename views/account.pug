@@ -9,7 +9,7 @@ block content
 			h5.mb-0 Tools
 			hr
 
-			- var buttons = [["/export", "Export All", "fas fa-download", "Export all of your quotes"]];
+			- var buttons = [["/export", "Export All", "fas fa-download", "Export all of your links"]];
 
 			.d-none.d-md-block
 				each item in buttons
@@ -23,32 +23,4 @@ block content
 					a.btn.btn-primary.btn-block(href=item[0], title=item[3], data-toggle="tooltip", target="_blank")
 						i.mr-2(class=item[2])
 						| #{item[1]}
-
-	.card.mb-2
-		.card-body
-			h5 My Lists
-			hr
-			
-			h5
-				ul
-					each list in lists
-						li.mb-2
-							a(href=`/list/${list._id}`) #{list.name}
-
-	.card
-		.card-body
-			h5 My Imports
-			hr
-
-			h5
-				ul
-					each item in importData
-						if (item._id)
-							li.mb-2
-								if (item.name)
-									a(href=`/import/${item._id}`) #{item.name}
-								else
-									a(href=`/import/${item._id}`) #{item._id}
-								
-								span.badge.badge-secondary.ml-2 #{item.count.toLocaleString()}
 						

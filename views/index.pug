@@ -7,7 +7,7 @@ block content
 
 		.card.mb-2
 			.card-body
-				- var buttons = [[`/${session.username}/quotes`, "My Quotes", "fas fa-stream", quoteCount], ["/tags", "My Tags", "fas fa-tag", tagCount], ["/speakers", "People", "fas fa-user-friends", speakerCount]];
+				- var buttons = [[`/${session.username}/links`, "My Links", "fas fa-stream", linkCount], ["/tags", "My Tags", "fas fa-tag", tagCount]];
 
 				.d-none.d-md-block
 					each item in buttons
@@ -28,21 +28,10 @@ block content
 		
 		.card.mb-2
 			.card-body
-				h5 My Lists
-				hr
-				
-				h5
-					ul
-						each list in lists
-							li.mb-2
-								a(href=`/list/${list._id}`) #{list.name}
-		
-		.card.mb-2
-			.card-body
 				h5 Tools
 				hr
 
-				- var buttons = [["/new-quote", "New Quote", "fas fa-plus-circle", "Add a new quote"], ["/new-list", "New List", "fas fa-list", "Create a new shareable list"], ["/import", "Import Quotes", "fas fa-file-upload", "Upload a list of new quotes"]];
+				- var buttons = [["/new-link", "New Link", "fas fa-plus-circle", "Add a new link"]];
 
 				.d-none.d-md-block
 					each item in buttons

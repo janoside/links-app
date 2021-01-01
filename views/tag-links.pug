@@ -1,14 +1,14 @@
 extends layout
 
 block content
-	h1 #{quotes.length.toLocaleString()} Quote
-		| #{quotes.length != 1 ? "s" : ""} 
+	h1 #{links.length.toLocaleString()} Link
+		| #{links.length != 1 ? "s" : ""} 
 		| tagged with 
 		span.badge.badge-primary
 			i.fas.fa-tag.mr-2
 			| #{tag}
 	
 	.grid
-		each quote, quoteIndex in quotes
+		each link, linkIndex in links
 			.grid-item.col-xl-4.col-sm-6.p-0.px-md-2
-				include shared/quote-card.pug
+				include shared/link-card.pug

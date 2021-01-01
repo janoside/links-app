@@ -14,27 +14,27 @@ hr {
 	font-weight: bold;
 }
 
-.quote-body em {
-	/* optional different color for italic content inside quotes */
+.link-body em {
+	/* optional different color for italic content inside links */
 }
 
-.quote-body h6 {
+.link-body h6 {
 	margin-bottom: 0;
 }
 
-.quote-body p {
+.link-body p {
 	margin-bottom: 0.75rem;
 }
 
-.quote-body .blockquote-footer {
+.link-body .blockquote-footer {
 	margin-bottom: 0.75rem;
 }
 
-.quote-body em::before {
+.link-body em::before {
 	content: "\2732";
 }
 
-.quote-body em::after {
+.link-body em::after {
 	content: "\2732";
 }
 

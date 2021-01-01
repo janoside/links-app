@@ -51,16 +51,16 @@
 	  
 	  # upload ~/.ssh/id_rsa.pub to github
 	  
-	  git clone git@github.com:janoside/quotes.cool.git
-	  cd quotes.cool
+	  git clone git@github.com:janoside/links-app.git
+	  cd links-app
 	  npm i
-	  pm2 start bin/main.js --name quotes
+	  pm2 start bin/main.js --name links
 	  
-	  wget "https://raw.githubusercontent.com/janoside/quotes.cool/master/docs/nginx-config.txt"
-	  mv nginx-config.txt /etc/nginx/sites-available/quotes.cool
+	  wget "https://raw.githubusercontent.com/janoside/links-app/master/docs/nginx-config.txt"
+	  mv nginx-config.txt /etc/nginx/sites-available/links.rest
 	  cd /etc/nginx/sites-enabled/
-	  certbot -d quotes.cool
-	  ln -s ../sites-available/quotes.cool .
+	  certbot -d links.rest
+	  ln -s ../sites-available/links.rest .
 	  unlink default
 	  service nginx restart
 	  
@@ -77,7 +77,7 @@
 	  aws --version
 	  aws configure # enter AWS credentials
 	  
-	  wget "https://raw.githubusercontent.com/janoside/quotes.cool/master/docs/backup.sh"
+	  wget "https://raw.githubusercontent.com/janoside/links.rest/master/docs/backup.sh"
 	  # edit backup.sh - enter credentials for "backups" db user
 	  
 	  crontab -e

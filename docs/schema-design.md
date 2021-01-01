@@ -1,34 +1,8 @@
-- quote
+- link
 	- fields
-		- text/parts
+		- url
 		- userId
 		- username
-		- visibility
-		- speakers
-		- speakerContexts
-		- link
-		- linkSite
+		- desc
 		- tags
-		- importId (random uuid?)
-		- importIndex (chronology in import)
-		- importName
-		
-	- indexes
-		- speakers (for distinct)
-		- linkSite (for distinct/stats)
-		- tags (for distinct/search)
-		- userId+visibility
-		- importId+importIndex
 
-- quoteList
-	- fields
-		- name
-		- userId
-		- username
-		- tagsAnd/tagsOr
-		- speakersAnd/speakersOr
-		- excludedQuoteIds
-	
-	- indexes
-		- name (for search)
-		- userId

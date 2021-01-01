@@ -4,16 +4,16 @@ export HOME=/root
 HOST=localhost
 
 # DB name
-DBNAME=quotes
+DBNAME=links
 
 # S3 bucket name
-BUCKET_WITH_PREFIX=quotes.cool/backups
+BUCKET_WITH_PREFIX=links.rest/backups
 
 # Current time
 TIME=`/bin/date +%Y-%m-%d-%T`
 
 # Backup directory
-DEST=/root/quotes.cool-mongodb-backups/
+DEST=/root/links-rest-mongodb-backups/
 
 # Tar file of backup directory
 TAR=$DEST/$TIME.tgz

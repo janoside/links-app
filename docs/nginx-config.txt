@@ -1,22 +1,22 @@
 ## http://domain.com redirects to https://domain.com
 server {
-	if ($host = quotes.cool) {
+	if ($host = links.rest) {
 		return 301 https://$host$request_uri;
 	} # managed by Certbot
 
 
-	server_name quotes.cool;
+	server_name links.rest;
 	listen 80;
 	#listen [::]:80 ipv6only=on;
 
 	location / {
-		return 301 https://quotes.cool$request_uri;
+		return 301 https://links.rest$request_uri;
 	}
 }
 
 ## Serves httpS://domain.com
 server {
-	server_name quotes.cool;
+	server_name links.rest;
 	listen 443 ssl http2;
 	#listen [::]:443 ssl http2 ipv6only=on;
 
@@ -51,6 +51,6 @@ server {
 	include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
 	ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
-	ssl_certificate /etc/letsencrypt/live/quotes.cool/fullchain.pem; # managed by Certbot
-	ssl_certificate_key /etc/letsencrypt/live/quotes.cool/privkey.pem; # managed by Certbot
+	ssl_certificate /etc/letsencrypt/live/links.rest/fullchain.pem; # managed by Certbot
+	ssl_certificate_key /etc/letsencrypt/live/links.rest/privkey.pem; # managed by Certbot
 }

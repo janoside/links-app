@@ -84,7 +84,7 @@ async function setupSchema(db) {
 			]
 		},
 		{
-			name: "quotes",
+			name: "links",
 			indexes: [
 				{
 					name: "userId_1_visibility_1",
@@ -99,45 +99,12 @@ async function setupSchema(db) {
 					key: { "date": 1 }
 				},
 				{
-					name: "speakers_1",
-					key: { "speakers": 1}
-				},
-				{
-					name: "linkSite_1",
-					key: { "linkSite": 1}
+					name: "description_1",
+					key: { "description": 1}
 				},
 				{
 					name: "tags_1",
 					key: { "tags": 1}
-				},
-				{
-					name: "importDate_1_importIndex_1",
-					key: { "importDate": 1, "importIndex": 1 }
-				},
-				{
-					name: "importDate_1_importIndex_1_date_1",
-					key: { "importDate": 1, "importIndex": 1, "date": 1 }
-				}
-			]
-		},
-		{
-			name: "quoteLists",
-			indexes: [
-				{
-					name: "userId_1",
-					key: { "userId": 1 }
-				},
-				{
-					name: "username_1",
-					key: { "username": 1 }
-				},
-				{
-					name: "name_1",
-					key: { "name": 1 }
-				},
-				{
-					name: "date_1",
-					key: { "date": 1 }
 				}
 			]
 		}

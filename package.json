@@ -1,7 +1,7 @@
 {
-	"name": "quotes.cool",
+	"name": "links.rest",
 	"version": "1.0.0",
-	"description": "A cool quotes app.",
+	"description": "A cool links app.",
 	"main": "app.js",
 	"dependencies": {
 		"cookie-parser": "~1.4.4",
@@ -25,15 +25,15 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/janoside/quotes.cool.git"
+		"url": "git+https://github.com/janoside/links-app.git"
 	},
 	"keywords": [
-		"quotes"
+		"links"
 	],
 	"author": "Dan Janosik",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/janoside/quotes.cool/issues"
+		"url": "https://github.com/janoside/links-app/issues"
 	},
-	"homepage": "https://github.com/janoside/quotes.cool#readme"
+	"homepage": "https://github.com/janoside/links-app#readme"
 }
