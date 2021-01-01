@@ -1,3 +1,5 @@
-# Quotes.cool
+# Links App
 
-A cool quotes app.
+A link organizing app.
+
+Add links, descriptions, tags. Search.
