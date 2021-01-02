@@ -195,6 +195,27 @@ router.post("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
 	res.redirect(`/link/${linkId}`);
 }));
 
+router.get("/link/:linkId/raw", asyncHandler(async (req, res, next) => {
+	if (!req.session.user) {
+		res.redirect("/");
+
+		return;
+	}
+
+	const linkId = req.params.linkId;
+	const link = await db.findObject("links", {_id:ObjectID(linkId)});
+
+	if (req.session.username != link.username) {
+		res.redirect("/");
+
+		return;
+	}
+
+	res.locals.link = link;
+
+	res.render("link-raw");
+}));
+
 router.get("/link/:linkId/delete", asyncHandler(async (req, res, next) => {
 	const linkId = req.params.linkId;
 	const link = await db.findObject("links", {_id:ObjectID(linkId)});

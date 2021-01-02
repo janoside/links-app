@@ -3,9 +3,11 @@ extends layout
 block content
 	h1 #{links.length.toLocaleString()} Link
 		| #{links.length != 1 ? "s" : ""}  for 
-		.badge.badge-primary #{query}
+		span.badge.badge-primary
+			i.fas.fa-search.mr-2
+			| #{query}
 
-	.grid
+	.grid2
 		each link, linkIndex in links
-			.grid-item.col-xl-4.col-sm-6.p-0.px-md-2
+			.grid-item.p-0.px-md-2
 				include shared/link-card.pug

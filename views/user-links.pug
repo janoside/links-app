@@ -4,7 +4,7 @@ block content
 	h1 #{links.length.toLocaleString()} Link
 		| #{links.count != 1 ? "s" : ""}
 
-	.grid
+	.grid2
 		each link, linkIndex in links
-			.grid-item.col-xl-4.col-sm-6.p-0.px-md-2
+			.grid-item.p-0.px-md-2
 				include shared/link-card.pug

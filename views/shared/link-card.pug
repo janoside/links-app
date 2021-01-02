@@ -16,8 +16,8 @@
 					| #{utils.formatDate(link.createdAt, "MMM d, yyyy")}
 				
 				if (session.user && link.userId == session.user._id)
-					div.text-right(class=(link.createdAt ? "mt-2" : false))
-						.dropdown
+					span.text-right.ml-2(class=(link.createdAt ? "mt-2" : false))
+						span.dropdown
 							button.btn.btn-outline-secondary.py-0.btn-sm.dropdown-toggle(type="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 								i.fas.fa-cog
 							.dropdown-menu.dropdown-menu-right
@@ -46,18 +46,6 @@
 							a.badge.badge-primary.mr-1(href=`/tag/${tag}`)
 								i.fas.fa-tag.mr-1
 								| #{tag}
-
-				.mt-2
-					- var linkUsername = link.username;
-					if (noUserLinks)
-						span.badge.badge-info
-							i.fas.fa-user-circle.mr-1
-							| #{linkUsername}
-
-					else
-						a.badge.badge-info(href=`/${linkUsername}/links`)
-							i.fas.fa-user-circle.mr-1
-							| #{linkUsername}
 				
 
 		
