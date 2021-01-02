@@ -1,14 +1,17 @@
-nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
+nav.navbar.navbar-expand-sm.navbar-dark.bg-dark
 	.container
 		a.navbar-brand(href="/") #{global.appConfig.siteName}
+		if (session.username)
+			ul.navbar-nav
+				li.nav-item.active
+					a.nav-link(href="/new-link") New Link
+
 		button.navbar-toggler(type="button", data-toggle="collapse", data-target="#navbarNav", aria-controls="navbarNav")
 			span.navbar-toggler-icon
 		
 		div.collapse.navbar-collapse#navbarNav
 			ul.navbar-nav.mr-auto
-				if (session.username)
-					li.nav-item.active
-						a.nav-link(href="/new-link") New Link
+				
 			
 			form.form-inline.mr-3(method="get", action="/search")
 				div.input-group.input-group-sm

@@ -7,7 +7,4 @@ block content
 			i.fas.fa-search.mr-2
 			| #{query}
 
-	.grid2
-		each link, linkIndex in links
-			.grid-item.p-0.px-md-2
-				include shared/link-card.pug
+	include ./shared/link-list.pug
