@@ -1,6 +1,8 @@
 nav.navbar.navbar-expand-sm.navbar-dark.bg-dark
 	.container
-		a.navbar-brand(href="/") #{global.appConfig.siteName}
+		a.navbar-brand(href="/")
+			img.rounded-lg.mr-2.mt-n2.mb-n1(src="/img/icon/favicon-32x32.png" alt="logo" style="width: 30px; height: 30px;")
+			| #{global.appConfig.siteName}
 		if (session.username)
 			ul.navbar-nav
 				li.nav-item.active
