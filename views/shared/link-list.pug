@@ -3,9 +3,10 @@
 		each item in tagsData
 			div.d-lg-block.d-inline
 				a.btn.btn-sm.mr-2.mb-2(href=`/tags/${item._id}`, class=(tags.includes(item._id) ? "btn-success" : "btn-primary"))
-					i.fas.fa-tag.mr-2
-					| #{item._id} 
-					span.badge.badge-light #{item.count.toLocaleString()}
+					small
+						i.fas.fa-tag.mr-2
+						| #{item._id} 
+						span.badge.badge-light #{item.count.toLocaleString()}
 
 	.col-md-10
 		.grid
