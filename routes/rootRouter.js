@@ -238,73 +238,86 @@ router.post("/link/:linkId/delete", asyncHandler(async (req, res, next) => {
 	res.redirect("/");
 }));
 
-router.get("/:username/links", asyncHandler(async (req, res, next) => {
-	const username = req.params.username;
-
-	if (!req.session.user || !req.session.username == username) {
+router.get("/links", asyncHandler(async (req, res, next) => {
+	if (!req.session.user) {
 		res.redirect("/");
 
 		return;
 	}
 
-	const user = await db.findObject("users", {username:username});
-	const links = await db.findObjects("links", {
-		userId:user._id.toString()
-	}, {
-		sort: [["date", 1]]
-	});
+	const user = await db.findObject("users", {username:req.session.username});
+	const links = await db.findObjects(
+		"links",
+		{ userId: user._id.toString()},
+		{ sort: [["date", 1]] });
+
+	const linksCollection = await db.getCollection("links");
+	const tagsData = await linksCollection.aggregate([
+		{ $match: { userId: req.session.user._id.toString() } },
+		{ $unwind: "$tags" },
+		{ $group: { _id: "$tags", count: { $sum: 1 } } },
+		{ $sort: { count: -1, _id: 1 }}
+	]).toArray();
 
 	res.locals.user = user;
 	res.locals.links = links;
+	res.locals.tags = [];
+	res.locals.tagsData = tagsData;
 
 	res.render("user-links");
 }));
 
-router.get("/tag/:tag", asyncHandler(async (req, res, next) => {
-	const tag = req.params.tag;
-	const links = await db.findObjects("links", {
-		$and: [
-			{
-				$or: [
-					{ userId: req.session.user._id.toString() },
-					{ visibility: "public" }
-				]
-			},
-			{ tags: tag }
-		]
-	}, {
-		sort: [["date", 1]]
-	});
+router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
+	const tags = req.params.tags.split(",");
+	const links = await db.findObjects(
+		"links",
+		{ userId: req.session.user._id.toString(), tags: { $all: tags }},
+		{ sort: [["date", 1]] });
 
-	res.locals.tag = tag;
+	const linksCollection = await db.getCollection("links");
+	const tagsData = await linksCollection.aggregate([
+		{ $match: { userId: req.session.user._id.toString(), tags: { $all: tags } } },
+		{ $unwind: "$tags" },
+		{ $group: { _id: "$tags", count: { $sum: 1 } } },
+		{ $sort: { count: -1, _id: 1 }}
+	]).toArray();
+
+	res.locals.tags = tags;
 	res.locals.links = links;
+	res.locals.tagsData = tagsData;
 
 	res.render("tag-links");
 }));
 
 router.get("/search", asyncHandler(async (req, res, next) => {
 	const query = req.query.query;
-	const links = await db.findObjects("links", {
-		$and: [
-			{
-				$or: [
-					{ userId: req.session.user._id.toString() },
-					{ visibility: "public" }
-				]
-			},
-			{
-				$or:[
-					{description:new RegExp(query, "i")},
-					{url:new RegExp(query, "i")}
-				]
-			}
-		]
-	}, {
-		sort: [["date", 1]]
-	});
+	const links = await db.findObjects(
+		"links",
+		{
+			$and: [
+				{ userId: req.session.user._id.toString() },
+				{
+					$or:[
+						{ desc: new RegExp(query, "i") },
+						{ url: new RegExp(query, "i") }
+					]
+				}
+			]
+		},
+		{ sort: [["date", 1]] });
+
+	const linksCollection = await db.getCollection("links");
+	const tagsData = await linksCollection.aggregate([
+		{ $match: { userId: req.session.user._id.toString(), $or: [ { desc: new RegExp(query, "i") }, { url: new RegExp(query, "i") } ] } },
+		{ $unwind: "$tags" },
+		{ $group: { _id: "$tags", count: { $sum: 1 } } },
+		{ $sort: { count: -1, _id: 1 }}
+	]).toArray();
 	
 	res.locals.query = query;
 	res.locals.links = links;
+	res.locals.tags = [];
+	res.locals.tagsData = tagsData;
 
 	res.render("search-links");
 }));

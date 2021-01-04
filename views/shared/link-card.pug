@@ -1,11 +1,11 @@
 .card.shadow-sm.mb-3
 	.card-body
 		.link-body
-			p
-				a(href=link.url, target="_blank") #{link.url}
-
 			if (link.desc)
 				p #{link.desc}
+
+			p
+				a(href=link.url, target="_blank") #{new URL(link.url).hostname}
 		
 		hr
 
@@ -38,8 +38,12 @@
 			.float-left(style="max-width: 60%;")
 				if (link.tags)
 					each tag, tagIndex in link.tags
-						if (noTagLinks)
-							span.badge.badge-primary.mr-1
+						if (tags)
+							- var newTags = [];
+							- tags.forEach(x => newTags.push(x));
+							- if (!newTags.includes(tag)) { newTags.push(tag); }
+
+							a.badge.badge-primary.mr-1(href=`/tags/${newTags.join(",")}`)
 								i.fas.fa-tag.mr-1
 								| #{tag}
 						else

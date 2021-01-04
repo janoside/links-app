@@ -87,20 +87,20 @@ async function setupSchema(db) {
 			name: "links",
 			indexes: [
 				{
-					name: "userId_1_visibility_1",
-					key: { "userId": 1, "visibility": 1 }
+					name: "userId_1",
+					key: { "userId": 1 }
 				},
 				{
-					name: "username_1_visibility_1",
-					key: { "username": 1, "visibility": 1 }
+					name: "username_1",
+					key: { "username": 1 }
 				},
 				{
 					name: "date_1",
 					key: { "date": 1 }
 				},
 				{
-					name: "description_1",
-					key: { "description": 1}
+					name: "desc_1",
+					key: { "desc": 1}
 				},
 				{
 					name: "tags_1",
