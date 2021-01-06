@@ -8,7 +8,7 @@ block content
 
 	if (tagsData)
 		each item in tagsData
-			a.btn.btn-primary.mr-2.mb-2(href=`/tag/${item._id}`)
+			a.btn.btn-primary.mr-2.mb-2(href=`/tags/${item._id}`)
 				i.fas.fa-tag.mr-2
 				| #{item._id} 
 				span.badge.badge-light #{item.count.toLocaleString()}
