@@ -1,12 +1,27 @@
 .row
 	.col-lg-2.border-right
 		each item in tagsData
-			div.d-lg-block.d-inline
-				a.btn.btn-sm.mr-2.mb-2(href=`/tags/${item._id}`, class=(tags.includes(item._id) ? "btn-success" : "btn-primary"))
-					small
-						i.fas.fa-tag.mr-2
-						| #{item._id} 
-						span.badge.badge-light #{item.count.toLocaleString()}
+			if (tags.includes(item._id))
+				div.d-lg-block.d-inline
+					a.btn.btn-success.btn-sm.mr-1.mb-2(href=`/tags/${item._id}`)
+						small
+							i.fas.fa-tag.mr-2
+							| #{item._id} 
+							span.badge.badge-light #{item.count.toLocaleString()}
+
+		each item in tagsData
+			if (!tags.includes(item._id))
+				div.d-lg-block.d-inline
+					a.btn.btn-primary.btn-sm.mr-1.mb-2(href=`/tags/${item._id}`)
+						small
+							i.fas.fa-tag.mr-2
+							| #{item._id} 
+							span.badge.badge-light #{item.count.toLocaleString()}
+
+					if (!tags.includes(item._id) && tags.length > 0)
+						a.btn.btn-sm.btn-secondary.mr-2.mb-2(href=`/tags/${tags.slice().concat([item._id]).join(",")}`, title=`Add filter: ${item._id}`, data-toggle="tooltip")
+							small
+								| + 
 
 	.col-md-10
 		.grid

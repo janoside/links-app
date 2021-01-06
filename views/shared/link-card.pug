@@ -12,14 +12,13 @@
 		.clearfix
 			.float-right
 				if (link.createdAt)
-					i.far.fa-clock.mr-1
 					| #{utils.formatDate(link.createdAt, "MMM d, yyyy")}
 				
 				if (session.user && link.userId == session.user._id)
 					span.text-right.ml-2(class=(link.createdAt ? "mt-2" : false))
 						span.dropdown
 							button.btn.btn-outline-secondary.py-0.btn-sm.dropdown-toggle(type="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-								i.fas.fa-cog
+								i.fas.fa-cog.fa-sm
 							.dropdown-menu.dropdown-menu-right
 								a.dropdown-item(href=`/link/${link._id}/edit`)
 									i.far.fa-edit.mr-2

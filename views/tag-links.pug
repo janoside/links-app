@@ -5,8 +5,7 @@ block headBlock
 
 block content
 	h1 #{links.length.toLocaleString()} Link
-		| #{links.length != 1 ? "s" : ""} 
-		| tagged with 
+		| #{links.length != 1 ? "s" : ""} for 
 		each tag in tags
 			span.badge.badge-primary.mr-1
 				i.fas.fa-tag.mr-2
