@@ -8,6 +8,14 @@ block content
 		h1 Home
 		hr
 
+		.d-block.d-md-none.mb-3
+			form(method="get", action="/search")
+				div.input-group.input-group-block
+					input.form-control.form-control-block(type="text", name="query", placeholder="search...", value=(query))
+					div.input-group-append
+						button.btn.btn-primary(type="submit")
+							i.fas.fa-search
+
 		.card.mb-2
 			.card-body
 				- var buttons = [[`/links`, "My Links", "fas fa-stream", linkCount], ["/tags", "My Tags", "fas fa-tag", tagCount]];
