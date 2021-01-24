@@ -138,7 +138,7 @@ router.post("/new-link", asyncHandler(async (req, res, next) => {
 		username: req.session.user.username,
 		url: req.body.url,
 		desc: req.body.desc,
-		tags: req.body.tags.split(",").map(x => x.trim())
+		tags: req.body.tags.split(",").map(x => x.trim().toLowerCase())
 	};
 
 	const savedLink = await db.insertObject("links", link);
