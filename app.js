@@ -31,6 +31,7 @@ process.on("unhandledRejection", (reason, p) => {
 
 expressApp.onStartup = function() {
 	global.appStartDate = new Date();
+	global.nodeVersion = process.version;
 
 	if (global.sourcecodeVersion == null && fs.existsSync('.git')) {
 		simpleGit(".").log(["-n 1"], function(err, log) {
