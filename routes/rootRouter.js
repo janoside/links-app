@@ -102,7 +102,10 @@ router.post("/login", asyncHandler(async (req, res, next) => {
 		res.redirect("/");
 
 	} else {
-		next();
+		req.session.userMessage = "Login failed - invalid username or password";
+		req.session.userMessageType = "danger";
+
+		res.redirect("/");
 	}
 }));
 
