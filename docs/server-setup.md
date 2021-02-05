@@ -77,7 +77,7 @@
 	  aws --version
 	  aws configure # enter AWS credentials
 	  
-	  wget "https://raw.githubusercontent.com/janoside/links-rest/master/docs/backup.sh"
+	  wget "https://raw.githubusercontent.com/janoside/links-app/master/docs/backup.sh"
 	  # edit backup.sh - enter credentials for "backups" db user
 	  
 	  crontab -e
