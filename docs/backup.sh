@@ -27,6 +27,10 @@ echo "Backing up $HOST/$DBNAME to s3://$BUCKET_WITH_PREFIX/ at $TIME";
 # Dump from mongodb host into backup directory
 mongodump -h $HOST -d $DBNAME -o $DEST --authenticationDatabase admin -u backups -p BACKUPS_USER_PASSWORD
 
+# Track the backup size in stats.cool
+TAR_FILESIZE=$(stat -c%s "$TAR")
+curl -d "name=admin.backup&val=$TAR_FILESIZE" https://stats.cool/api/v1/project/tdqf8sw19c/dataPoint
+
 # Create tar of backup directory
 tar czfv $TAR -C $DEST .
 
