@@ -138,7 +138,7 @@ router.post("/new-link", asyncHandler(async (req, res, next) => {
 		username: req.session.user.username,
 		url: req.body.url,
 		desc: req.body.desc,
-		tags: req.body.tags.split(",").map(x => x.trim())
+		tags: req.body.tags.split(",").map(x => x.trim().toLowerCase())
 	};
 
 	const savedLink = await db.insertObject("links", link);
@@ -294,6 +294,9 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 
 router.get("/search", asyncHandler(async (req, res, next) => {
 	const query = req.query.query;
+
+	const regex = new RegExp(query, "i");
+	
 	const links = await db.findObjects(
 		"links",
 		{
@@ -301,8 +304,9 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 				{ userId: req.session.user._id.toString() },
 				{
 					$or:[
-						{ desc: new RegExp(query, "i") },
-						{ url: new RegExp(query, "i") }
+						{ desc: regex },
+						{ url: regex },
+						{ tags: regex }
 					]
 				}
 			]
