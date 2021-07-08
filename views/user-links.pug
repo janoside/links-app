@@ -4,8 +4,9 @@ block headBlock
 	title My Links
 
 block content
-	h1 #{links.length.toLocaleString()} Link
-		| #{links.count != 1 ? "s" : ""}
+	+linkListPageHeader(linkCount, limit, offset, sort, paginationBaseUrl)
+		h1 #{linkCount.toLocaleString()} Link
+			| #{linkCount != 1 ? "s" : ""}
 
 	hr
 

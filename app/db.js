@@ -165,11 +165,19 @@ async function findObject(collectionName, query, options={}) {
 	return objects[0];
 }
 
-async function findObjects(collectionName, query, options={}, returnAsArray=true) {
+async function findObjects(collectionName, query, options={}, limit=-1, offset=0, returnAsArray=true) {
 	return new Promise((resolve, reject) => {
 		let collection = db.collection(collectionName);
 
 		var cursor = collection.find(query, options);
+
+		if (offset > 0) {
+			cursor.skip(offset);
+		}
+
+		if (limit > 0) {
+			cursor.limit(limit);
+		}
 
 		if (returnAsArray) {
 			cursor.toArray((err, results) => {

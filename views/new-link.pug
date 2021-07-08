@@ -8,13 +8,14 @@ block content
 	hr
 
 	form(method="post", action="/new-link")
-		fieldset.form-group
+		fieldset.mb-4
 			input#url.form-control(name="url", placeholder="url")
 
-		fieldset.form-group
+		fieldset.mb-4
 			input#desc.form-control(name="desc", placeholder="desc")
 
-		fieldset.form-group
+		fieldset.mb-4
 			input#tags.form-control(name="tags", placeholder="tags")
 
-		button.btn.btn-primary.btn-block(type="submit") Save
+		.d-grid
+			button.btn.btn-primary(type="submit") Save

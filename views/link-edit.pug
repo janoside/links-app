@@ -5,13 +5,14 @@ block content
 	hr
 
 	form(method="post", action=`/link/${link._id}/edit`)
-		fieldset.form-group
+		fieldset.mb-4
 			input#url.form-control(name="url", placeholder="url" value=link.url)
 
-		fieldset.form-group
+		fieldset.mb-4
 			input#desc.form-control(name="desc", placeholder="desc", value=link.desc)
 
-		fieldset.form-group
+		fieldset.mb-4
 			input#tags.form-control(name="tags", placeholder="tags", value=link.tags.join(","))
 
-		button.btn.btn-primary.btn-block(type="submit") Save
+		.d-grid
+			button.btn.btn-primary(type="submit") Save

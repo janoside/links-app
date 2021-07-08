@@ -22,20 +22,21 @@ block content
 
 				.d-none.d-md-block
 					each item in buttons
-						a.btn.btn-primary.mr-2(href=item[0])
-							i.mr-2(class=item[2])
+						a.btn.btn-primary.me-2(href=item[0])
+							i.me-2(class=item[2])
 							| #{item[1]}
 							if (item.length > 3)
-								span.badge.badge-light.ml-2 #{item[3].toLocaleString()}
+								span.badge.bg-light.text-dark.ms-2 #{item[3].toLocaleString()}
 
 					
 				.d-md-none
 					each item in buttons
-						a.btn.btn-primary.btn-block(href=item[0])
-							i.mr-2(class=item[2])
-							| #{item[1]}
-							if (item.length > 3)
-								span.badge.badge-light.ml-2 #{item[3].toLocaleString()}
+						.d-grid
+							a.btn.btn-primary(href=item[0])
+								i.me-2(class=item[2])
+								| #{item[1]}
+								if (item.length > 3)
+									span.badge.bg-light.text-dark.ms-2 #{item[3].toLocaleString()}
 		
 		.card.mb-2
 			.card-body
@@ -46,16 +47,17 @@ block content
 
 				.d-none.d-md-block
 					each item in buttons
-						a.btn.btn-primary.mr-2(href=item[0], title=item[3], data-toggle="tooltip")
-							i.mr-2(class=item[2])
+						a.btn.btn-primary.me-2(href=item[0], title=item[3], data-bs-toggle="tooltip")
+							i.me-2(class=item[2])
 							| #{item[1]}
 
 					
 				.d-md-none
 					each item in buttons
-						a.btn.btn-primary.btn-block(href=item[0], title=item[3], data-toggle="tooltip")
-							i.mr-2(class=item[2])
-							| #{item[1]}
+						.d-grid
+							a.btn.btn-primary(href=item[0], title=item[3], data-bs-toggle="tooltip")
+								i.me-2(class=item[2])
+								| #{item[1]}
 				
 
 	else

@@ -4,11 +4,12 @@ block headBlock
 	title Links: Matching '#{query}'
 
 block content
-	h1 #{links.length.toLocaleString()} Link
-		| #{links.length != 1 ? "s" : ""}  for 
-		span.badge.badge-primary
-			i.fas.fa-search.mr-2
-			| #{query}
+	+linkListPageHeader(linkCount, limit, offset, sort, paginationBaseUrl)
+		h1 #{linkCount.toLocaleString()} Link
+			| #{linkCount != 1 ? "s" : ""}  for 
+			span.badge.bg-primary
+				i.fas.fa-search.me-2
+				| #{query}
 
 	hr
 

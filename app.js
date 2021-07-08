@@ -122,6 +122,21 @@ expressApp.use(async (req, res, next) => {
 		req.session.userErrors = null;
 	}
 
+
+
+	if (!req.session.userSettings) {
+		req.session.userSettings = JSON.parse(req.cookies["user-settings"] || "{}");
+	}
+
+	const userSettings = req.session.userSettings;
+	res.locals.userSettings = userSettings;
+
+	if (!userSettings.uiTheme) {
+		userSettings.uiTheme = "light";
+	}
+
+	
+
 	res.locals.url = req.url;
 	res.locals.path = req.path;
 

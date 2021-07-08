@@ -4,12 +4,13 @@ block headBlock
 	title Links: Tagged #{tags.join(", ")}
 
 block content
-	h1 #{links.length.toLocaleString()} Link
-		| #{links.length != 1 ? "s" : ""} for 
-		each tag in tags
-			span.badge.badge-primary.mr-1
-				i.fas.fa-tag.mr-2
-				| #{tag}
+	+linkListPageHeader(linkCount, limit, offset, sort, paginationBaseUrl)
+		h1 #{linkCount.toLocaleString()} Link
+			| #{linkCount != 1 ? "s" : ""} for 
+			each tag in tags
+				span.badge.bg-primary.me-1
+					i.fas.fa-tag.me-2
+					| #{tag}
 
 	hr
 	

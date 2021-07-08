@@ -1,8 +1,27 @@
+mixin linkAdminDropdown
+	span.dropdown
+		button.btn.btn-outline-secondary.py-0.btn-sm.dropdown-toggle(type="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+			i.fas.fa-cog.fa-sm
+		.dropdown-menu.dropdown-menu-right
+			a.dropdown-item(href=`/link/${link._id}/edit`)
+				i.far.fa-edit.me-2
+				| Edit this link
+			a.dropdown-item(href=`/link/${link._id}/raw`, target="_blank")
+				i.fas.fa-info-circle.me-2
+				| View raw data
+			a.dropdown-item.text-danger(href=`/link/${link._id}/delete`)
+				i.far.fa-trash-alt.me-2
+				| Delete this link
+
 .card.shadow-sm.mb-3
 	.card-body
 		.link-body
-			if (link.desc)
-				p #{link.desc}
+			.mb-2
+				if (link.desc)
+					a.text-reset.text-decoration-none(href=`./link/${link._id}`) #{link.desc}
+
+				else
+					a.text-reset.text-decoration-none(href=`./link/${link._id}`) ...
 
 			p
 				a(href=link.url, target="_blank") #{new URL(link.url).hostname}
@@ -10,31 +29,7 @@
 		hr
 
 		.clearfix
-			.float-right
-				if (link.createdAt)
-					| #{utils.formatDate(link.createdAt, "MMM d, yyyy")}
-				
-				if (session.user && link.userId == session.user._id)
-					span.text-right.ml-2(class=(link.createdAt ? "mt-2" : false))
-						span.dropdown
-							button.btn.btn-outline-secondary.py-0.btn-sm.dropdown-toggle(type="button", data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-								i.fas.fa-cog.fa-sm
-							.dropdown-menu.dropdown-menu-right
-								a.dropdown-item(href=`/link/${link._id}/edit`)
-									i.far.fa-edit.mr-2
-									| Edit this link
-								a.dropdown-item(href=`/link/${link._id}/raw`, target="_blank")
-									i.fas.fa-info-circle.mr-2
-									| View raw data
-								a.dropdown-item.text-danger(href=`/link/${link._id}/delete`)
-									i.far.fa-trash-alt.mr-2
-									| Delete this link
-				
-				else
-					// no link-management dropdown
-					
-			
-			.float-left(style="max-width: 60%;")
+			.float-start
 				if (link.tags)
 					each tag, tagIndex in link.tags
 						if (tags)
@@ -42,16 +37,29 @@
 							- tags.forEach(x => newTags.push(x));
 							- if (!newTags.includes(tag)) { newTags.push(tag); }
 
-							a.badge.badge-primary.mr-1(href=`/tags/${newTags.join(",")}`)
-								i.fas.fa-tag.mr-1
+							a.badge.bg-primary.me-1(href=`/tags/${newTags.join(",")}`)
+								i.fas.fa-tag.me-1
 								| #{tag}
 						else
-							a.badge.badge-primary.mr-1(href=`/tag/${tag}`)
-								i.fas.fa-tag.mr-1
+							a.badge.bg-primary.me-1(href=`/tag/${tag}`)
+								i.fas.fa-tag.me-1
 								| #{tag}
-				
 
-		
-		.clearfix
-			.float-right
+
+			.float-end.d-md-none
+				if (session.user && link.userId == session.user._id && !linkListPage)
+					div.text-end(class=(link.date ? "mt-2" : false))
+						+linkAdminDropdown
+				
+				else
+					// no quote-management dropdown
+
+
+			.float-md-end.float-start
+				if (link.createdAt)
+					| #{utils.formatDate(link.createdAt, "MMM d, yyyy")}
+
+				.d-none.d-md-block.text-end.pt-2
+					if (session.user && link.userId == session.user._id && !linkListPage)
+						+linkAdminDropdown
 				

@@ -1,30 +1,31 @@
 .row
-	.col-lg-2.col-sm-12
-		each item in tagsData
-			if (tags.includes(item._id))
-				div.d-lg-block.d-inline
-					a.btn.btn-success.btn-sm.mr-1.mb-2(href=`/tags/${item._id}`)
-						small
-							i.fas.fa-tag.mr-2
-							| #{item._id} 
-							span.badge.badge-light #{item.count.toLocaleString()}
-
-		each item in tagsData
-			if (!tags.includes(item._id))
-				div.d-lg-block.d-inline
-					a.btn.btn-primary.btn-sm.mr-1.mb-2(href=`/tags/${item._id}`)
-						small
-							i.fas.fa-tag.mr-2
-							| #{item._id} 
-							span.badge.badge-light #{item.count.toLocaleString()}
-
-					if (!tags.includes(item._id) && tags.length > 0)
-						a.btn.btn-sm.btn-secondary.mr-2.mb-2(href=`/tags/${tags.slice().concat([item._id]).join(",")}`, title=`Add filter: ${item._id}`, data-toggle="tooltip")
+	if (tagsData)
+		.col-md-0.col-lg-2.d-none.d-lg-block
+			each item in tagsData
+				if (tags.includes(item._id))
+					div.d-lg-block.d-inline
+						a.btn.btn-success.btn-sm.mb-2(href=`/tags/${item._id}`)
 							small
-								| + 
+								i.fas.fa-tag.me-2
+								| #{item._id} 
+								span.badge.bg-light.text-dark.ms-1 #{item.count.toLocaleString()}
 
-	.col-md-10
-		.grid
-			each link, linkIndex in links
-				.grid-item.col-xl-4.col-sm-6.p-0.px-md-2
-					include ./link-card.pug
+			each item in tagsData
+				if (!tags.includes(item._id))
+					div.d-lg-block.d-inline
+						a.btn.btn-primary.btn-sm.mb-2(href=`/tags/${item._id}`)
+							small
+								i.fas.fa-tag.me-2
+								| #{item._id} 
+								span.badge.bg-light.text-dark.ms-1 #{item.count.toLocaleString()}
+
+						if (!tags.includes(item._id) && tags.length > 0)
+							a.btn.btn-sm.btn-secondary.ms-1.mb-2(href=`/tags/${tags.slice().concat([item._id]).join(",")}`, title=`Add filter: ${item._id}`, data-bs-toggle="tooltip")
+								small
+									| + 
+
+	.col-md-12.col-lg-10
+		each link, linkIndex in links
+			.col.p-0.px-lg-2
+				- var linkListPage = true;
+				include ./link-card.pug

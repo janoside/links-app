@@ -126,6 +126,23 @@ router.get("/account", asyncHandler(async (req, res, next) => {
 	res.render("account");
 }));
 
+router.get("/changeSetting", asyncHandler(async (req, res, next) => {
+	if (req.query.name) {
+		if (!req.session.userSettings) {
+			req.session.userSettings = {};
+		}
+
+		req.session.userSettings[req.query.name] = req.query.value;
+
+		var userSettings = JSON.parse(req.cookies["user-settings"] || "{}");
+		userSettings[req.query.name] = req.query.value;
+
+		res.cookie("user-settings", JSON.stringify(userSettings));
+	}
+
+	res.redirect(req.headers.referer);
+}));
+
 router.get("/new-link", asyncHandler(async (req, res, next) => {
 	res.render("new-link");
 }));
@@ -248,13 +265,43 @@ router.get("/links", asyncHandler(async (req, res, next) => {
 		return;
 	}
 
+	var limit = 25;
+	var offset = 0;
+	var sort = "date-desc";
+
+	if (req.query.limit) {
+		limit = parseInt(req.query.limit);
+	}
+
+	if (req.query.offset) {
+		offset = parseInt(req.query.offset);
+	}
+
+	if (req.query.sort) {
+		sort = req.query.sort;
+	}
+
+	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
+
+
 	const user = await db.findObject("users", {username:req.session.username});
 	const links = await db.findObjects(
 		"links",
-		{ userId: user._id.toString()},
-		{ sort: [["date", 1]] });
+		{
+			userId: user._id.toString()
+		},
+		{
+			sort: [
+				["date", dateSortVal]
+			]
+		},
+		limit,
+		offset);
 
 	const linksCollection = await db.getCollection("links");
+
+	const linkCount = await linksCollection.countDocuments({ userId: user._id.toString() });
+
 	const tagsData = await linksCollection.aggregate([
 		{ $match: { userId: req.session.user._id.toString() } },
 		{ $unwind: "$tags" },
@@ -263,21 +310,62 @@ router.get("/links", asyncHandler(async (req, res, next) => {
 	]).toArray();
 
 	res.locals.user = user;
+	res.locals.linkCount = linkCount;
 	res.locals.links = links;
 	res.locals.tags = [];
 	res.locals.tagsData = tagsData;
+
+	res.locals.limit = limit;
+	res.locals.offset = offset;
+	res.locals.sort = sort;
+	res.locals.paginationBaseUrl = `/links`;
 
 	res.render("user-links");
 }));
 
 router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 	const tags = req.params.tags.split(",");
+
+	var limit = 25;
+	var offset = 0;
+	var sort = "date-desc";
+
+	if (req.query.limit) {
+		limit = parseInt(req.query.limit);
+	}
+
+	if (req.query.offset) {
+		offset = parseInt(req.query.offset);
+	}
+
+	if (req.query.sort) {
+		sort = req.query.sort;
+	}
+
+	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
+
+
 	const links = await db.findObjects(
 		"links",
-		{ userId: req.session.user._id.toString(), tags: { $all: tags }},
-		{ sort: [["date", 1]] });
+		{
+			userId: req.session.user._id.toString(),
+			tags: { $all: tags }
+		},
+		{
+			sort: [
+				["date", dateSortVal]
+			]
+		},
+		limit,
+		offset);
 
 	const linksCollection = await db.getCollection("links");
+
+	const linkCount = await linksCollection.countDocuments({
+		userId: req.session.user._id.toString(),
+		tags: { $all: tags }
+	});
+
 	const tagsData = await linksCollection.aggregate([
 		{ $match: { userId: req.session.user._id.toString(), tags: { $all: tags } } },
 		{ $unwind: "$tags" },
@@ -286,14 +374,39 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 	]).toArray();
 
 	res.locals.tags = tags;
+	res.locals.linkCount = linkCount;
 	res.locals.links = links;
 	res.locals.tagsData = tagsData;
+
+	res.locals.limit = limit;
+	res.locals.offset = offset;
+	res.locals.sort = sort;
+	res.locals.paginationBaseUrl = `/tags/${req.params.tags}`;
 
 	res.render("tag-links");
 }));
 
 router.get("/search", asyncHandler(async (req, res, next) => {
 	const query = req.query.query;
+
+	var limit = 25;
+	var offset = 0;
+	var sort = "date-desc";
+
+	if (req.query.limit) {
+		limit = parseInt(req.query.limit);
+	}
+
+	if (req.query.offset) {
+		offset = parseInt(req.query.offset);
+	}
+
+	if (req.query.sort) {
+		sort = req.query.sort;
+	}
+
+	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
+
 
 	const regex = new RegExp(query, "i");
 	
@@ -311,20 +424,46 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 				}
 			]
 		},
-		{ sort: [["date", 1]] });
+		{
+			sort: [
+				["date", dateSortVal]
+			]
+		},
+		limit,
+		offset);
 
 	const linksCollection = await db.getCollection("links");
+
+	const linkCount = await linksCollection.countDocuments({
+		$and: [
+			{ userId: req.session.user._id.toString() },
+			{
+				$or:[
+					{ desc: regex },
+					{ url: regex },
+					{ tags: regex }
+				]
+			}
+		]
+	});
+
 	const tagsData = await linksCollection.aggregate([
-		{ $match: { userId: req.session.user._id.toString(), $or: [ { desc: new RegExp(query, "i") }, { url: new RegExp(query, "i") } ] } },
+		{ $match: { userId: req.session.user._id.toString(), $or: [ { desc: new RegExp(query, "i") }, { url: new RegExp(query, "i") }, { tags: new RegExp(query, "i") } ] } },
 		{ $unwind: "$tags" },
 		{ $group: { _id: "$tags", count: { $sum: 1 } } },
 		{ $sort: { count: -1, _id: 1 }}
 	]).toArray();
 	
 	res.locals.query = query;
+	res.locals.linkCount = linkCount;
 	res.locals.links = links;
 	res.locals.tags = [];
 	res.locals.tagsData = tagsData;
+
+	res.locals.limit = limit;
+	res.locals.offset = offset;
+	res.locals.sort = sort;
+	res.locals.paginationBaseUrl = `/search?query=${query}`;
 
 	res.render("search-links");
 }));
