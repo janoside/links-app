@@ -33,6 +33,10 @@ tar czfv $TAR -C $DEST .
 # Upload tar to s3
 /usr/local/bin/aws s3 cp $TAR s3://$BUCKET_WITH_PREFIX/
 
+# Track the backup size in stats.cool
+TAR_FILESIZE=$(stat -c%s "$TAR")
+curl -d "name=admin.backup&val=$TAR_FILESIZE" https://stats.cool/api/v1/project/tdqf8sw19c/dataPoint
+
 # Remove tar file locally
 rm -f $TAR
 
