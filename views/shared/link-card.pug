@@ -1,6 +1,6 @@
 mixin linkAdminDropdown
 	span.dropdown
-		button.btn.btn-outline-secondary.py-0.btn-sm.dropdown-toggle(type="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+		button.btn.btn-light.border.shadow-sm.py-0.btn-sm.dropdown-toggle(type="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 			i.fas.fa-cog.fa-sm
 		.dropdown-menu.dropdown-menu-right
 			a.dropdown-item(href=`/link/${link._id}/edit`)
@@ -31,19 +31,24 @@ mixin linkAdminDropdown
 		.clearfix
 			.float-start
 				if (link.tags)
-					each tag, tagIndex in link.tags
-						if (tags)
-							- var newTags = [];
-							- tags.forEach(x => newTags.push(x));
-							- if (!newTags.includes(tag)) { newTags.push(tag); }
+					.mb-2
+						each tag, tagIndex in link.tags
+							if (tags)
+								- var newTags = [];
+								- tags.forEach(x => newTags.push(x));
+								- if (!newTags.includes(tag)) { newTags.push(tag); }
 
-							a.badge.bg-primary.me-1(href=`/tags/${newTags.join(",")}`)
-								i.fas.fa-tag.me-1
-								| #{tag}
-						else
-							a.badge.bg-primary.me-1(href=`/tag/${tag}`)
-								i.fas.fa-tag.me-1
-								| #{tag}
+								a.badge.bg-primary.me-1(href=`/tags/${newTags.join(",")}`)
+									i.fas.fa-tag.me-1
+									| #{tag}
+							else
+								a.badge.bg-primary.me-1(href=`/tag/${tag}`)
+									i.fas.fa-tag.me-1
+									| #{tag}
+
+				if (link.createdAt)
+					.d-block.d-md-none
+						| #{utils.formatDate(link.createdAt, "MMM d, yyyy")}
 
 
 			.float-end.d-md-none
@@ -55,7 +60,7 @@ mixin linkAdminDropdown
 					// no quote-management dropdown
 
 
-			.float-md-end.float-start
+			.float-md-end.d-none.d-md-block
 				if (link.createdAt)
 					| #{utils.formatDate(link.createdAt, "MMM d, yyyy")}
 
