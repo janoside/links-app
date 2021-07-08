@@ -292,7 +292,7 @@ router.get("/links", asyncHandler(async (req, res, next) => {
 		},
 		{
 			sort: [
-				["date", dateSortVal]
+				["createdAt", dateSortVal]
 			]
 		},
 		limit,
@@ -353,7 +353,7 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 		},
 		{
 			sort: [
-				["date", dateSortVal]
+				["createdAt", dateSortVal]
 			]
 		},
 		limit,
@@ -426,7 +426,7 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 		},
 		{
 			sort: [
-				["date", dateSortVal]
+				["createdAt", dateSortVal]
 			]
 		},
 		limit,

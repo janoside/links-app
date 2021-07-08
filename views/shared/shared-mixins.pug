@@ -105,22 +105,24 @@ mixin linkListPageHeader(linkCount, limit, offset, sort, paginationBaseUrl)
 				.float-end
 					nav.me-2
 						ul.pagination
-							li.page-item
-								if (sort == "date-desc")
-									a.page-link.text-body(href="javascript:void(0)")
+							if (sort == "date-desc")
+								li.page-item.disabled
+									a.page-link.text-body(href="", aria-disabled="true")
 										i.fas.fa-check.me-2
 										span New First
 										
-								else
+							else
+								li.page-item
 									a.page-link(href=`${paginationBaseUrl}?sort=date-desc`, type="button") New First
 
-							li.page-item
-								if (sort == "date-asc")
-									a.page-link.text-body(href="javascript:void(0)")
+							if (sort == "date-asc")
+								li.page-item.disabled
+									a.page-link.text-body(href="#", aria-disabled="true")
 										i.fas.fa-check.me-1
 										span Old First
 										
-								else
+							else
+								li.page-item
 									a.page-link(href=`${paginationBaseUrl}?sort=date-asc`, type="button") Old First
 
 
