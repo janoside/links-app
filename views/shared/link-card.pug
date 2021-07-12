@@ -23,8 +23,10 @@ mixin linkAdminDropdown
 				else
 					a.text-reset.text-decoration-none(href=`./link/${link._id}`) ...
 
+			- var hostname = "unknown";
+			- try { hostname = new URL(link.url).hostname; } catch (e) {}
 			p
-				a(href=link.url, target="_blank") #{new URL(link.url).hostname}
+				a(href=link.url, target="_blank") #{hostname}
 		
 		hr
 
