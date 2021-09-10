@@ -7,12 +7,15 @@ block content
 	h1.mb-3 New Link
 	hr
 
-	form(method="post", action="/new-link")
+	form(method="post", action="/new-link", enctype="multipart/form-data")
 		fieldset.mb-4
 			input#url.form-control(name="url", placeholder="url")
 
 		fieldset.mb-4
 			input#desc.form-control(name="desc", placeholder="desc")
+
+		fieldset.mb-4
+			input#img.form-control(name="img", type="file")
 
 		fieldset.mb-4
 			input#tags.form-control(name="tags", placeholder="tags")

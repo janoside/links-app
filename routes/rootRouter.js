@@ -7,8 +7,9 @@ const asyncHandler = require("express-async-handler");
 const passwordUtils = require("../app/util/password.js");
 const appConfig = require("../app/config.js");
 const db = require("../app/db.js");
-const { ObjectID } = require("mongodb");
-const MongoObjectID = require("mongodb").ObjectID;
+const ObjectId = require("mongodb").ObjectId;
+const formidable = require("formidable");
+const knox = require("knox");
 
 router.get("/", asyncHandler(async (req, res, next) => {
 	if (req.session.user) {
@@ -150,6 +151,18 @@ router.get("/new-link", asyncHandler(async (req, res, next) => {
 router.post("/new-link", asyncHandler(async (req, res, next) => {
 	const content = req.body.text;
 
+	/*const form = formidable({ multiples: true });
+ 
+	form.parse(req, (err, fields, files) => {
+		if (err) {
+			next(err);
+
+			return;
+		}
+
+		res.json({ fields, files });
+	});*/
+
 	const link = {
 		userId: req.session.user._id.toString(),
 		username: req.session.user.username,
@@ -174,7 +187,7 @@ router.get("/link/:linkId", asyncHandler(async (req, res, next) => {
 	}
 
 	const linkId = req.params.linkId;
-	const link = await db.findObject("links", {_id:ObjectID(linkId)});
+	const link = await db.findObject("links", {_id:ObjectId(linkId)});
 
 	if (req.session.username != link.username) {
 		res.redirect("/");
@@ -189,7 +202,7 @@ router.get("/link/:linkId", asyncHandler(async (req, res, next) => {
 
 router.get("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
 	const linkId = req.params.linkId;
-	const link = await db.findObject("links", {_id:ObjectID(linkId)});
+	const link = await db.findObject("links", {_id:ObjectId(linkId)});
 
 	res.locals.link = link;
 
@@ -198,7 +211,7 @@ router.get("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
 
 router.post("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
 	const linkId = req.params.linkId;
-	const link = await db.findObject("links", {_id:ObjectID(linkId)});
+	const link = await db.findObject("links", {_id:ObjectId(linkId)});
 
 	link.url = req.body.url;
 	link.desc = req.body.desc;
@@ -207,7 +220,7 @@ router.post("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
 	debugLog("updatedLink: " + JSON.stringify(link));
 
 	const linksCollection = await db.getCollection("links");
-	const updateResult = await linksCollection.updateOne({_id:ObjectID(linkId)}, {$set: link});
+	const updateResult = await linksCollection.updateOne({_id:ObjectId(linkId)}, {$set: link});
 
 	req.session.userMessage = updateResult.result.ok == 1 ? "Link saved." : ("Status unknown: " + JSON.stringify(updateResult));
 	req.session.userMessageType = "success";
@@ -223,7 +236,7 @@ router.get("/link/:linkId/raw", asyncHandler(async (req, res, next) => {
 	}
 
 	const linkId = req.params.linkId;
-	const link = await db.findObject("links", {_id:ObjectID(linkId)});
+	const link = await db.findObject("links", {_id:ObjectId(linkId)});
 
 	if (req.session.username != link.username) {
 		res.redirect("/");
@@ -238,7 +251,7 @@ router.get("/link/:linkId/raw", asyncHandler(async (req, res, next) => {
 
 router.get("/link/:linkId/delete", asyncHandler(async (req, res, next) => {
 	const linkId = req.params.linkId;
-	const link = await db.findObject("links", {_id:ObjectID(linkId)});
+	const link = await db.findObject("links", {_id:ObjectId(linkId)});
 
 	res.locals.link = link;
 
@@ -247,7 +260,7 @@ router.get("/link/:linkId/delete", asyncHandler(async (req, res, next) => {
 
 router.post("/link/:linkId/delete", asyncHandler(async (req, res, next) => {
 	const linkId = req.params.linkId;
-	const link = await db.findObject("links", {_id:ObjectID(linkId)});
+	const link = await db.findObject("links", {_id:ObjectId(linkId)});
 
 	const result = await db.deleteObject("links", {_id:link._id});
 
