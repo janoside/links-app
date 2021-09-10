@@ -195,39 +195,32 @@ async function findObjects(collectionName, query, options={}, limit=-1, offset=0
 }
 
 async function insertObject(collectionName, document) {
-	var insertedObjects = await insertObjects(collectionName, [document]);
+	var insertedObjectIds = await insertObjects(collectionName, [document]);
 
-	return insertedObjects[0];
+	return insertedObjectIds[0];
 }
 
 async function insertObjects(collectionName, documents) {
-	return new Promise((resolve, reject) => {
-		let collection = db.collection(collectionName);
+	let collection = db.collection(collectionName);
 
-		documents.forEach((doc) => {
-			if (!doc.createdAt) {
-				doc.createdAt = new Date();
-			}
+	documents.forEach((doc) => {
+		if (!doc.createdAt) {
+			doc.createdAt = new Date();
+		}
 
-			doc.updatedAt = new Date();
-		});
-
-		collection.insertMany(documents, (err, result) => {
-			if (err) {
-				reject(err);
-
-			} else {
-				var insertedObjects = [];
-				for (var i = 0; i < result.ops.length; i++) {
-					insertedObjects.push(result.ops[i]);
-				}
-
-				debugLog(`${collectionName}: inserted ${result.ops.length} document(s)`);
-
-				resolve(insertedObjects);
-			}
-		});
+		doc.updatedAt = new Date();
 	});
+
+	const result = await collection.insertMany(documents);
+
+	var insertedObjectIds = [];
+	for (var i = 0; i < result.insertedCount; i++) {
+		insertedObjectIds.push(result.insertedIds[`${i}`]);
+	}
+
+	debugLog(`${collectionName}: inserted ${result.insertedCount} document(s)`);
+
+	return insertedObjectIds;
 }
 
 async function deleteObject(collectionName, query) {
