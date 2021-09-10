@@ -1,5 +1,11 @@
 const { DateTime } = require("luxon");
-const debugLog = require("debug")("app:utils");
+
+const debug = require("debug");
+const debugLog = debug("app:utils");
+const debugErrorLog = debug("app:error");
+const debugErrorVerboseLog = debug("app:errorVerbose");
+
+const crypto = require("crypto");
 
 
 // safely handles circular references
@@ -103,6 +109,64 @@ function objectHasProperty(obj, prop) {
 	return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
+const sha256 = (data) => {
+	return crypto.createHash("sha256").update(data).digest("hex");
+};
+
+
+function logError(errorId, err, optionalUserData = {}, logStacktrace=true) {
+	if (!global.errorLog) {
+		global.errorLog = [];
+	}
+
+	if (!global.errorStats[errorId]) {
+		global.errorStats[errorId] = {
+			count: 0,
+			firstSeen: new Date().getTime(),
+			properties: {}
+		};
+	}
+
+	if (optionalUserData && err.message) {
+		optionalUserData.errorMsg = err.message;
+	}
+
+	if (optionalUserData) {
+		for (const [key, value] of Object.entries(optionalUserData)) {
+			if (!global.errorStats[errorId].properties[key]) {
+				global.errorStats[errorId].properties[key] = {};
+			}
+
+			if (!global.errorStats[errorId].properties[key][value]) {
+				global.errorStats[errorId].properties[key][value] = 0;
+			}
+
+			global.errorStats[errorId].properties[key][value]++;
+		}
+	}
+
+	global.errorStats[errorId].count++;
+	global.errorStats[errorId].lastSeen = new Date().getTime();
+
+	global.errorLog.push({errorId:errorId, error:err, userData:optionalUserData, date:new Date()});
+	while (global.errorLog.length > 100) {
+		global.errorLog.splice(0, 1);
+	}
+
+	debugErrorLog("Error " + errorId + ": " + err + ", json: " + JSON.stringify(err) + (optionalUserData != null ? (", userData: " + optionalUserData + " (json: " + JSON.stringify(optionalUserData) + ")") : ""));
+	
+	if (err && err.stack && logStacktrace) {
+		debugErrorVerboseLog("Stack: " + err.stack);
+	}
+
+	var returnVal = {errorId:errorId, error:err};
+	if (optionalUserData) {
+		returnVal.userData = optionalUserData;
+	}
+
+	return returnVal;
+}
+
 
 module.exports = {
 	formatDate: formatDate,
@@ -115,5 +179,6 @@ module.exports = {
 	yearMillis: yearMillis,
 	toUrlString: toUrlString,
 	objectProperties: objectProperties,
-	objectHasProperty: objectHasProperty
+	objectHasProperty: objectHasProperty,
+	sha256: sha256
 };

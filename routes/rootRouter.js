@@ -10,6 +10,17 @@ const db = require("../app/db.js");
 const ObjectId = require("mongodb").ObjectId;
 const formidable = require("formidable");
 const knox = require("knox");
+const fs = require("fs");
+const encrpytor = require("../app/util/encryptor.js");
+const zlib = require("zlib");
+
+
+const s3Client = knox.createClient({
+    key: process.env.AWS_ACCESS_KEY,
+    secret: process.env.AWS_SECRET_KEY,
+    bucket: process.env.S3_BUCKET
+});
+
 
 router.get("/", asyncHandler(async (req, res, next) => {
 	if (req.session.user) {
@@ -151,32 +162,80 @@ router.get("/new-link", asyncHandler(async (req, res, next) => {
 router.post("/new-link", asyncHandler(async (req, res, next) => {
 	const content = req.body.text;
 
-	/*const form = formidable({ multiples: true });
- 
-	form.parse(req, (err, fields, files) => {
+	const form = formidable({ multiples: true });
+	form.parse(req, async (err, fields, files) => {
+		//console.log("fields: " + JSON.stringify(fields));
+		//console.log("files: " + JSON.stringify(files));
+
+
 		if (err) {
+			utils.logError("32987y4ew7ged", err);
+
 			next(err);
 
 			return;
 		}
 
-		res.json({ fields, files });
-	});*/
 
-	const link = {
-		userId: req.session.user._id.toString(),
-		username: req.session.user.username,
-		url: req.body.url,
-		desc: req.body.desc,
-		tags: req.body.tags.split(",").map(x => x.trim().toLowerCase())
-	};
+		const link = {
+			userId: req.session.user._id.toString(),
+			username: req.session.user.username,
+			url: fields.url
+		};
 
-	const savedLink = await db.insertObject("links", link);
+		if (fields.desc) {
+			link.desc = fields.desc;
+		}
 
-	req.session.userMessage = "Saved!";
-	req.session.userMessageType = "success";
+		if (fields.tags) {
+			link.tags = fields.tags.split(",").map(x => x.trim().toLowerCase());
+		}
 
-	res.redirect(`/link/${savedLink._id.toString()}`);
+		const savedLinkId = await db.insertObject("links", link);
+		
+
+		if (files && files.img && files.img.path) {
+			let buffer = fs.readFileSync(files.img.path, "utf8");
+			let ciphertext = encrpytor.encrypt(buffer, "abc");
+			let compressed = zlib.deflateSync(JSON.stringify(ciphertext)).toString('base64');
+
+			let compressedBuffer = Buffer.from(compressed, "utf8");
+			let headers = {
+				'Content-Type': 'text/plain'
+			};
+
+			s3Client.putBuffer(compressedBuffer, `/img/${savedLinkId}`, headers, async (err, result) => {
+				console.log("result: " + utils.objectProperties(result));
+				console.log("ERR: " + err);
+
+				if (err) {
+					console.log("ERRRR");
+					utils.logError("2308yhfwhde", err);
+
+					req.session.userMessage = "Error saving image";
+					req.session.userMessageType = "danger";
+
+				} else {
+					console.log("no error");
+					link.imgPath = `/img/${savedLinkId}`;
+
+					const linksCollection = await db.getCollection("links");
+					const updateResult = await linksCollection.updateOne({_id:ObjectId(savedLinkId)}, {$set: link});
+
+					req.session.userMessage = "Saved!";
+					req.session.userMessageType = "success";
+				}
+
+				res.redirect(`/link/${savedLinkId}`);
+			});
+
+		} else {
+			req.session.userMessage = "Saved!";
+			req.session.userMessageType = "success";
+
+			res.redirect(`/link/${savedLinkId}`);
+		}
+	});
 }));
 
 router.get("/link/:linkId", asyncHandler(async (req, res, next) => {

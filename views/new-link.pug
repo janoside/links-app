@@ -15,7 +15,9 @@ block content
 			input#desc.form-control(name="desc", placeholder="desc")
 
 		fieldset.mb-4
-			input#img.form-control(name="img", type="file")
+			label(for="img") Image File
+				span.text-muted.ms-2 (optional)
+			input#img.form-control(name="img", type="file", placeholder="image file")
 
 		fieldset.mb-4
 			input#tags.form-control(name="tags", placeholder="tags")
