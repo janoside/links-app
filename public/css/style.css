@@ -2,10 +2,6 @@ body {
 	font: 14px "Montserrat", "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-.dotted-bottom {
-	border-bottom: dotted 1px #ccc;
-}
-
 hr {
 	margin-top: 0.25rem;
 }

@@ -15,13 +15,6 @@ const encrpytor = require("../app/util/encryptor.js");
 const zlib = require("zlib");
 
 
-const s3Client = knox.createClient({
-    key: process.env.AWS_ACCESS_KEY,
-    secret: process.env.AWS_SECRET_KEY,
-    bucket: process.env.S3_BUCKET
-});
-
-
 router.get("/", asyncHandler(async (req, res, next) => {
 	if (req.session.user) {
 		const linksCollection = await db.getCollection("links");
@@ -195,19 +188,28 @@ router.post("/new-link", asyncHandler(async (req, res, next) => {
 		
 
 		if (files && files.img && files.img.path) {
-			let buffer = fs.readFileSync(files.img.path, "utf8");
-			let ciphertext = encrpytor.encrypt(buffer, "abc");
-			let compressed = zlib.deflateSync(JSON.stringify(ciphertext)).toString('base64');
+			let fileBuffer = fs.readFileSync(files.img.path);
+			let ciphertext = encrpytor.encrypt(fileBuffer);
+			console.log("cL: " + ciphertext.length);
 
-			let compressedBuffer = Buffer.from(compressed, "utf8");
+			/*let compressedBuffer = Buffer.from(compressed, "utf8");
 			let headers = {
 				'Content-Type': 'text/plain'
-			};
+			};*/
 
-			s3Client.putBuffer(compressedBuffer, `/img/${savedLinkId}`, headers, async (err, result) => {
-				console.log("result: " + utils.objectProperties(result));
-				console.log("ERR: " + err);
+			await utils.s3Put(ciphertext, process.env.S3_BUCKET, `img/${savedLinkId}`);
 
+			link.imgPath = `img/${savedLinkId}`;
+
+			const linksCollection = await db.getCollection("links");
+			const updateResult = await linksCollection.updateOne({_id:ObjectId(savedLinkId)}, {$set: link});
+
+			req.session.userMessage = "Saved!";
+			req.session.userMessageType = "success";
+
+			res.redirect(`/link/${savedLinkId}`);
+
+			/*s3Client.putBuffer(compressedBuffer, `/img/${savedLinkId}`, headers, async (err, result) => {
 				if (err) {
 					console.log("ERRRR");
 					utils.logError("2308yhfwhde", err);
@@ -227,7 +229,7 @@ router.post("/new-link", asyncHandler(async (req, res, next) => {
 				}
 
 				res.redirect(`/link/${savedLinkId}`);
-			});
+			});*/
 
 		} else {
 			req.session.userMessage = "Saved!";
@@ -247,6 +249,22 @@ router.get("/link/:linkId", asyncHandler(async (req, res, next) => {
 
 	const linkId = req.params.linkId;
 	const link = await db.findObject("links", {_id:ObjectId(linkId)});
+
+	if (link.imgPath) {
+		try {
+			const s3Data = await utils.s3Get(process.env.S3_BUCKET, link.imgPath);
+			const imgCiphertext = s3Data.Body;
+
+			console.log("img.base641: " + imgCiphertext.toString("base64").substring(0, 100));
+
+			res.locals.imgData = encrpytor.decrypt(imgCiphertext).toString("base64");
+
+			console.log("img.base642: " + res.locals.imgData.substring(0, 100));
+			
+		} catch (err) {
+			utils.logError("38ryhfewuwe", err);
+		}
+	}
 
 	if (req.session.username != link.username) {
 		res.redirect("/");

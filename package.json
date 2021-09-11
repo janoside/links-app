@@ -4,6 +4,7 @@
 	"description": "A cool links app.",
 	"main": "app.js",
 	"dependencies": {
+		"aws-sdk": "^2.987.0",
 		"bootstrap": "5.1.1",
 		"cookie-parser": "~1.4.4",
 		"debug": "4.3.2",
@@ -33,7 +34,9 @@
 		"css-debug": "npm-run-all css-light-debug css-dark-debug",
 		"css-light": "node-sass --output-style compressed --precision 6 ./public/scss/light.scss ./public/style/light.css",
 		"css-dark": "node-sass --output-style compressed --precision 6 ./public/scss/dark.scss ./public/style/dark.css",
-		"css": "npm-run-all css-light css-dark"
+		"css": "npm-run-all css-light css-dark",
+		"test-s3": "node ./bin/test-s3.js",
+		"test-encryptor": "node ./bin/test-encryptor.js"
 	},
 	"repository": {
 		"type": "git",

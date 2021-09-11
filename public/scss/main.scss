@@ -142,8 +142,9 @@ code {
 
 body {
 	/*font-size: 14px;*/
-	font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
+	/*font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;*/
 	/*font: 14px 'Open Sans', "Lucida Grande", Helvetica, Arial, sans-serif;*/
+	font: 14px "Montserrat", "Lucida Grande", Helvetica, Arial, sans-serif !important;
 }
 
 .font-serif {
@@ -252,4 +253,57 @@ pre {
 
 .hljs-literal, .hljs-number {
 	color: #0dcaf0;
+}
+
+
+
+
+
+
+/*body {
+	font: 14px "Montserrat", "Lucida Grande", Helvetica, Arial, sans-serif;
+}*/
+
+hr {
+	margin-top: 0.25rem;
+}
+
+.speaker-non-link {
+	font-weight: bold;
+}
+
+.link-body em {
+	/* optional different color for italic content inside links */
+}
+
+.link-body h6 {
+	margin-bottom: 0;
+}
+
+.link-body p {
+	margin-bottom: 0.75rem;
+}
+
+.link-body .blockquote-footer {
+	margin-bottom: 0.75rem;
+}
+
+.link-body em::before {
+	content: "\2732";
+}
+
+.link-body em::after {
+	content: "\2732";
+}
+
+.blockquote-footer {
+	font-size: 100%;
+}
+
+.underlined-link {
+	text-decoration: underline;
+}
+
+.underlined-link:hover {
+	text-decoration: none;
 }

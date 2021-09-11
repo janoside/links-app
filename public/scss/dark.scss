@@ -137,8 +137,8 @@ $modal-content-color: $body-color;
 }
 
 code {
-	padding: 0px 3px;
+	padding: 0px 30px;
 	border-radius: 3px;
 	background-color: lighten($card-bg, 15%);
-	color: #198754;
+	color: $body-color;
 }

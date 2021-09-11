@@ -1,28 +1,30 @@
-var fs = require('fs');
-var createError = require("http-errors");
-var express = require("express");
-var path = require("path");
-var cookieParser = require("cookie-parser");
-var logger = require("morgan");
-var session = require("express-session");
-var marked = require("marked");
-var simpleGit = require("simple-git");
+require("dotenv").config();
+
+const fs = require('fs');
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const session = require("express-session");
+const marked = require("marked");
+const simpleGit = require("simple-git");
 const { DateTime } = require("luxon");
 const utils = require("./app/util/utils.js");
 const app = require("./app/app.js");
 
-var debugLog = require("debug")("app:app");
+const debugLog = require("debug")("app:app");
 
-var package_json = require('./package.json');
+const package_json = require('./package.json');
 global.appVersion = package_json.version;
 
 const appConfig = require("./app/config.js");
 
-var rootRouter = require("./routes/rootRouter.js");
-var adminRouter = require("./routes/adminRouter.js");
+const rootRouter = require("./routes/rootRouter.js");
+const adminRouter = require("./routes/adminRouter.js");
 
-var expressApp = express();
-var db = require("./app/db.js");
+const expressApp = express();
+const db = require("./app/db.js");
 
 
 process.on("unhandledRejection", (reason, p) => {

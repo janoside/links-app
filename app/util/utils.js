@@ -114,6 +114,7 @@ const sha256 = (data) => {
 };
 
 
+global.errorStats = {};
 function logError(errorId, err, optionalUserData = {}, logStacktrace=true) {
 	if (!global.errorLog) {
 		global.errorLog = [];
@@ -168,6 +169,39 @@ function logError(errorId, err, optionalUserData = {}, logStacktrace=true) {
 }
 
 
+const AWS = require('aws-sdk');
+
+if (process.env.AWS_PROFILE_NAME) {
+	debugLog(`Using AWS Credentials from profile '${process.env.AWS_PROFILE_NAME}'`);
+
+	var credentials = new AWS.SharedIniFileCredentials({profile: process.env.AWS_PROFILE_NAME});
+	AWS.config.credentials = credentials;
+}
+
+debugLog(`Using AWS Access Key: ${AWS.config.credentials.accessKeyId}`);
+const s3Client = new AWS.S3({apiVersion: '2006-03-01'});
+
+
+const s3Put = async (data, bucket, path) => {
+	var uploadParams = {
+		Bucket: bucket,
+		Key: path,
+		Body: data
+	};
+		
+	await s3Client.putObject(uploadParams).promise();
+};
+
+const s3Get = async (bucket, path) => {
+	var getParams = {
+		Bucket: bucket,
+		Key: path
+	};
+		
+	return await s3Client.getObject(getParams).promise();
+};
+
+
 module.exports = {
 	formatDate: formatDate,
 	randomString: randomString,
@@ -180,5 +214,8 @@ module.exports = {
 	toUrlString: toUrlString,
 	objectProperties: objectProperties,
 	objectHasProperty: objectHasProperty,
-	sha256: sha256
+	sha256: sha256,
+	s3Put: s3Put,
+	s3Get: s3Get,
+	logError: logError
 };

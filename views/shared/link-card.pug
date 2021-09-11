@@ -15,13 +15,16 @@ mixin linkAdminDropdown
 
 .card.shadow-sm.mb-3
 	.card-body
+		if (link.imgPath)
+			img(src=`data:image/png;base64, ${imgData}`, style="max-width: 100%;")
+
 		.link-body
 			.mb-2
 				if (link.desc)
 					a.text-reset.text-decoration-none(href=`./link/${link._id}`) #{link.desc}
 
-				else
-					a.text-reset.text-decoration-none(href=`./link/${link._id}`) ...
+				else if (!imgData)
+					a.text-reset.text-decoration-none.text-muted(href=`./link/${link._id}`) (no description)
 
 			- var hostname = "unknown";
 			- try { hostname = new URL(link.url).hostname; } catch (e) {}
