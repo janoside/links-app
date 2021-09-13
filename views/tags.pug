@@ -9,7 +9,7 @@ block content
 	if (tagsData)
 		each item in tagsData
 			a.btn.btn-primary.me-2.mb-2(href=`/tags/${item._id}`)
-				i.fas.fa-tag.me-2
+				i.bi-tag.me-2
 				| #{item._id} 
 				span.badge.bg-light.text-dark.ms-2 #{item.count.toLocaleString()}
 

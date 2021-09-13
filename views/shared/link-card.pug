@@ -1,29 +1,31 @@
 mixin linkAdminDropdown
 	span.dropdown
 		button.btn.btn-light.border.shadow-sm.py-0.btn-sm.dropdown-toggle(type="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-			i.fas.fa-cog.fa-sm
+			i.bi-gear.fa-sm
 		.dropdown-menu.dropdown-menu-right
 			a.dropdown-item(href=`/link/${link._id}/edit`)
-				i.far.fa-edit.me-2
+				i.bi-pencil-square.me-2
 				| Edit this link
 			a.dropdown-item(href=`/link/${link._id}/raw`, target="_blank")
-				i.fas.fa-info-circle.me-2
+				i.bi-info-circle.me-2
 				| View raw data
 			a.dropdown-item.text-danger(href=`/link/${link._id}/delete`)
-				i.far.fa-trash-alt.me-2
+				i.bi-trash.me-2
 				| Delete this link
 
-.card.shadow-sm.mb-3
+.card.shadow-sm.mb-2
 	.card-body
-		if (link.imgPath)
-			img(src=`data:image/png;base64, ${imgData}`, style="max-width: 100%;")
+		if (link.hasImage)
+			.text-center
+				a(href=`./link/${link._id}`)
+					img.text-center(src=`./img/link/${link._id.toString()}/${linkListPage ? "md" : "lg"}`, style="max-width: 100%;")
 
 		.link-body
 			.mb-2
 				if (link.desc)
 					a.text-reset.text-decoration-none(href=`./link/${link._id}`) #{link.desc}
 
-				else if (!imgData)
+				else if (!link.hasImage)
 					a.text-reset.text-decoration-none.text-muted(href=`./link/${link._id}`) (no description)
 
 			- var hostname = "unknown";
@@ -44,11 +46,11 @@ mixin linkAdminDropdown
 								- if (!newTags.includes(tag)) { newTags.push(tag); }
 
 								a.badge.bg-primary.me-1(href=`/tags/${newTags.join(",")}`)
-									i.fas.fa-tag.me-1
+									i.bi-tag.me-1
 									| #{tag}
 							else
-								a.badge.bg-primary.me-1(href=`/tag/${tag}`)
-									i.fas.fa-tag.me-1
+								a.badge.bg-primary.me-1(href=`/tags/${tag}`)
+									i.bi-tag.me-1
 									| #{tag}
 
 				if (link.createdAt)

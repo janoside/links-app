@@ -14,11 +14,11 @@ block content
 					input.form-control.form-control-block(type="text", name="query", placeholder="search...", value=(query))
 					div.input-group-append
 						button.btn.btn-primary(type="submit")
-							i.fas.fa-search
+							i.fas.bi-search
 
 		.card.mb-2
 			.card-body
-				- var buttons = [[`/links`, "My Links", "fas fa-stream", linkCount], ["/tags", "My Tags", "fas fa-tag", tagCount]];
+				- var buttons = [[`/links`, "My Links", "bi-list", linkCount], ["/tags", "My Tags", "bi-tag", tagCount]];
 
 				.d-none.d-md-block
 					each item in buttons
@@ -43,7 +43,7 @@ block content
 				h5 Tools
 				hr
 
-				- var buttons = [["/new-link", "New Link", "fas fa-plus-circle", "Add a new link"]];
+				- var buttons = [["/new-link", "New Link", "bi-plus-circle", "Add a new link"]];
 
 				.d-none.d-md-block
 					each item in buttons

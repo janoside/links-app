@@ -9,6 +9,8 @@ global.appConfig = {
 	secureSite: process.env.SECURE_SITE == "true",
 	cookiePassword: process.env.COOKIE_PASSWORD || "c-is-for-cookie",
 
+	s3Bucket: process.env.S3_BUCKET,
+
 	db: {
 		host: process.env.DB_HOST || "127.0.0.1",
 		port: process.env.DB_PORT || "27017",

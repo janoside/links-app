@@ -1,10 +1,17 @@
 extends layout
 
+block headBlock
+	title Edit Link
+
 block content
 	h1 Edit
 	hr
 
-	form(method="post", action=`/link/${link._id}/edit`)
+	if (link.hasImage)
+		.rounded.p-3.border.mb-4.d-inline-block
+			img(src=`./img/link/${link._id.toString()}/md`)
+
+	form(method="post", action=`/link/${link._id}/edit`, enctype="multipart/form-data")
 		fieldset.mb-4
 			input#url.form-control(name="url", placeholder="url" value=link.url)
 
@@ -12,7 +19,23 @@ block content
 			input#desc.form-control(name="desc", placeholder="desc", value=link.desc)
 
 		fieldset.mb-4
-			input#tags.form-control(name="tags", placeholder="tags", value=link.tags.join(","))
+			input#tags.form-control(name="tags", placeholder="tags", value=(link.tags ? link.tags.join(",") : ""))
+
+		fieldset.mb-4
+			.row
+				.col-md-5
+					label(for="img") Image File
+						span.text-muted.ms-2 (optional)
+					input#img.form-control(name="img", type="file", placeholder="image file")
+
+				.col-md-1.pt-4.text-center
+					span - OR -
+
+				.col-md-6
+					
+
+					label(for="img") Image URL
+					input#imgUrl.form-control(name="imgUrl", placeholder="image url")
 
 		.d-grid
 			button.btn.btn-primary(type="submit") Save

@@ -31,7 +31,7 @@ mixin sectionTitle(text, toggle=false, toggleUniqueClass, toggleUserSettingName,
 		if (toggle)
 			small(title=`Toggle ${text}`, data-bs-toggle="tooltip")
 				a.text-muted.fs-6(href=`./changeSetting?name=${toggleUserSettingName}&value=false`)
-					i.toggle-plus-minus.far.ms-2(class=(toggleOpen ? "fa-minus-square" : "fa-plus-square"))
+					i.toggle-plus-minus.far.ms-2(class=(toggleOpen ? "bi-dash-square" : "bi-plus-square"))
 
 
 mixin contentSection(title, toggleable=false, toggleUserSettingName, defaultOpen=true, cardUi=true)
@@ -102,13 +102,30 @@ mixin linkListPageHeader(linkCount, limit, offset, sort, paginationBaseUrl)
 					if (linkCount > limit)
 						+pagination(limit, offset, sort, linkCount, paginationBaseUrl, "end")
 
+
+				.float-end
+					- var colCounts = ["4", "3", "2", "1"];
+					nav.me-2
+						ul.pagination
+							each colCount in colCounts
+								if ((userSettings.listColCount || "3") == colCount)
+									li.page-item.disabled
+										a.page-link.text-body(href="", aria-disabled="true")
+											i.bi-check.me-2
+											span #{colCount}
+
+								else
+									li.page-item
+										a.page-link(href=`./changeSetting?name=listColCount&value=${colCount}`, data-bs-toggle="tooltip", title=`Use ${colCount} column${colCount == "1" ? "" : "s"}`) #{colCount}
+
+
 				.float-end
 					nav.me-2
 						ul.pagination
 							if (sort == "date-desc")
 								li.page-item.disabled
 									a.page-link.text-body(href="", aria-disabled="true")
-										i.fas.fa-check.me-2
+										i.bi-check.me-2
 										span New First
 										
 							else
@@ -118,7 +135,7 @@ mixin linkListPageHeader(linkCount, limit, offset, sort, paginationBaseUrl)
 							if (sort == "date-asc")
 								li.page-item.disabled
 									a.page-link.text-body(href="#", aria-disabled="true")
-										i.fas.fa-check.me-1
+										i.bi-check.me-1
 										span Old First
 										
 							else
@@ -208,18 +225,18 @@ mixin copyTextButton(text)
 	small.ms-2
 		if (false)
 			a(href="javascript:void(0)", title="Copy", data-clipboard-text=text, data-bs-toggle="tooltip", onclick=`copyTextToClipboard("${text}"); $(".icon-copy").toggle(); $(this).find(".icon-copied").toggle(); setTimeout(() => { $(this).find(".icon-copy").toggle(); $(this).find(".icon-copied").toggle(); }, 2000); return false;`)
-				i.far.fa-copy.text-info.icon-copy
-				i.fas.fa-check.text-success.icon-copied(style="display: none;")
+				i.bi-clipboard.text-info.icon-copy
+				i.bi-check.text-success.icon-copied(style="display: none;")
 
 		a(href="javascript:void(0)", title="Copy", data-clipboard-text=text, data-bs-toggle="tooltip", onclick=`copyTextToClipboard("${text}"); $(this).attr("title", "Copied!").tooltip("_fixTitle").tooltip("show"); $(this).mouseleave(function() { $(this).tooltip("hide"); $(this).attr("data-bs-original-title", "Copy"); });`)
-			i.far.fa-copy.text-info
+			i.bi-clipboard.text-info
 
 
 mixin dismissableInfoAlert(userSettingDismissedName, textToShowWhenClosed)
 	if (!userSettings.hideInfoNotes || userSettings.hideInfoNotes == "false")
 		if (userSettings[userSettingDismissedName] != "true")
 			.alert.alert-primary.alert-dismissible.shadow-sm.mb-4.ps-3.ps-md-7(role="alert")
-				i.d-none.d-md-inline.fas.fa-info-circle.fa-lg.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.4rem; margin-top: 1.3rem;")
+				i.d-none.d-md-inline.bi-info-circle.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.4rem; margin-top: 1.3rem;")
 
 				block
 
@@ -230,17 +247,17 @@ mixin dismissableInfoAlert(userSettingDismissedName, textToShowWhenClosed)
 			.alert.alert-primary.shadow-sm.mb-4(role="alert")
 				.clearfix
 					.float-start
-						i.fas.fa-info-circle.fa-lg.me-3
+						i.bi-info-circle.me-3
 						| #{textToShowWhenClosed}
 
 					.float-end
 						a.text-muted(href=`./changeSetting?name=${userSettingDismissedName}&value=false`, aria-label="Close", style="text-decoration: none;", title="Open this note", data-bs-toggle="tooltip")
-							i.far.fa-plus-square.fa-lg
+							i.bi--plus-square
 
 
 mixin warningAlert
 	.alert.alert-warning.shadow-sm.mb-4.ps-3.ps-md-7(role="alert")
-		i.d-none.d-md-inline.fas.fa-exclamation-triangle.fa-lg.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.4rem; margin-top: 1.3rem;")
+		i.d-none.d-md-inline.bi-exclamation-triangle.d-inline-block(style="position: absolute; top: 0; left: 0; width: 36px; margin-left: 0.4rem; margin-top: 1.3rem;")
 
 		block
 

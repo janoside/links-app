@@ -18,37 +18,36 @@ nav.navbar.navbar-expand-md.navbar-dark.bg-header-footer
 			form.form-inline.me-3(method="get", action="/search")
 				div.input-group.input-group-sm
 					input.form-control.form-control-sm(type="text", name="query", placeholder="search...", value=(query))
-					div.input-group-append
-						button.btn.btn-primary(type="submit")
-							i.fas.fa-search
+					button.btn.btn-primary(type="submit")
+						i.bi-search
 			
 			if (session.username)
 				ul.navbar-nav
 					li.nav-item
 						if (userSettings.uiTheme == "light")
 							a.nav-link(href=`./changeSetting?name=uiTheme&value=dark`, data-bs-toggle="tooltip", title="Switch to dark theme")
-								i.fas.fa-moon
+								i.fas.bi-moon
 						else
 							a.nav-link(href=`./changeSetting?name=uiTheme&value=light`, data-bs-toggle="tooltip", title="Switch to light theme")
-								i.fas.fa-sun
+								i.fas.bi-sun
 									
 					li.nav-item.dropdown
 						a#navbarDropdown.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false") #{session.username}
 						.dropdown-menu.dropdown-menu-right(aria-labelledby="navbarDropdown")
 							a.dropdown-item(href="/account")
-								i.fas.fa-user-circle.me-2
+								i.bi-person-circle.me-2
 								| My Account
 
 							a.dropdown-item(href="/settings")
-								i.fas.fa-cog.me-2
+								i.bi-gear.me-2
 								| Settings
 
 							if (session.user && session.user.roles && session.user.roles.includes("admin"))
 								a.dropdown-item(href="/admin")
-									i.fas.fa-lock.me-2
+									i.bi-shield-lock.me-2
 									| Admin
 
 							.dropdown-divider
 							a.dropdown-item(href="/logout")
-								i.fas.fa-sign-out-alt.me-2
+								i.bi-box-arrow-right.me-2
 								| Logout

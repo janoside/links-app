@@ -113,6 +113,11 @@ const sha256 = (data) => {
 	return crypto.createHash("sha256").update(data).digest("hex");
 };
 
+const descBuffer = (buffer) => {
+	let b64 = buffer.toString("base64");
+	return `buffer: ${b64.substring(0, 16)}...${b64.substring(100, 116)}...${b64.substring(b64.length - 16, b64.length)}, sha256: ${sha256(b64).substring(0, 16)}`;
+};
+
 
 global.errorStats = {};
 function logError(errorId, err, optionalUserData = {}, logStacktrace=true) {
@@ -201,6 +206,15 @@ const s3Get = async (bucket, path) => {
 	return await s3Client.getObject(getParams).promise();
 };
 
+const s3Delete = async (bucket, path) => {
+	var deleteParams = {
+		Bucket: bucket,
+		Key: path
+	};
+		
+	return await s3Client.deleteObject(deleteParams).promise();
+};
+
 
 module.exports = {
 	formatDate: formatDate,
@@ -217,5 +231,7 @@ module.exports = {
 	sha256: sha256,
 	s3Put: s3Put,
 	s3Get: s3Get,
-	logError: logError
+	s3Delete: s3Delete,
+	logError: logError,
+	descBuffer: descBuffer
 };

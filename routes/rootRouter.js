@@ -2,17 +2,18 @@ const express = require("express");
 const router = express.Router();
 const app = require("../app/app.js");
 const utils = require("../app/util/utils.js");
-const debugLog = require("debug")("app:rootRouter");
+const debug = require("debug");
+const debugLog = debug("app:rootRouter");
 const asyncHandler = require("express-async-handler");
 const passwordUtils = require("../app/util/password.js");
 const appConfig = require("../app/config.js");
 const db = require("../app/db.js");
 const ObjectId = require("mongodb").ObjectId;
 const formidable = require("formidable");
-const knox = require("knox");
 const fs = require("fs");
 const encrpytor = require("../app/util/encryptor.js");
-const zlib = require("zlib");
+const sharp = require("sharp");
+const axios = require("axios");
 
 
 router.get("/", asyncHandler(async (req, res, next) => {
@@ -185,21 +186,47 @@ router.post("/new-link", asyncHandler(async (req, res, next) => {
 		}
 
 		const savedLinkId = await db.insertObject("links", link);
+
 		
+		if (files && files.img && files.img.size > 0 && files.img.path && files.img.path.trim().length > 0) {
+			if (fields.imgUrl && fields.imgUrl.trim().length > 0) {
+				next(new Error("Use image file OR image URL, not both."));
 
-		if (files && files.img && files.img.path) {
-			let fileBuffer = fs.readFileSync(files.img.path);
-			let ciphertext = encrpytor.encrypt(fileBuffer);
-			console.log("cL: " + ciphertext.length);
+				return;
+			}
+		}
 
-			/*let compressedBuffer = Buffer.from(compressed, "utf8");
-			let headers = {
-				'Content-Type': 'text/plain'
-			};*/
+		let imgBuffer = null;
 
-			await utils.s3Put(ciphertext, process.env.S3_BUCKET, `img/${savedLinkId}`);
+		if (files && files.img && files.img.size > 0) {
+			imgBuffer = fs.readFileSync(files.img.path);
+			console.log("loading file");
+		}
 
-			link.imgPath = `img/${savedLinkId}`;
+		if (fields.imgUrl && fields.imgUrl.trim().length > 0) {
+			const response = await axios.get(fields.imgUrl, { responseType: 'arraybuffer' });
+			imgBuffer = Buffer.from(response.data, "binary");
+			console.log("loaded url:: " + utils.descBuffer(imgBuffer));
+		}
+
+		if (imgBuffer) {
+			let ciphertextFull = encrpytor.encrypt(imgBuffer);
+			await utils.s3Put(ciphertextFull, appConfig.s3Bucket, `img/${savedLinkId}/full`);
+			console.log(`imgFull: ${utils.descBuffer(imgBuffer)}`);
+
+			let buffer350 = await sharp(imgBuffer).resize({width: 350, fit: "inside"}).toFormat("png").toBuffer();
+			console.log(`img350: ${utils.descBuffer(buffer350)}`);
+			let ciphertext350 = encrpytor.encrypt(buffer350);
+			await utils.s3Put(ciphertext350, appConfig.s3Bucket, `img/${savedLinkId}/md`);
+
+			let buffer500 = await sharp(imgBuffer).resize({width: 500, fit: "inside"}).toFormat("png").toBuffer();
+			console.log(`img500: ${utils.descBuffer(buffer500)}`);
+			let ciphertext500 = encrpytor.encrypt(buffer500);
+			await utils.s3Put(ciphertext500, appConfig.s3Bucket, `img/${savedLinkId}/lg`);
+
+			
+
+			link.hasImage = true;
 
 			const linksCollection = await db.getCollection("links");
 			const updateResult = await linksCollection.updateOne({_id:ObjectId(savedLinkId)}, {$set: link});
@@ -208,28 +235,6 @@ router.post("/new-link", asyncHandler(async (req, res, next) => {
 			req.session.userMessageType = "success";
 
 			res.redirect(`/link/${savedLinkId}`);
-
-			/*s3Client.putBuffer(compressedBuffer, `/img/${savedLinkId}`, headers, async (err, result) => {
-				if (err) {
-					console.log("ERRRR");
-					utils.logError("2308yhfwhde", err);
-
-					req.session.userMessage = "Error saving image";
-					req.session.userMessageType = "danger";
-
-				} else {
-					console.log("no error");
-					link.imgPath = `/img/${savedLinkId}`;
-
-					const linksCollection = await db.getCollection("links");
-					const updateResult = await linksCollection.updateOne({_id:ObjectId(savedLinkId)}, {$set: link});
-
-					req.session.userMessage = "Saved!";
-					req.session.userMessageType = "success";
-				}
-
-				res.redirect(`/link/${savedLinkId}`);
-			});*/
 
 		} else {
 			req.session.userMessage = "Saved!";
@@ -249,22 +254,6 @@ router.get("/link/:linkId", asyncHandler(async (req, res, next) => {
 
 	const linkId = req.params.linkId;
 	const link = await db.findObject("links", {_id:ObjectId(linkId)});
-
-	if (link.imgPath) {
-		try {
-			const s3Data = await utils.s3Get(process.env.S3_BUCKET, link.imgPath);
-			const imgCiphertext = s3Data.Body;
-
-			console.log("img.base641: " + imgCiphertext.toString("base64").substring(0, 100));
-
-			res.locals.imgData = encrpytor.decrypt(imgCiphertext).toString("base64");
-
-			console.log("img.base642: " + res.locals.imgData.substring(0, 100));
-			
-		} catch (err) {
-			utils.logError("38ryhfewuwe", err);
-		}
-	}
 
 	if (req.session.username != link.username) {
 		res.redirect("/");
@@ -290,19 +279,78 @@ router.post("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
 	const linkId = req.params.linkId;
 	const link = await db.findObject("links", {_id:ObjectId(linkId)});
 
-	link.url = req.body.url;
-	link.desc = req.body.desc;
-	link.tags = req.body.tags.split(",").map(x => x.trim());
 
-	debugLog("updatedLink: " + JSON.stringify(link));
+	const form = formidable({ multiples: true });
+	form.parse(req, async (err, fields, files) => {
+		link.url = fields.url;
+		link.desc = fields.desc;
+		link.tags = fields.tags.split(",").map(x => x.trim());
 
-	const linksCollection = await db.getCollection("links");
-	const updateResult = await linksCollection.updateOne({_id:ObjectId(linkId)}, {$set: link});
 
-	req.session.userMessage = updateResult.result.ok == 1 ? "Link saved." : ("Status unknown: " + JSON.stringify(updateResult));
-	req.session.userMessageType = "success";
+		const linksCollection = await db.getCollection("links");
+		const updateResult = await linksCollection.updateOne({_id:ObjectId(linkId)}, {$set: link});
 
-	res.redirect(`/link/${linkId}`);
+
+		debugLog("updatedLink: " + JSON.stringify(link) + " - result: " + JSON.stringify(updateResult));
+
+
+		if (files && files.img && files.img.size > 0 && files.img.path && files.img.path.trim().length > 0) {
+			if (fields.imgUrl && fields.imgUrl.trim().length > 0) {
+				next(new Error("Use image file OR image URL, not both."));
+
+				return;
+			}
+		}
+
+		let imgBuffer = null;
+
+		if (files && files.img && files.img.size > 0) {
+			imgBuffer = fs.readFileSync(files.img.path);
+			console.log("loading file");
+		}
+
+		if (fields.imgUrl && fields.imgUrl.trim().length > 0) {
+			const response = await axios.get(fields.imgUrl, { responseType: 'arraybuffer' });
+			imgBuffer = Buffer.from(response.data, "binary");
+			console.log("loaded url:: " + utils.descBuffer(imgBuffer));
+		}
+
+		if (imgBuffer) {
+			let ciphertextFull = encrpytor.encrypt(imgBuffer);
+			await utils.s3Put(ciphertextFull, appConfig.s3Bucket, `img/${linkId}/full`);
+			console.log(`imgFull: ${utils.descBuffer(imgBuffer)}`);
+
+			let buffer350 = await sharp(imgBuffer).resize({width: 350, fit: "inside"}).toFormat("png").toBuffer();
+			console.log(`img350: ${utils.descBuffer(buffer350)}`);
+			let ciphertext350 = encrpytor.encrypt(buffer350);
+			await utils.s3Put(ciphertext350, appConfig.s3Bucket, `img/${linkId}/md`);
+
+			let buffer500 = await sharp(imgBuffer).resize({width: 500, fit: "inside"}).toFormat("png").toBuffer();
+			console.log(`img500: ${utils.descBuffer(buffer500)}`);
+			let ciphertext500 = encrpytor.encrypt(buffer500);
+			await utils.s3Put(ciphertext500, appConfig.s3Bucket, `img/${linkId}/lg`);
+
+			
+
+			link.hasImage = true;
+
+			const linksCollection = await db.getCollection("links");
+			const updateResult = await linksCollection.updateOne({_id:ObjectId(linkId)}, {$set: link});
+
+
+			req.session.userMessage = updateResult.modifiedCount == 1 ? "Link saved." : ("Status unknown: " + JSON.stringify(updateResult));
+			req.session.userMessageType = "success";
+
+			res.redirect(`/link/${linkId}`);
+
+		} else {
+			req.session.userMessage = updateResult.modifiedCount == 1 ? "Link saved." : ("Status unknown: " + JSON.stringify(updateResult));
+			req.session.userMessageType = "success";
+
+			res.redirect(`/link/${linkId}`);
+		}
+	});
+
 }));
 
 router.get("/link/:linkId/raw", asyncHandler(async (req, res, next) => {
@@ -342,6 +390,14 @@ router.post("/link/:linkId/delete", asyncHandler(async (req, res, next) => {
 	const result = await db.deleteObject("links", {_id:link._id});
 
 	debugLog("deleteResult: " + JSON.stringify(result));
+
+	if (link.hasImage) {
+		await utils.s3Delete(appConfig.s3Bucket, `img/${linkId}/md`);
+		await utils.s3Delete(appConfig.s3Bucket, `img/${linkId}/lg`);
+		await utils.s3Delete(appConfig.s3Bucket, `img/${linkId}/full`);
+
+		debugLog("deleted images");
+	}
 	
 	req.session.userMessage = "Link deleted."
 
@@ -355,7 +411,7 @@ router.get("/links", asyncHandler(async (req, res, next) => {
 		return;
 	}
 
-	var limit = 25;
+	var limit = 30;
 	var offset = 0;
 	var sort = "date-desc";
 

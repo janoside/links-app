@@ -15,9 +15,20 @@ block content
 			input#desc.form-control(name="desc", placeholder="desc")
 
 		fieldset.mb-4
-			label(for="img") Image File
-				span.text-muted.ms-2 (optional)
-			input#img.form-control(name="img", type="file", placeholder="image file")
+			.row
+				.col-md-5
+					label(for="img") Image File
+						span.text-muted.ms-2 (optional)
+					input#img.form-control(name="img", type="file", placeholder="image file")
+
+				.col-md-1.pt-4.text-center
+					span - OR -
+
+				.col-md-6
+					
+
+					label(for="img") Image URL
+					input#imgUrl.form-control(name="imgUrl", placeholder="image url")
 
 		fieldset.mb-4
 			input#tags.form-control(name="tags", placeholder="tags")

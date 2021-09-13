@@ -22,6 +22,7 @@ const appConfig = require("./app/config.js");
 
 const rootRouter = require("./routes/rootRouter.js");
 const adminRouter = require("./routes/adminRouter.js");
+const imgRouter = require("./routes/imgRouter.js");
 
 const expressApp = express();
 const db = require("./app/db.js");
@@ -146,6 +147,7 @@ expressApp.use(async (req, res, next) => {
 });
 
 expressApp.use("/admin", adminRouter);
+expressApp.use("/img", imgRouter);
 expressApp.use("/", rootRouter);
 
 
