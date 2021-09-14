@@ -10,9 +10,12 @@
 								| #{item._id} 
 								span.badge.bg-light.text-dark.ms-1 #{item.count.toLocaleString()}
 
-			each item in tagsData
+			- var hiddenTagCount = 0;
+			each item, itemIndex in tagsData
 				if (!tags.includes(item._id))
-					div.d-lg-block.d-inline
+					if (itemIndex > 50)
+						- hiddenTagCount++;
+					.tag-item(class=(itemIndex > 50 ? "d-none" : "d-lg-block d-inline"))
 						a.btn.btn-primary.btn-sm.mb-2(href=`/tags/${item._id}`)
 							small
 								i.bi-tag.me-2
@@ -24,9 +27,19 @@
 								small
 									| + 
 
+			if (hiddenTagCount > 0)
+				a(href=`javascript:void(0)`, onclick=`$('.tag-item').removeClass('d-none'); $(this).hide(); return false;`) Show #{hiddenTagCount} hidden
+
 	.col-md-12.col-lg-10
 		.row.masonry
 			each link, linkIndex in links
 				.col-12(class=`col-lg-${12/parseInt(userSettings.listColCount || "3")}`)
 					- var linkListPage = true;
 					include ./link-card.pug
+
+
+		.my-4
+			hr.mb-4
+
+			if (linkCount > limit)
+				+pagination(limit, offset, sort, linkCount, paginationBaseUrl, "center")

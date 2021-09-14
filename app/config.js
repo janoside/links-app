@@ -3,6 +3,11 @@ require("dotenv").config();
 var debug = require("debug");
 debug.enable(process.env.DEBUG || "app:*");
 
+let s3PathPrefix = (process.env.S3_PATH_PREFIX || "");
+if (s3PathPrefix.length > 0 && !s3PathPrefix.endsWith("/")) {
+	s3PathPrefix = (s3PathPrefix + "/");
+}
+
 global.appConfig = {
 	siteDomain: process.env.SITE_DOMAIN || "localhost",
 	siteName: process.env.SITE_NAME || "UnknownSite",
@@ -10,6 +15,13 @@ global.appConfig = {
 	cookiePassword: process.env.COOKIE_PASSWORD || "c-is-for-cookie",
 
 	s3Bucket: process.env.S3_BUCKET,
+	s3PathPrefix: s3PathPrefix,
+
+	images: {
+		widths: (process.env.IMAGE_WIDTHS || "350").split(",").map(x => parseInt(x)),
+		listWidth: parseInt(process.env.IMAGE_LIST_WIDTH || "350"),
+		mainWidth: parseInt(process.env.IMAGE_MAIN_WIDTH || "350"),
+	},
 
 	db: {
 		host: process.env.DB_HOST || "127.0.0.1",

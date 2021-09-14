@@ -126,21 +126,21 @@ mixin linkListPageHeader(linkCount, limit, offset, sort, paginationBaseUrl)
 								li.page-item.disabled
 									a.page-link.text-body(href="", aria-disabled="true")
 										i.bi-check.me-2
-										span New First
+										span New
 										
 							else
 								li.page-item
-									a.page-link(href=`${paginationBaseUrl}?sort=date-desc`, type="button") New First
+									a.page-link(href=`${paginationBaseUrl}?sort=date-desc`, type="button") New
 
 							if (sort == "date-asc")
 								li.page-item.disabled
 									a.page-link.text-body(href="#", aria-disabled="true")
 										i.bi-check.me-1
-										span Old First
+										span Old
 										
 							else
 								li.page-item
-									a.page-link(href=`${paginationBaseUrl}?sort=date-asc`, type="button") Old First
+									a.page-link(href=`${paginationBaseUrl}?sort=date-asc`, type="button") Old
 
 
 mixin timestamp(timestamp, includeAgo=true, formatString)

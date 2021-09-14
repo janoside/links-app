@@ -16,7 +16,7 @@ const sharp = require("sharp");
 
 
 router.get("/link/:linkId/:size", asyncHandler(async (req, res, next) => {
-	const s3Data = await utils.s3Get(appConfig.s3Bucket, `img/${req.params.linkId}/${req.params.size}`);
+	const s3Data = await utils.s3Get(`img/${req.params.linkId}/${req.params.size}`);
 	const imgCiphertext = s3Data.Body;
 	const imgBuffer = encrpytor.decrypt(imgCiphertext);
 	//const imgBase64 = imgBuffer.toString("base64");

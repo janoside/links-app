@@ -18,18 +18,64 @@ const axios = require("axios");
 
 router.get("/", asyncHandler(async (req, res, next) => {
 	if (req.session.user) {
+		var limit = 50;
+		var offset = 0;
+		var sort = "date-desc";
+
+		if (req.query.limit) {
+			limit = parseInt(req.query.limit);
+		}
+
+		if (req.query.offset) {
+			offset = parseInt(req.query.offset);
+		}
+
+		if (req.query.sort) {
+			sort = req.query.sort;
+		}
+
+		const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
+
+
+		const user = await db.findObject("users", {username:req.session.username});
+		const links = await db.findObjects(
+			"links",
+			{
+				userId: user._id.toString()
+			},
+			{
+				sort: [
+					["createdAt", dateSortVal]
+				]
+			},
+			limit,
+			offset);
+
 		const linksCollection = await db.getCollection("links");
 
-		res.locals.linkCount = await linksCollection.countDocuments({userId:req.session.user._id.toString()});
+		const linkCount = await linksCollection.countDocuments({ userId: user._id.toString() });
 
 		const tagsData = await linksCollection.aggregate([
 			{ $match: { userId: req.session.user._id.toString() } },
 			{ $unwind: "$tags" },
 			{ $group: { _id: "$tags", count: { $sum: 1 } } },
-			{ $sort: { count: -1 }}
+			{ $sort: { count: -1, _id: 1 }}
 		]).toArray();
 
-		res.locals.tagCount = tagsData.length;
+		res.locals.user = user;
+		res.locals.linkCount = linkCount;
+		res.locals.links = links;
+		res.locals.tags = [];
+		res.locals.tagsData = tagsData;
+
+		res.locals.limit = limit;
+		res.locals.offset = offset;
+		res.locals.sort = sort;
+		res.locals.paginationBaseUrl = `/links`;
+
+		res.render("user-links");
+
+		return;
 	}
 
 	res.render("index");
@@ -211,18 +257,19 @@ router.post("/new-link", asyncHandler(async (req, res, next) => {
 
 		if (imgBuffer) {
 			let ciphertextFull = encrpytor.encrypt(imgBuffer);
-			await utils.s3Put(ciphertextFull, appConfig.s3Bucket, `img/${savedLinkId}/full`);
 			console.log(`imgFull: ${utils.descBuffer(imgBuffer)}`);
 
-			let buffer350 = await sharp(imgBuffer).resize({width: 350, fit: "inside"}).toFormat("png").toBuffer();
-			console.log(`img350: ${utils.descBuffer(buffer350)}`);
-			let ciphertext350 = encrpytor.encrypt(buffer350);
-			await utils.s3Put(ciphertext350, appConfig.s3Bucket, `img/${savedLinkId}/md`);
+			let buffer0 = await sharp(imgBuffer).resize({width: appConfig.images.widths[0], fit: "inside"}).toFormat("jpeg").toBuffer();
+			console.log(`img0: ${utils.descBuffer(buffer0)}`);
+			let ciphertext0 = encrpytor.encrypt(buffer0);
+			await utils.s3Put(ciphertext0, `img/${savedLinkId}/w${appConfig.images.widths[0]}`);
 
-			let buffer500 = await sharp(imgBuffer).resize({width: 500, fit: "inside"}).toFormat("png").toBuffer();
-			console.log(`img500: ${utils.descBuffer(buffer500)}`);
-			let ciphertext500 = encrpytor.encrypt(buffer500);
-			await utils.s3Put(ciphertext500, appConfig.s3Bucket, `img/${savedLinkId}/lg`);
+			for (let i = 1; i < appConfig.images.widths.length; i++) {
+				let bufferX = await sharp(imgBuffer).resize({width: appConfig.images.widths[i], fit: "inside"}).toFormat("jpeg").toBuffer();
+				console.log(`img_${i}: ${utils.descBuffer(bufferX)}`);
+				let ciphertextX = encrpytor.encrypt(bufferX);
+				utils.s3Put(ciphertextX, `img/${savedLinkId}/w${appConfig.images.widths[i]}`);
+			}
 
 			
 
@@ -317,18 +364,20 @@ router.post("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
 
 		if (imgBuffer) {
 			let ciphertextFull = encrpytor.encrypt(imgBuffer);
-			await utils.s3Put(ciphertextFull, appConfig.s3Bucket, `img/${linkId}/full`);
+			//await utils.s3Put(ciphertextFull, `img/${linkId}/full`);
 			console.log(`imgFull: ${utils.descBuffer(imgBuffer)}`);
 
-			let buffer350 = await sharp(imgBuffer).resize({width: 350, fit: "inside"}).toFormat("png").toBuffer();
-			console.log(`img350: ${utils.descBuffer(buffer350)}`);
-			let ciphertext350 = encrpytor.encrypt(buffer350);
-			await utils.s3Put(ciphertext350, appConfig.s3Bucket, `img/${linkId}/md`);
+			let buffer0 = await sharp(imgBuffer).resize({width: appConfig.images.widths[0], fit: "inside"}).toFormat("jpeg").toBuffer();
+			console.log(`img0: ${utils.descBuffer(buffer0)}`);
+			let ciphertext0 = encrpytor.encrypt(buffer0);
+			await utils.s3Put(ciphertext0, `img/${savedLinkId}/w${appConfig.images.widths[0]}`);
 
-			let buffer500 = await sharp(imgBuffer).resize({width: 500, fit: "inside"}).toFormat("png").toBuffer();
-			console.log(`img500: ${utils.descBuffer(buffer500)}`);
-			let ciphertext500 = encrpytor.encrypt(buffer500);
-			await utils.s3Put(ciphertext500, appConfig.s3Bucket, `img/${linkId}/lg`);
+			for (let i = 1; i < appConfig.images.widths.length; i++) {
+				let bufferX = await sharp(imgBuffer).resize({width: appConfig.images.widths[i], fit: "inside"}).toFormat("jpeg").toBuffer();
+				console.log(`img_${i}: ${utils.descBuffer(bufferX)}`);
+				let ciphertextX = encrpytor.encrypt(bufferX);
+				utils.s3Put(ciphertextX, `img/${savedLinkId}/w${appConfig.images.widths[i]}`);
+			}
 
 			
 
@@ -392,9 +441,9 @@ router.post("/link/:linkId/delete", asyncHandler(async (req, res, next) => {
 	debugLog("deleteResult: " + JSON.stringify(result));
 
 	if (link.hasImage) {
-		await utils.s3Delete(appConfig.s3Bucket, `img/${linkId}/md`);
-		await utils.s3Delete(appConfig.s3Bucket, `img/${linkId}/lg`);
-		await utils.s3Delete(appConfig.s3Bucket, `img/${linkId}/full`);
+		for (let i = 0; i < appConfig.images.widths.length; i++) {
+			await utils.s3Delete(appConfig.s3Bucket, `img/${linkId}/w${appConfig.images.widths[i]}`);
+		}
 
 		debugLog("deleted images");
 	}
@@ -411,7 +460,7 @@ router.get("/links", asyncHandler(async (req, res, next) => {
 		return;
 	}
 
-	var limit = 30;
+	var limit = 50;
 	var offset = 0;
 	var sort = "date-desc";
 

@@ -5,6 +5,8 @@ const debugLog = debug("app:utils");
 const debugErrorLog = debug("app:error");
 const debugErrorVerboseLog = debug("app:errorVerbose");
 
+const appConfig = require("../config.js");
+
 const crypto = require("crypto");
 
 
@@ -187,29 +189,29 @@ debugLog(`Using AWS Access Key: ${AWS.config.credentials.accessKeyId}`);
 const s3Client = new AWS.S3({apiVersion: '2006-03-01'});
 
 
-const s3Put = async (data, bucket, path) => {
+const s3Put = async (data, path) => {
 	var uploadParams = {
-		Bucket: bucket,
-		Key: path,
+		Bucket: appConfig.s3Bucket,
+		Key: `${appConfig.s3PathPrefix}${path}`,
 		Body: data
 	};
 		
 	await s3Client.putObject(uploadParams).promise();
 };
 
-const s3Get = async (bucket, path) => {
+const s3Get = async (path) => {
 	var getParams = {
-		Bucket: bucket,
-		Key: path
+		Bucket: appConfig.s3Bucket,
+		Key: `${appConfig.s3PathPrefix}${path}`,
 	};
 		
 	return await s3Client.getObject(getParams).promise();
 };
 
-const s3Delete = async (bucket, path) => {
+const s3Delete = async (path) => {
 	var deleteParams = {
-		Bucket: bucket,
-		Key: path
+		Bucket: appConfig.s3Bucket,
+		Key: `${appConfig.s3PathPrefix}${path}`,
 	};
 		
 	return await s3Client.deleteObject(deleteParams).promise();

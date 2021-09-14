@@ -18,9 +18,9 @@ console.log("buffer.length: " + buffer.length);
 
 (async () => {
 	try {
-		await utils.s3Put(buffer, bucketName, keyName);
+		await utils.s3Put(buffer, keyName);
 
-		const getData = await utils.s3Get(bucketName, keyName);
+		const getData = await utils.s3Get(keyName);
 
 		console.log("buffer.length(after): " + getData.Body.length);
 

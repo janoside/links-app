@@ -18,7 +18,7 @@ mixin linkAdminDropdown
 		if (link.hasImage)
 			.text-center
 				a(href=`./link/${link._id}`)
-					img.text-center(src=`./img/link/${link._id.toString()}/${linkListPage ? "md" : "lg"}`, style="max-width: 100%;")
+					img.text-center(src=`./img/link/${link._id.toString()}/w${linkListPage ? appConfig.images.listWidth : appConfig.images.mainWidth}`, style="max-width: 100%;")
 
 		.link-body
 			.mb-2

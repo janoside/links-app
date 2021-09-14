@@ -9,7 +9,7 @@ block content
 
 	if (link.hasImage)
 		.rounded.p-3.border.mb-4.d-inline-block
-			img(src=`./img/link/${link._id.toString()}/md`)
+			img(src=`./img/link/${link._id.toString()}/w${appConfig.images.mainWidth}`)
 
 	form(method="post", action=`/link/${link._id}/edit`, enctype="multipart/form-data")
 		fieldset.mb-4
