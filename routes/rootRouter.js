@@ -370,13 +370,13 @@ router.post("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
 			let buffer0 = await sharp(imgBuffer).resize({width: appConfig.images.widths[0], fit: "inside"}).toFormat("jpeg").toBuffer();
 			console.log(`img0: ${utils.descBuffer(buffer0)}`);
 			let ciphertext0 = encrpytor.encrypt(buffer0);
-			await utils.s3Put(ciphertext0, `img/${savedLinkId}/w${appConfig.images.widths[0]}`);
+			await utils.s3Put(ciphertext0, `img/${linkId}/w${appConfig.images.widths[0]}`);
 
 			for (let i = 1; i < appConfig.images.widths.length; i++) {
 				let bufferX = await sharp(imgBuffer).resize({width: appConfig.images.widths[i], fit: "inside"}).toFormat("jpeg").toBuffer();
 				console.log(`img_${i}: ${utils.descBuffer(bufferX)}`);
 				let ciphertextX = encrpytor.encrypt(bufferX);
-				utils.s3Put(ciphertextX, `img/${savedLinkId}/w${appConfig.images.widths[i]}`);
+				utils.s3Put(ciphertextX, `img/${linkId}/w${appConfig.images.widths[i]}`);
 			}
 
 			
