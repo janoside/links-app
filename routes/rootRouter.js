@@ -271,30 +271,35 @@ router.post("/new-link", asyncHandler(async (req, res, next) => {
 		}
 
 		if (imgBuffer) {
-			let ciphertextFull = encryptor.encrypt(imgBuffer);
-			console.log(`imgFull: ${utils.descBuffer(imgBuffer)}`);
+			try {
+				let ciphertextFull = encryptor.encrypt(imgBuffer);
+				console.log(`imgFull: ${utils.descBuffer(imgBuffer)}`);
 
-			let buffer0 = await sharp(imgBuffer).resize({width: appConfig.images.widths[0], fit: "inside"}).toFormat("jpeg").toBuffer();
-			console.log(`img0: ${utils.descBuffer(buffer0)}`);
-			let ciphertext0 = encryptor.encrypt(buffer0);
-			await s3Bucket.put(ciphertext0, `img/${savedLinkId}/w${appConfig.images.widths[0]}`);
+				let buffer0 = await sharp(imgBuffer).resize({width: appConfig.images.widths[0], fit: "inside"}).toFormat("jpeg").toBuffer();
+				console.log(`img0: ${utils.descBuffer(buffer0)}`);
+				let ciphertext0 = encryptor.encrypt(buffer0);
+				await s3Bucket.put(ciphertext0, `img/${savedLinkId}/w${appConfig.images.widths[0]}`);
 
-			for (let i = 1; i < appConfig.images.widths.length; i++) {
-				let bufferX = await sharp(imgBuffer).resize({width: appConfig.images.widths[i], fit: "inside"}).toFormat("jpeg").toBuffer();
-				console.log(`img_${i}: ${utils.descBuffer(bufferX)}`);
-				let ciphertextX = encryptor.encrypt(bufferX);
-				s3Bucket.put(ciphertextX, `img/${savedLinkId}/w${appConfig.images.widths[i]}`);
+				for (let i = 1; i < appConfig.images.widths.length; i++) {
+					let bufferX = await sharp(imgBuffer).resize({width: appConfig.images.widths[i], fit: "inside"}).toFormat("jpeg").toBuffer();
+					console.log(`img_${i}: ${utils.descBuffer(bufferX)}`);
+					let ciphertextX = encryptor.encrypt(bufferX);
+					s3Bucket.put(ciphertextX, `img/${savedLinkId}/w${appConfig.images.widths[i]}`);
+				}
+
+				
+
+				link.hasImage = true;
+
+				const linksCollection = await db.getCollection("links");
+				const updateResult = await linksCollection.updateOne({_id:ObjectId(savedLinkId)}, {$set: link});
+
+				req.session.userMessage = "Saved!";
+				req.session.userMessageType = "success";
+
+			} catch (err) {
+				utils.logError("38yewge34", err);
 			}
-
-			
-
-			link.hasImage = true;
-
-			const linksCollection = await db.getCollection("links");
-			const updateResult = await linksCollection.updateOne({_id:ObjectId(savedLinkId)}, {$set: link});
-
-			req.session.userMessage = "Saved!";
-			req.session.userMessageType = "success";
 
 			res.redirect(`/link/${savedLinkId}`);
 
