@@ -60,7 +60,32 @@ const dbSchema = [
 const connect = async () => {
 	global.db = await mongoClient.createClient(dbConfig.host, dbConfig.port, dbConfig.username, dbConfig.passwordHash, dbConfig.name, dbSchema);
 
+	await createAdminUserIfNeeded();
+
 	return global.db;
+};
+
+const createAdminUserIfNeeded = async () => {
+	// create admin user if needed
+	const adminUser = await db.findOne("users", {username: appConfig.db.adminUser.username});
+	if (!adminUser) {
+		debugLog(`Creating admin user '${appConfig.db.adminUser.username}'...`);
+
+		const passwordHash = await passwordUtils.hash(appConfig.db.adminUser.password);
+
+		const adminUser = {
+			username: appConfig.db.adminUser.username,
+			passwordHash: passwordHash,
+			roles: ["admin"]
+		};
+
+		await db.insertOne("users", adminUser);
+
+		debugLog(`Admin user '${appConfig.db.adminUser.username}' created.`);
+
+	} else {
+		debugLog(`Admin user '${appConfig.db.adminUser.username}' already exists`);
+	}
 };
 
 

@@ -3,11 +3,10 @@ const crypto = require("crypto");
 const { DateTime } = require("luxon");
 
 const appConfig = require("./config.js");
-const appUtils = require("@janoside/app-utils");
 
+const appUtils = require("@janoside/app-utils");
 const utils = appUtils.utils;
 const passwordUtils = appUtils.passwordUtils;
-const mongoClient = appUtils.mongoClient;
 
 const debugLog = debug("app:main");
 

@@ -1,8 +1,10 @@
 const express = require("express");
-const router = express.Router();
-const app = require("../app/app.js");
 const debug = require("debug");
 const asyncHandler = require("express-async-handler");
+
+const router = express.Router();
+
+const app = require("../app/app.js");
 
 const debugLog = debug("app:rootRouter");
 
