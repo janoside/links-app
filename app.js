@@ -10,8 +10,10 @@ const session = require("express-session");
 const marked = require("marked");
 const simpleGit = require("simple-git");
 const { DateTime } = require("luxon");
-const utils = require("./app/util/utils.js");
 const app = require("./app/app.js");
+
+const appUtils = require("@janoside/app-utils");
+const utils = appUtils.utils;
 
 const debugLog = require("debug")("app:app");
 
@@ -25,7 +27,8 @@ const adminRouter = require("./routes/adminRouter.js");
 const imgRouter = require("./routes/imgRouter.js");
 
 const expressApp = express();
-const db = require("./app/db.js");
+
+const dbSetup = require("./app/dbSetup.js");
 
 
 process.on("unhandledRejection", (reason, p) => {
@@ -35,6 +38,10 @@ process.on("unhandledRejection", (reason, p) => {
 expressApp.onStartup = function() {
 	global.appStartDate = new Date();
 	global.nodeVersion = process.version;
+
+	(async () => {
+		let db = await dbSetup.connect();
+	})();
 
 	if (global.sourcecodeVersion == null && fs.existsSync('.git')) {
 		simpleGit(".").log(["-n 1"], function(err, log) {

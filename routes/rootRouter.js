@@ -1,19 +1,26 @@
 const express = require("express");
 const router = express.Router();
 const app = require("../app/app.js");
-const utils = require("../app/util/utils.js");
 const debug = require("debug");
-const debugLog = debug("app:rootRouter");
 const asyncHandler = require("express-async-handler");
-const passwordUtils = require("../app/util/password.js");
 const appConfig = require("../app/config.js");
-const db = require("../app/db.js");
 const ObjectId = require("mongodb").ObjectId;
 const formidable = require("formidable");
 const fs = require("fs");
-const encrpytor = require("../app/util/encryptor.js");
 const sharp = require("sharp");
 const axios = require("axios");
+
+const debugLog = debug("app:rootRouter");
+
+const appUtils = require("@janoside/app-utils");
+const utils = appUtils.utils;
+const passwordUtils = appUtils.passwordUtils;
+const encryptionUtils = appUtils.encryptionUtils;
+const s3Utils = appUtils.s3Utils;
+
+const encryptor = encryptionUtils.encryptor(appConfig.encryptionPassword, appConfig.pbkdf2Salt);
+const s3Bucket = s3Utils.createBucket(appConfig.s3Bucket, appConfig.s3PathPrefix);
+
 
 
 router.get("/", asyncHandler(async (req, res, next) => {
@@ -37,8 +44,8 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
 
 
-		const user = await db.findObject("users", {username:req.session.username});
-		const links = await db.findObjects(
+		const user = await db.findOne("users", {username:req.session.username});
+		const links = await db.findMany(
 			"links",
 			{
 				userId: user._id.toString()
@@ -89,7 +96,7 @@ router.post("/signup", asyncHandler(async (req, res, next) => {
 	const username = req.body.username;
 	const passwordHash = await passwordUtils.hash(req.body.password);
 
-	const existingUser = await db.findObject("users", {username:username});
+	const existingUser = await db.findOne("users", {username:username});
 	if (existingUser) {
 		debugLog("Username already exists");
 
@@ -106,7 +113,7 @@ router.post("/signup", asyncHandler(async (req, res, next) => {
 		passwordHash: passwordHash
 	};
 
-	const insertedUser = await db.insertObject("users", user);
+	const insertedUser = await db.insertOne("users", user);
 
 	req.session.username = username;
 	req.session.user = insertedUser;
@@ -151,7 +158,15 @@ router.post("/login", asyncHandler(async (req, res, next) => {
 			res.clearCookie("rememberme");
 		}
 
-		res.redirect("/");
+		if (req.session.redirectUrl) {
+			const redirectUrl = req.session.redirectUrl;
+			delete req.session.redirectUrl;
+
+			res.redirect(redirectUrl);
+
+		} else {
+			res.redirect("/");
+		}
 
 	} else {
 		req.session.userMessage = "Login failed - invalid username or password";
@@ -231,7 +246,7 @@ router.post("/new-link", asyncHandler(async (req, res, next) => {
 			link.tags = fields.tags.split(",").map(x => x.trim().toLowerCase());
 		}
 
-		const savedLinkId = await db.insertObject("links", link);
+		const savedLinkId = await db.insertOne("links", link);
 
 		
 		if (files && files.img && files.img.size > 0 && files.img.path && files.img.path.trim().length > 0) {
@@ -256,19 +271,19 @@ router.post("/new-link", asyncHandler(async (req, res, next) => {
 		}
 
 		if (imgBuffer) {
-			let ciphertextFull = encrpytor.encrypt(imgBuffer);
+			let ciphertextFull = encryptor.encrypt(imgBuffer);
 			console.log(`imgFull: ${utils.descBuffer(imgBuffer)}`);
 
 			let buffer0 = await sharp(imgBuffer).resize({width: appConfig.images.widths[0], fit: "inside"}).toFormat("jpeg").toBuffer();
 			console.log(`img0: ${utils.descBuffer(buffer0)}`);
-			let ciphertext0 = encrpytor.encrypt(buffer0);
-			await utils.s3Put(ciphertext0, `img/${savedLinkId}/w${appConfig.images.widths[0]}`);
+			let ciphertext0 = encryptor.encrypt(buffer0);
+			await s3Bucket.put(ciphertext0, `img/${savedLinkId}/w${appConfig.images.widths[0]}`);
 
 			for (let i = 1; i < appConfig.images.widths.length; i++) {
 				let bufferX = await sharp(imgBuffer).resize({width: appConfig.images.widths[i], fit: "inside"}).toFormat("jpeg").toBuffer();
 				console.log(`img_${i}: ${utils.descBuffer(bufferX)}`);
-				let ciphertextX = encrpytor.encrypt(bufferX);
-				utils.s3Put(ciphertextX, `img/${savedLinkId}/w${appConfig.images.widths[i]}`);
+				let ciphertextX = encryptor.encrypt(bufferX);
+				s3Bucket.put(ciphertextX, `img/${savedLinkId}/w${appConfig.images.widths[i]}`);
 			}
 
 			
@@ -294,15 +309,19 @@ router.post("/new-link", asyncHandler(async (req, res, next) => {
 
 router.get("/link/:linkId", asyncHandler(async (req, res, next) => {
 	if (!req.session.user) {
+		req.session.redirectUrl = req.path;
 		res.redirect("/");
 
 		return;
 	}
 
 	const linkId = req.params.linkId;
-	const link = await db.findObject("links", {_id:ObjectId(linkId)});
+	const link = await db.findOne("links", {_id:ObjectId(linkId)});
 
 	if (req.session.username != link.username) {
+		req.session.userMessage = "You're not authorized to view that.";
+		req.session.userMessageType = "info";
+
 		res.redirect("/");
 
 		return;
@@ -315,7 +334,7 @@ router.get("/link/:linkId", asyncHandler(async (req, res, next) => {
 
 router.get("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
 	const linkId = req.params.linkId;
-	const link = await db.findObject("links", {_id:ObjectId(linkId)});
+	const link = await db.findOne("links", {_id:ObjectId(linkId)});
 
 	res.locals.link = link;
 
@@ -324,7 +343,7 @@ router.get("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
 
 router.post("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
 	const linkId = req.params.linkId;
-	const link = await db.findObject("links", {_id:ObjectId(linkId)});
+	const link = await db.findOne("links", {_id:ObjectId(linkId)});
 
 
 	const form = formidable({ multiples: true });
@@ -363,20 +382,20 @@ router.post("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
 		}
 
 		if (imgBuffer) {
-			let ciphertextFull = encrpytor.encrypt(imgBuffer);
-			//await utils.s3Put(ciphertextFull, `img/${linkId}/full`);
+			let ciphertextFull = encryptor.encrypt(imgBuffer);
+			//await s3Bucket.put(ciphertextFull, `img/${linkId}/full`);
 			console.log(`imgFull: ${utils.descBuffer(imgBuffer)}`);
 
 			let buffer0 = await sharp(imgBuffer).resize({width: appConfig.images.widths[0], fit: "inside"}).toFormat("jpeg").toBuffer();
 			console.log(`img0: ${utils.descBuffer(buffer0)}`);
-			let ciphertext0 = encrpytor.encrypt(buffer0);
-			await utils.s3Put(ciphertext0, `img/${savedLinkId}/w${appConfig.images.widths[0]}`);
+			let ciphertext0 = encryptor.encrypt(buffer0);
+			await s3Bucket.put(ciphertext0, `img/${linkId}/w${appConfig.images.widths[0]}`);
 
 			for (let i = 1; i < appConfig.images.widths.length; i++) {
 				let bufferX = await sharp(imgBuffer).resize({width: appConfig.images.widths[i], fit: "inside"}).toFormat("jpeg").toBuffer();
 				console.log(`img_${i}: ${utils.descBuffer(bufferX)}`);
-				let ciphertextX = encrpytor.encrypt(bufferX);
-				utils.s3Put(ciphertextX, `img/${savedLinkId}/w${appConfig.images.widths[i]}`);
+				let ciphertextX = encryptor.encrypt(bufferX);
+				s3Bucket.put(ciphertextX, `img/${linkId}/w${appConfig.images.widths[i]}`);
 			}
 
 			
@@ -410,7 +429,7 @@ router.get("/link/:linkId/raw", asyncHandler(async (req, res, next) => {
 	}
 
 	const linkId = req.params.linkId;
-	const link = await db.findObject("links", {_id:ObjectId(linkId)});
+	const link = await db.findOne("links", {_id:ObjectId(linkId)});
 
 	if (req.session.username != link.username) {
 		res.redirect("/");
@@ -425,7 +444,7 @@ router.get("/link/:linkId/raw", asyncHandler(async (req, res, next) => {
 
 router.get("/link/:linkId/delete", asyncHandler(async (req, res, next) => {
 	const linkId = req.params.linkId;
-	const link = await db.findObject("links", {_id:ObjectId(linkId)});
+	const link = await db.findOne("links", {_id:ObjectId(linkId)});
 
 	res.locals.link = link;
 
@@ -434,7 +453,7 @@ router.get("/link/:linkId/delete", asyncHandler(async (req, res, next) => {
 
 router.post("/link/:linkId/delete", asyncHandler(async (req, res, next) => {
 	const linkId = req.params.linkId;
-	const link = await db.findObject("links", {_id:ObjectId(linkId)});
+	const link = await db.findOne("links", {_id:ObjectId(linkId)});
 
 	const result = await db.deleteObject("links", {_id:link._id});
 
@@ -442,7 +461,7 @@ router.post("/link/:linkId/delete", asyncHandler(async (req, res, next) => {
 
 	if (link.hasImage) {
 		for (let i = 0; i < appConfig.images.widths.length; i++) {
-			await utils.s3Delete(appConfig.s3Bucket, `img/${linkId}/w${appConfig.images.widths[i]}`);
+			await s3Bucket.del(appConfig.s3Bucket, `img/${linkId}/w${appConfig.images.widths[i]}`);
 		}
 
 		debugLog("deleted images");
@@ -479,8 +498,8 @@ router.get("/links", asyncHandler(async (req, res, next) => {
 	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
 
 
-	const user = await db.findObject("users", {username:req.session.username});
-	const links = await db.findObjects(
+	const user = await db.findOne("users", {username:req.session.username});
+	const links = await db.findMany(
 		"links",
 		{
 			userId: user._id.toString()
@@ -540,7 +559,7 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
 
 
-	const links = await db.findObjects(
+	const links = await db.findMany(
 		"links",
 		{
 			userId: req.session.user._id.toString(),
@@ -605,7 +624,7 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 
 	const regex = new RegExp(query, "i");
 	
-	const links = await db.findObjects(
+	const links = await db.findMany(
 		"links",
 		{
 			$and: [

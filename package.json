@@ -16,6 +16,7 @@
 		"express-session": "1.17.2",
 		"formidable": "^2.0.0-canary.20200504.1",
 		"http-errors": "1.8.0",
+		"@janoside/app-utils": "github:janoside/app-utils#semver:1.0.0",
 		"luxon": "2.0.2",
 		"marked": "3.0.3",
 		"mongodb": "4.1.1",

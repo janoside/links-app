@@ -25,6 +25,10 @@ block adminContent
 			tr
 				th Updated At
 				td.text-monospace #{utils.formatDate(user.updatedAt)}
+
+			tr
+				th Link(s)
+				td.text-monospace #{linkCount.toLocaleString()}
 	
 
 	hr

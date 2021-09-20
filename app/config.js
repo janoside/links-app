@@ -14,6 +14,9 @@ global.appConfig = {
 	secureSite: process.env.SECURE_SITE == "true",
 	cookiePassword: process.env.COOKIE_PASSWORD || "c-is-for-cookie",
 
+	encryptionPassword: process.env.ENCRYPTION_PASSWORD,
+	pbkdf2Salt: process.env.PBKDF2_SALT,
+
 	s3Bucket: process.env.S3_BUCKET,
 	s3PathPrefix: s3PathPrefix,
 

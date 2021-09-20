@@ -1,9 +1,14 @@
-var express = require("express");
-var router = express.Router();
-var app = require("../app/app.js");
-var db = require("../app/db.js");
-var debugLog = require("debug")("app:rootRouter");
+const express = require("express");
+const router = express.Router();
+const app = require("../app/app.js");
+const debug = require("debug");
 const asyncHandler = require("express-async-handler");
+
+const debugLog = debug("app:rootRouter");
+
+const appUtils = require("@janoside/app-utils");
+const utils = appUtils.utils;
+
 
 router.get("*", asyncHandler(async (req, res, next) => {
 	var loginNeeded = false;
@@ -11,12 +16,12 @@ router.get("*", asyncHandler(async (req, res, next) => {
 	if (req.session.username == null) {
 		loginNeeded = true;
 
-	} else if (!req.session.user.roles.includes("admin")) {
+	} else if (!req.session.user.roles || !req.session.user.roles.includes("admin")) {
 		loginNeeded = true;
 	}
 
 	if (loginNeeded) {
-		req.session.userMessage = "Login required.";
+		req.session.userMessage = "Admin user account required.";
 
 		res.redirect("/");
 
@@ -44,7 +49,7 @@ router.get("/users", asyncHandler(async (req, res, next) => {
 	var userCollection = await db.getCollection("users");
 	res.locals.userCount = await userCollection.countDocuments();
 	
-	var users = await db.findObjects("users", {}, {limit:res.locals.limit, skip:res.locals.offset});
+	var users = await db.findMany("users", {}, {limit:res.locals.limit, skip:res.locals.offset});
 
 	res.locals.users = users;
 
@@ -57,9 +62,14 @@ router.get("/users", asyncHandler(async (req, res, next) => {
 router.get("/user/:username", asyncHandler(async (req, res, next) => {
 	var username = req.params.username;
 	
-	var user = await db.findObject("users", {username:username});
+	var user = await db.findOne("users", {username:username});
+
+	const linksCollection = await db.getCollection("links");
+
+	const linkCount = await linksCollection.countDocuments({ username: username });
 
 	res.locals.user = user;
+	res.locals.linkCount = linkCount;
 
 	res.render("admin/user");
 }));
