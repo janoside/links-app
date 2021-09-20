@@ -46,11 +46,11 @@ mixin linkAdminDropdown
 								- if (!newTags.includes(tag)) { newTags.push(tag); }
 
 								a.badge.bg-primary.me-1(href=`/tags/${newTags.join(",")}`)
-									i.bi-tag.me-1
+									i.bi-tag-fill.me-1
 									| #{tag}
 							else
 								a.badge.bg-primary.me-1(href=`/tags/${tag}`)
-									i.bi-tag.me-1
+									i.bi-tag-fill.me-1
 									| #{tag}
 
 				if (link.createdAt)

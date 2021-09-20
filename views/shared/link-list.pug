@@ -6,7 +6,7 @@
 					div.d-lg-block.d-inline
 						a.btn.btn-success.btn-sm.mb-2(href=`/tags/${item._id}`)
 							small
-								i.bi-tag.me-2
+								i.bi-tag-fill.me-2
 								| #{item._id} 
 								span.badge.bg-light.text-dark.ms-1 #{item.count.toLocaleString()}
 
@@ -18,7 +18,7 @@
 					.tag-item(class=(itemIndex > 50 ? "d-none" : "d-lg-block d-inline"))
 						a.btn.btn-primary.btn-sm.mb-2(href=`/tags/${item._id}`)
 							small
-								i.bi-tag.me-2
+								i.bi-tag-fill.me-2
 								| #{item._id} 
 								span.badge.bg-light.text-dark.ms-1 #{item.count.toLocaleString()}
 
