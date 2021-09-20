@@ -58,7 +58,7 @@ const dbSchema = [
 
 
 const connect = async () => {
-	global.db = await mongoClient.createClient(dbConfig.host, dbConfig.port, dbConfig.username, dbConfig.passwordHash, dbConfig.name, dbSchema);
+	global.db = await mongoClient.createClient(dbConfig.host, dbConfig.port, dbConfig.username, dbConfig.password, dbConfig.name, dbSchema);
 
 	await createAdminUserIfNeeded();
 
