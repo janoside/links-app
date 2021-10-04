@@ -10,12 +10,14 @@
 								| #{item._id} 
 								span.badge.bg-light.text-dark.ms-1 #{item.count.toLocaleString()}
 
+
+			- var maxVisibleTagCount = 50;
 			- var hiddenTagCount = 0;
 			each item, itemIndex in tagsData
 				if (!tags.includes(item._id))
-					if (itemIndex > 50)
+					if (itemIndex > maxVisibleTagCount)
 						- hiddenTagCount++;
-					.tag-item(class=(itemIndex > 50 ? "d-none" : "d-lg-block d-inline"))
+					.tag-item(class=(itemIndex > maxVisibleTagCount ? "d-none" : "d-lg-block d-inline"))
 						a.btn.btn-primary.btn-sm.mb-2(href=`/tags/${item._id}`)
 							small
 								i.bi-tag-fill.me-2
