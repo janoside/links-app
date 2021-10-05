@@ -104,7 +104,7 @@ mixin linkListPageHeader(linkCount, limit, offset, sort, paginationBaseUrl)
 						+pagination(limit, offset, sort, linkCount, paginationBaseUrl, "center")
 
 
-				.d-none.d-md-block.float-none.float-md-end
+				.d-none.d-lg-block.float-none.float-md-end
 					- var colCounts = ["4", "3", "2", "1"];
 					nav.me-2
 						ul.pagination
@@ -122,7 +122,7 @@ mixin linkListPageHeader(linkCount, limit, offset, sort, paginationBaseUrl)
 
 				.float-none.float-md-end
 					nav.me-md-2.mt-2.mt-md-0
-						ul.pagination
+						ul.pagination.justify-content-center.justify-content-md-start
 							if (sort == "date-desc")
 								li.page-item.disabled
 									a.page-link.text-body(href="", aria-disabled="true")
