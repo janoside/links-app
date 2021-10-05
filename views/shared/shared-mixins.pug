@@ -93,17 +93,18 @@ mixin summaryItem(title, titleDesc, subtitle, subtitleDesc)
 
 mixin linkListPageHeader(linkCount, limit, offset, sort, paginationBaseUrl)
 	.clearfix
-		.float-start
-			block
+		.float-none.float-md-start
+			.text-center
+				block
 
-		.float-end.text-right
+		.float-none.float-md-end
 			.clearfix
-				.float-end
+				.float-none.float-md-end.mb-0.mb-md-2
 					if (linkCount > limit)
-						+pagination(limit, offset, sort, linkCount, paginationBaseUrl, "end")
+						+pagination(limit, offset, sort, linkCount, paginationBaseUrl, "center")
 
 
-				.float-end
+				.d-none.d-md-block.float-none.float-md-end
 					- var colCounts = ["4", "3", "2", "1"];
 					nav.me-2
 						ul.pagination
@@ -119,8 +120,8 @@ mixin linkListPageHeader(linkCount, limit, offset, sort, paginationBaseUrl)
 										a.page-link(href=`./changeSetting?name=listColCount&value=${colCount}`, data-bs-toggle="tooltip", title=`Use ${colCount} column${colCount == "1" ? "" : "s"}`) #{colCount}
 
 
-				.float-end
-					nav.me-2
+				.float-none.float-md-end
+					nav.me-md-2.mt-2.mt-md-0
 						ul.pagination
 							if (sort == "date-desc")
 								li.page-item.disabled
