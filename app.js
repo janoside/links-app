@@ -95,7 +95,7 @@ expressApp.use(session(sessionCookieConfig));
 
 expressApp.use(logger('dev'));
 expressApp.use(express.json());
-expressApp.use(express.urlencoded({ extended: false }));
+expressApp.use(express.urlencoded({ extended: false, limit: '50mb' }));
 expressApp.use(cookieParser());
 expressApp.use(express.static(path.join(__dirname, "public")));
 
