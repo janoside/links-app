@@ -275,13 +275,13 @@ router.post("/new-link", asyncHandler(async (req, res, next) => {
 				let ciphertextFull = encryptor.encrypt(imgBuffer);
 				console.log(`imgFull: ${utils.descBuffer(imgBuffer)}`);
 
-				let buffer0 = await sharp(imgBuffer, {failOnError:false}).resize({width: appConfig.images.widths[0], fit: "inside"}).toFormat("jpeg").toBuffer();
+				let buffer0 = await sharp(imgBuffer, {failOnError:false}).resize({width: appConfig.images.widths[0], fit: "inside"}).png().toBuffer();
 				console.log(`img0: ${utils.descBuffer(buffer0)}`);
 				let ciphertext0 = encryptor.encrypt(buffer0);
 				await s3Bucket.put(ciphertext0, `img/${savedLinkId}/w${appConfig.images.widths[0]}`);
 
 				for (let i = 1; i < appConfig.images.widths.length; i++) {
-					let bufferX = await sharp(imgBuffer, {failOnError:false}).resize({width: appConfig.images.widths[i], fit: "inside"}).toFormat("jpeg").toBuffer();
+					let bufferX = await sharp(imgBuffer, {failOnError:false}).resize({width: appConfig.images.widths[i], fit: "inside"}).png().toBuffer();
 					console.log(`img_${i}: ${utils.descBuffer(bufferX)}`);
 					let ciphertextX = encryptor.encrypt(bufferX);
 					await s3Bucket.put(ciphertextX, `img/${savedLinkId}/w${appConfig.images.widths[i]}`);
@@ -392,13 +392,13 @@ router.post("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
 				//await s3Bucket.put(ciphertextFull, `img/${linkId}/full`);
 				console.log(`imgFull: ${utils.descBuffer(imgBuffer)}`);
 
-				let buffer0 = await sharp(imgBuffer, {failOnError:false}).resize({width: appConfig.images.widths[0], fit: "inside"}).toFormat("jpeg").toBuffer();
+				let buffer0 = await sharp(imgBuffer, {failOnError:false}).resize({width: appConfig.images.widths[0], fit: "inside"}).png().toBuffer();
 				console.log(`img0: ${utils.descBuffer(buffer0)}`);
 				let ciphertext0 = encryptor.encrypt(buffer0);
 				await s3Bucket.put(ciphertext0, `img/${linkId}/w${appConfig.images.widths[0]}`);
 
 				for (let i = 1; i < appConfig.images.widths.length; i++) {
-					let bufferX = await sharp(imgBuffer, {failOnError:false}).resize({width: appConfig.images.widths[i], fit: "inside"}).toFormat("jpeg").toBuffer();
+					let bufferX = await sharp(imgBuffer, {failOnError:false}).resize({width: appConfig.images.widths[i], fit: "inside"}).png().toBuffer();
 					console.log(`img_${i}: ${utils.descBuffer(bufferX)}`);
 					let ciphertextX = encryptor.encrypt(bufferX);
 					await s3Bucket.put(ciphertextX, `img/${linkId}/w${appConfig.images.widths[i]}`);
