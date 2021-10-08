@@ -466,7 +466,7 @@ router.post("/link/:linkId/delete", asyncHandler(async (req, res, next) => {
 	const linkId = req.params.linkId;
 	const link = await db.findOne("links", {_id:ObjectId(linkId)});
 
-	const result = await db.deleteObject("links", {_id:link._id});
+	const result = await db.deleteOne("links", {_id:link._id});
 
 	debugLog("deleteResult: " + JSON.stringify(result));
 

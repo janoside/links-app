@@ -79,7 +79,7 @@ router.get("/user/:username", asyncHandler(async (req, res, next) => {
 router.get("/user/:username/delete", asyncHandler(async (req, res, next) => {
 	var username = req.params.username;
 
-	await db.deleteObject("users", {username:username});
+	await db.deleteOne("users", {username:username});
 
 	req.session.userMessage = `Deleted user '${username}'`;
 	req.session.userMessageType = "success";
