@@ -92,56 +92,54 @@ mixin summaryItem(title, titleDesc, subtitle, subtitleDesc)
 
 
 mixin linkListPageHeader(linkCount, limit, offset, sort, paginationBaseUrl)
-	.clearfix
-		.float-none.float-md-start
-			.text-center
-				block
+	.d-md-flex.justify-content-between
+		.text-center
+			block
 
-		.float-none.float-md-end
-			.clearfix
-				.float-none.float-md-end.mb-0.mb-md-2
-					if (linkCount > limit)
-						+pagination(limit, offset, sort, linkCount, paginationBaseUrl, "center")
+		.d-md-flex.align-items-end.mb-2
+			if (linkCount > limit)
+				+pagination(limit, offset, sort, linkCount, paginationBaseUrl, "center")
 
+			- var colCounts = ["4", "3", "2", "1"];
+			nav.ms-md-2.mt-2.mt-md-0.d-none.d-lg-inline-block
+				ul.pagination.mb-0
+					each colCount in colCounts
+						if ((userSettings.listColCount || "3") == colCount)
+							li.page-item.disabled
+								a.page-link.text-body(href="", aria-disabled="true")
+									i.bi-check.me-2
+									span #{colCount}
 
-				.d-none.d-lg-block.float-none.float-md-end
-					- var colCounts = ["4", "3", "2", "1"];
-					nav.me-2
-						ul.pagination
-							each colCount in colCounts
-								if ((userSettings.listColCount || "3") == colCount)
-									li.page-item.disabled
-										a.page-link.text-body(href="", aria-disabled="true")
-											i.bi-check.me-2
-											span #{colCount}
-
-								else
-									li.page-item
-										a.page-link(href=`./changeSetting?name=listColCount&value=${colCount}`, data-bs-toggle="tooltip", title=`Use ${colCount} column${colCount == "1" ? "" : "s"}`) #{colCount}
+						else
+							li.page-item
+								a.page-link(href=`./changeSetting?name=listColCount&value=${colCount}`, data-bs-toggle="tooltip", title=`Use ${colCount} column${colCount == "1" ? "" : "s"}`) #{colCount}
 
 
-				.float-none.float-md-end
-					nav.me-md-2.mt-2.mt-md-0
-						ul.pagination.justify-content-center.justify-content-md-start
-							if (sort == "date-desc")
-								li.page-item.disabled
-									a.page-link.text-body(href="", aria-disabled="true")
-										i.bi-check.me-2
-										span New
-										
-							else
-								li.page-item
-									a.page-link(href=`${paginationBaseUrl}?sort=date-desc`, type="button") New
+			nav.ms-md-2.mt-2.mt-md-0
+				ul.pagination.mb-0.justify-content-center.justify-content-md-start
+					if (sort == "date-desc")
+						li.page-item.disabled
+							a.page-link.text-body(href="#", aria-disabled="true")
+								i.bi-check.me-2
+								span New
+								i.bi-arrow-up.ms-1
+								
+					else
+						li.page-item
+							a.page-link(href=`${paginationBaseUrl}?sort=date-desc`, type="button") New
+								i.bi-arrow-up.ms-1
 
-							if (sort == "date-asc")
-								li.page-item.disabled
-									a.page-link.text-body(href="#", aria-disabled="true")
-										i.bi-check.me-1
-										span Old
-										
-							else
-								li.page-item
-									a.page-link(href=`${paginationBaseUrl}?sort=date-asc`, type="button") Old
+					if (sort == "date-asc")
+						li.page-item.disabled
+							a.page-link.text-body(href="#", aria-disabled="true")
+								i.bi-check.me-1
+								span Old
+								i.bi-arrow-up.ms-1
+								
+					else
+						li.page-item
+							a.page-link(href=`${paginationBaseUrl}?sort=date-asc`, type="button") Old
+								i.bi-arrow-up.ms-1
 
 
 mixin timestamp(timestamp, includeAgo=true, formatString)
