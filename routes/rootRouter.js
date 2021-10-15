@@ -274,6 +274,7 @@ router.post("/new-link", asyncHandler(async (req, res, next) => {
 			try {
 				let ciphertextFull = encryptor.encrypt(imgBuffer);
 				console.log(`imgFull: ${utils.descBuffer(imgBuffer)}`);
+				await s3Bucket.put(ciphertext0, `img/${savedLinkId}/raw`);
 
 				let buffer0 = await sharp(imgBuffer, {failOnError:false}).resize({width: appConfig.images.widths[0], fit: "inside"}).png().toBuffer();
 				console.log(`img0: ${utils.descBuffer(buffer0)}`);
@@ -389,7 +390,7 @@ router.post("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
 		if (imgBuffer) {
 			try {
 				let ciphertextFull = encryptor.encrypt(imgBuffer);
-				//await s3Bucket.put(ciphertextFull, `img/${linkId}/full`);
+				await s3Bucket.put(ciphertextFull, `img/${linkId}/raw`);
 				console.log(`imgFull: ${utils.descBuffer(imgBuffer)}`);
 
 				let buffer0 = await sharp(imgBuffer, {failOnError:false}).resize({width: appConfig.images.widths[0], fit: "inside"}).png().toBuffer();
