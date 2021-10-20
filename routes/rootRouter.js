@@ -1,14 +1,15 @@
 const express = require("express");
+const path = require("path");
 const router = express.Router();
 const app = require("../app/app.js");
 const debug = require("debug");
 const asyncHandler = require("express-async-handler");
 const appConfig = require("../app/config.js");
 const ObjectId = require("mongodb").ObjectId;
-const formidable = require("formidable");
 const fs = require("fs");
 const sharp = require("sharp");
 const axios = require("axios");
+const Busboy = require('busboy');
 
 const debugLog = debug("app:rootRouter");
 
@@ -45,8 +46,8 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 
 		const user = await db.findOne("users", {username:req.session.username});
-		const links = await db.findMany(
-			"links",
+		const items = await db.findMany(
+			"items",
 			{
 				userId: user._id.toString()
 			},
@@ -58,11 +59,11 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			limit,
 			offset);
 
-		const linksCollection = await db.getCollection("links");
+		const itemsCollection = await db.getCollection("items");
 
-		const linkCount = await linksCollection.countDocuments({ userId: user._id.toString() });
+		const itemCount = await itemsCollection.countDocuments({ userId: user._id.toString() });
 
-		const tagsData = await linksCollection.aggregate([
+		const tagsData = await itemsCollection.aggregate([
 			{ $match: { userId: req.session.user._id.toString() } },
 			{ $unwind: "$tags" },
 			{ $group: { _id: "$tags", count: { $sum: 1 } } },
@@ -70,17 +71,17 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		]).toArray();
 
 		res.locals.user = user;
-		res.locals.linkCount = linkCount;
-		res.locals.links = links;
+		res.locals.itemCount = itemCount;
+		res.locals.items = items;
 		res.locals.tags = [];
 		res.locals.tagsData = tagsData;
 
 		res.locals.limit = limit;
 		res.locals.offset = offset;
 		res.locals.sort = sort;
-		res.locals.paginationBaseUrl = `/links`;
+		res.locals.paginationBaseUrl = `/items`;
 
-		res.render("user-links");
+		res.render("user-items");
 
 		return;
 	}
@@ -214,106 +215,115 @@ router.get("/new-link", asyncHandler(async (req, res, next) => {
 	res.render("new-link");
 }));
 
-router.post("/new-link", asyncHandler(async (req, res, next) => {
-	const content = req.body.text;
+const saveItemRoute = async (existingItemId, itemType, req, res, next) => {
+	const fields = {};
 
-	const form = formidable({ multiples: true });
-	form.parse(req, async (err, fields, files) => {
-		//console.log("fields: " + JSON.stringify(fields));
-		//console.log("files: " + JSON.stringify(files));
+	const userId = req.session.user._id.toString();
+	const username = req.session.user.username;
 
+	var busboy = new Busboy({ headers: req.headers });
+	busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
+		file.on('data', (data) => {
+			const dataBuffer = Buffer.from(data);
 
-		if (err) {
-			utils.logError("32987y4ew7ged", err);
+			if (fields[fieldname] == null) {
+				fields[fieldname] = dataBuffer;
 
-			next(err);
+			} else {
+				fields[fieldname] = Buffer.concat([fields[fieldname], dataBuffer]);
+			}
+		});
+		file.on('end', () => {});
+	});
+	busboy.on('field', (fieldname, val, fieldnameTruncated, valTruncated) => {
+		if (val && val.trim().length > 0) {
+			fields[fieldname] = val;
+		}
+	});
+	busboy.on('finish', async () => {
+		let item = null;
+
+		try {
+			item = await app.createOrUpdateItem(existingItemId, userId, username, itemType, fields);
+
+		} catch (e) {
+			utils.logError("9w734ywfd", e);
+
+			next(e);
 
 			return;
 		}
 
+		req.session.userMessage = "Saved!";
+		req.session.userMessageType = "success";
 
-		const link = {
-			userId: req.session.user._id.toString(),
-			username: req.session.user.username,
-			url: fields.url
-		};
-
-		if (fields.desc) {
-			link.desc = fields.desc;
-		}
-
-		if (fields.tags) {
-			link.tags = fields.tags.split(",").map(x => x.trim().toLowerCase());
-		}
-
-		const savedLinkId = await db.insertOne("links", link);
-
-		
-		if (files && files.img && files.img.size > 0 && files.img.path && files.img.path.trim().length > 0) {
-			if (fields.imgUrl && fields.imgUrl.trim().length > 0) {
-				next(new Error("Use image file OR image URL, not both."));
-
-				return;
-			}
-		}
-
-		let imgBuffer = null;
-
-		if (files && files.img && files.img.size > 0) {
-			imgBuffer = fs.readFileSync(files.img.path);
-			console.log("loading file");
-		}
-
-		if (fields.imgUrl && fields.imgUrl.trim().length > 0) {
-			const response = await axios.get(fields.imgUrl, { responseType: 'arraybuffer' });
-			imgBuffer = Buffer.from(response.data, "binary");
-			console.log("loaded url:: " + utils.descBuffer(imgBuffer));
-		}
-
-		if (imgBuffer) {
-			try {
-				let ciphertextFull = encryptor.encrypt(imgBuffer);
-				console.log(`imgFull: ${utils.descBuffer(imgBuffer)}`);
-				await s3Bucket.put(ciphertext0, `img/${savedLinkId}/raw`);
-
-				let buffer0 = await sharp(imgBuffer, {failOnError:false}).resize({width: appConfig.images.widths[0], fit: "inside"}).png().toBuffer();
-				console.log(`img0: ${utils.descBuffer(buffer0)}`);
-				let ciphertext0 = encryptor.encrypt(buffer0);
-				await s3Bucket.put(ciphertext0, `img/${savedLinkId}/w${appConfig.images.widths[0]}`);
-
-				for (let i = 1; i < appConfig.images.widths.length; i++) {
-					let bufferX = await sharp(imgBuffer, {failOnError:false}).resize({width: appConfig.images.widths[i], fit: "inside"}).png().toBuffer();
-					console.log(`img_${i}: ${utils.descBuffer(bufferX)}`);
-					let ciphertextX = encryptor.encrypt(bufferX);
-					await s3Bucket.put(ciphertextX, `img/${savedLinkId}/w${appConfig.images.widths[i]}`);
-				}
-
-				
-
-				link.hasImage = true;
-
-				const linksCollection = await db.getCollection("links");
-				const updateResult = await linksCollection.updateOne({_id:ObjectId(savedLinkId)}, {$set: link});
-
-				req.session.userMessage = "Saved!";
-				req.session.userMessageType = "success";
-
-			} catch (err) {
-				utils.logError("38yewge34", err);
-			}
-
-			res.redirect(`/link/${savedLinkId}`);
-
-		} else {
-			req.session.userMessage = "Saved!";
-			req.session.userMessageType = "success";
-
-			res.redirect(`/link/${savedLinkId}`);
-		}
+		res.redirect(`/item/${item._id.toString()}`);
 	});
+
+	req.pipe(busboy);
+};
+
+router.post("/new-link", asyncHandler(async (req, res, next) => {
+	saveItemRoute(null, "link", req, res, next);
 }));
 
-router.get("/link/:linkId", asyncHandler(async (req, res, next) => {
+router.get("/new-note", asyncHandler(async (req, res, next) => {
+	res.render("new-note");
+}));
+
+router.post("/new-note", asyncHandler(async (req, res, next) => {
+	const item = {
+		userId: req.session.user._id.toString(),
+		username: req.session.user.username,
+		type: "note"
+	};
+
+	if (req.body.text) {
+		item.text = req.body.text;
+	}
+
+	if (req.body.tags) {
+		item.tags = req.body.tags.split(",").map(x => x.trim().toLowerCase());
+	}
+
+	const savedItemId = await db.insertOne("items", item);
+
+	req.session.userMessage = "Saved!";
+	req.session.userMessageType = "success";
+
+	res.redirect(`/item/${savedItemId}`);
+}));
+
+router.post("/edit-note/:itemId", asyncHandler(async (req, res, next) => {
+	const itemId = req.params.itemId;
+	const item = await db.findOne("items", {_id:ObjectId(itemId)});
+
+	if (req.body.text) {
+		item.text = req.body.text;
+	}
+
+	if (req.body.tags) {
+		item.tags = req.body.tags.split(",").map(x => x.trim().toLowerCase());
+	}
+
+	const itemsCollection = await db.getCollection("items");
+	const updateResult = await itemsCollection.updateOne({_id:ObjectId(itemId)}, {$set: item});
+
+	req.session.userMessage = "Saved!";
+	req.session.userMessageType = "success";
+
+	res.redirect(`/item/${itemId}`);
+}));
+
+router.get("/new-image", asyncHandler(async (req, res, next) => {
+	res.render("new-image");
+}));
+
+router.post("/new-image", asyncHandler(async (req, res, next) => {
+	saveItemRoute(null, "image", req, res, next);
+}));
+
+router.get("/item/:itemId", asyncHandler(async (req, res, next) => {
 	if (!req.session.user) {
 		req.session.redirectUrl = req.path;
 		res.redirect("/");
@@ -321,10 +331,10 @@ router.get("/link/:linkId", asyncHandler(async (req, res, next) => {
 		return;
 	}
 
-	const linkId = req.params.linkId;
-	const link = await db.findOne("links", {_id:ObjectId(linkId)});
+	const itemId = req.params.itemId;
+	const item = await db.findOne("items", {_id:ObjectId(itemId)});
 
-	if (req.session.username != link.username) {
+	if (req.session.username != item.username) {
 		req.session.userMessage = "You're not authorized to view that.";
 		req.session.userMessageType = "info";
 
@@ -333,158 +343,94 @@ router.get("/link/:linkId", asyncHandler(async (req, res, next) => {
 		return;
 	}
 
-	res.locals.link = link;
+	res.locals.item = item;
 
-	res.render("link");
+	res.render("item");
 }));
 
-router.get("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
-	const linkId = req.params.linkId;
-	const link = await db.findOne("links", {_id:ObjectId(linkId)});
+router.get("/item/:itemId/edit", asyncHandler(async (req, res, next) => {
+	const itemId = req.params.itemId;
+	const item = await db.findOne("items", {_id:ObjectId(itemId)});
 
-	res.locals.link = link;
+	res.locals.item = item;
 
-	res.render("link-edit");
+	if (!item.type || item.type == "link") {
+		res.render("edit-link");
+
+	} else if (item.type == "note") {
+		res.render("edit-note");
+
+	} else if (item.type == "image") {
+		res.render("edit-image");
+
+	} else {
+		throw new Error("Unknown item type: " + item.type);
+	}
 }));
 
-router.post("/link/:linkId/edit", asyncHandler(async (req, res, next) => {
-	const linkId = req.params.linkId;
-	const link = await db.findOne("links", {_id:ObjectId(linkId)});
+router.post("/item/:itemId/edit", asyncHandler(async (req, res, next) => {
+	const itemId = req.params.itemId;
 
-
-	const form = formidable({ multiples: true });
-	form.parse(req, async (err, fields, files) => {
-		link.url = fields.url;
-		link.desc = fields.desc;
-		link.tags = fields.tags.split(",").map(x => x.trim());
-
-
-		const linksCollection = await db.getCollection("links");
-		const updateResult = await linksCollection.updateOne({_id:ObjectId(linkId)}, {$set: link});
-
-
-		debugLog("updatedLink: " + JSON.stringify(link) + " - result: " + JSON.stringify(updateResult));
-
-
-		if (files && files.img && files.img.size > 0 && files.img.path && files.img.path.trim().length > 0) {
-			if (fields.imgUrl && fields.imgUrl.trim().length > 0) {
-				next(new Error("Use image file OR image URL, not both."));
-
-				return;
-			}
-		}
-
-		let imgBuffer = null;
-
-		if (files && files.img && files.img.size > 0) {
-			imgBuffer = fs.readFileSync(files.img.path);
-			console.log("loading file");
-		}
-
-		if (fields.imgUrl && fields.imgUrl.trim().length > 0) {
-			const response = await axios.get(fields.imgUrl, { responseType: 'arraybuffer' });
-			imgBuffer = Buffer.from(response.data, "binary");
-			console.log("loaded url:: " + utils.descBuffer(imgBuffer));
-		}
-
-		if (imgBuffer) {
-			try {
-				let ciphertextFull = encryptor.encrypt(imgBuffer);
-				await s3Bucket.put(ciphertextFull, `img/${linkId}/raw`);
-				console.log(`imgFull: ${utils.descBuffer(imgBuffer)}`);
-
-				let buffer0 = await sharp(imgBuffer, {failOnError:false}).resize({width: appConfig.images.widths[0], fit: "inside"}).png().toBuffer();
-				console.log(`img0: ${utils.descBuffer(buffer0)}`);
-				let ciphertext0 = encryptor.encrypt(buffer0);
-				await s3Bucket.put(ciphertext0, `img/${linkId}/w${appConfig.images.widths[0]}`);
-
-				for (let i = 1; i < appConfig.images.widths.length; i++) {
-					let bufferX = await sharp(imgBuffer, {failOnError:false}).resize({width: appConfig.images.widths[i], fit: "inside"}).png().toBuffer();
-					console.log(`img_${i}: ${utils.descBuffer(bufferX)}`);
-					let ciphertextX = encryptor.encrypt(bufferX);
-					await s3Bucket.put(ciphertextX, `img/${linkId}/w${appConfig.images.widths[i]}`);
-				}
-
-				
-
-				link.hasImage = true;
-
-				const linksCollection = await db.getCollection("links");
-				const updateResult = await linksCollection.updateOne({_id:ObjectId(linkId)}, {$set: link});
-
-
-				req.session.userMessage = updateResult.modifiedCount == 1 ? "Link saved." : ("Status unknown: " + JSON.stringify(updateResult));
-				req.session.userMessageType = "success";
-
-			} catch (err) {
-				utils.logError("1238234yee", err);
-			}
-			
-
-			res.redirect(`/link/${linkId}`);
-
-		} else {
-			req.session.userMessage = updateResult.modifiedCount == 1 ? "Link saved." : ("Status unknown: " + JSON.stringify(updateResult));
-			req.session.userMessageType = "success";
-
-			res.redirect(`/link/${linkId}`);
-		}
-	});
-
+	saveItemRoute(itemId, null, req, res, next);
 }));
 
-router.get("/link/:linkId/raw", asyncHandler(async (req, res, next) => {
+router.get("/item/:itemId/raw", asyncHandler(async (req, res, next) => {
 	if (!req.session.user) {
 		res.redirect("/");
 
 		return;
 	}
 
-	const linkId = req.params.linkId;
-	const link = await db.findOne("links", {_id:ObjectId(linkId)});
+	const itemId = req.params.itemId;
+	const item = await db.findOne("items", {_id:ObjectId(itemId)});
 
-	if (req.session.username != link.username) {
+	if (req.session.username != item.username) {
 		res.redirect("/");
 
 		return;
 	}
 
-	res.locals.link = link;
+	res.locals.item = item;
 
-	res.render("link-raw");
+	res.render("raw-item");
 }));
 
-router.get("/link/:linkId/delete", asyncHandler(async (req, res, next) => {
-	const linkId = req.params.linkId;
-	const link = await db.findOne("links", {_id:ObjectId(linkId)});
+router.get("/item/:itemId/delete", asyncHandler(async (req, res, next) => {
+	const itemId = req.params.itemId;
+	const item = await db.findOne("items", {_id:ObjectId(itemId)});
 
-	res.locals.link = link;
+	res.locals.item = item;
 
-	res.render("link-delete");
+	res.render("delete-item");
 }));
 
-router.post("/link/:linkId/delete", asyncHandler(async (req, res, next) => {
-	const linkId = req.params.linkId;
-	const link = await db.findOne("links", {_id:ObjectId(linkId)});
+router.post("/item/:itemId/delete", asyncHandler(async (req, res, next) => {
+	const itemId = req.params.itemId;
+	const item = await db.findOne("items", {_id:ObjectId(itemId)});
 
-	const result = await db.deleteOne("links", {_id:link._id});
+	const result = await db.deleteOne("items", {_id:item._id});
 
-	debugLog("deleteResult: " + JSON.stringify(result));
+	debugLog("Deleted item: " + JSON.stringify(result));
 
-	if (link.hasImage) {
-		for (let i = 0; i < appConfig.images.widths.length; i++) {
-			await s3Bucket.del(appConfig.s3Bucket, `img/${linkId}/w${appConfig.images.widths[i]}`);
+	if (item.hasImage) {
+		for (let i = 0; i < item.imageSizes.length; i++) {
+			const x = await s3Bucket.del(appConfig.s3Bucket, `img/${itemId}/${item.imageSizes[i]}`);
+			console.log("xxx: " + JSON.stringify(x));
 		}
 
-		debugLog("deleted images");
+		const y = await s3Bucket.del(appConfig.s3Bucket, `img/${itemId}/`);
+		console.log("xxyy: " + JSON.stringify(y));
+
+		debugLog(`Deleted ${item.imageSizes.length} image(s)`);
 	}
 	
-	req.session.userMessage = "Link deleted."
+	req.session.userMessage = "Item deleted.";
+	req.session.userMessageType = "success";
 
 	res.redirect("/");
 }));
 
-router.get("/links", asyncHandler(async (req, res, next) => {
+router.get("/items", asyncHandler(async (req, res, next) => {
 	if (!req.session.user) {
 		res.redirect("/");
 
@@ -511,8 +457,8 @@ router.get("/links", asyncHandler(async (req, res, next) => {
 
 
 	const user = await db.findOne("users", {username:req.session.username});
-	const links = await db.findMany(
-		"links",
+	const items = await db.findMany(
+		"items",
 		{
 			userId: user._id.toString()
 		},
@@ -524,11 +470,11 @@ router.get("/links", asyncHandler(async (req, res, next) => {
 		limit,
 		offset);
 
-	const linksCollection = await db.getCollection("links");
+	const itemsCollection = await db.getCollection("items");
 
-	const linkCount = await linksCollection.countDocuments({ userId: user._id.toString() });
+	const itemCount = await itemsCollection.countDocuments({ userId: user._id.toString() });
 
-	const tagsData = await linksCollection.aggregate([
+	const tagsData = await itemsCollection.aggregate([
 		{ $match: { userId: req.session.user._id.toString() } },
 		{ $unwind: "$tags" },
 		{ $group: { _id: "$tags", count: { $sum: 1 } } },
@@ -536,21 +482,21 @@ router.get("/links", asyncHandler(async (req, res, next) => {
 	]).toArray();
 
 	res.locals.user = user;
-	res.locals.linkCount = linkCount;
-	res.locals.links = links;
+	res.locals.itemCount = itemCount;
+	res.locals.items = items;
 	res.locals.tags = [];
 	res.locals.tagsData = tagsData;
 
 	res.locals.limit = limit;
 	res.locals.offset = offset;
 	res.locals.sort = sort;
-	res.locals.paginationBaseUrl = `/links`;
+	res.locals.paginationBaseUrl = `/items`;
 
-	res.render("user-links");
+	res.render("user-items");
 }));
 
 router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
-	const tags = req.params.tags.split(",");
+	const tags = req.params.tags.split(",").map(x => x.trim().toLowerCase());
 
 	var limit = 25;
 	var offset = 0;
@@ -571,8 +517,8 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
 
 
-	const links = await db.findMany(
-		"links",
+	const items = await db.findMany(
+		"items",
 		{
 			userId: req.session.user._id.toString(),
 			tags: { $all: tags }
@@ -585,14 +531,14 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 		limit,
 		offset);
 
-	const linksCollection = await db.getCollection("links");
+	const itemsCollection = await db.getCollection("items");
 
-	const linkCount = await linksCollection.countDocuments({
+	const itemCount = await itemsCollection.countDocuments({
 		userId: req.session.user._id.toString(),
 		tags: { $all: tags }
 	});
 
-	const tagsData = await linksCollection.aggregate([
+	const tagsData = await itemsCollection.aggregate([
 		{ $match: { userId: req.session.user._id.toString(), tags: { $all: tags } } },
 		{ $unwind: "$tags" },
 		{ $group: { _id: "$tags", count: { $sum: 1 } } },
@@ -600,8 +546,8 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 	]).toArray();
 
 	res.locals.tags = tags;
-	res.locals.linkCount = linkCount;
-	res.locals.links = links;
+	res.locals.itemCount = itemCount;
+	res.locals.items = items;
 	res.locals.tagsData = tagsData;
 
 	res.locals.limit = limit;
@@ -609,7 +555,7 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 	res.locals.sort = sort;
 	res.locals.paginationBaseUrl = `/tags/${req.params.tags}`;
 
-	res.render("tag-links");
+	res.render("tag-items");
 }));
 
 router.get("/search", asyncHandler(async (req, res, next) => {
@@ -636,14 +582,14 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 
 	const regex = new RegExp(query, "i");
 	
-	const links = await db.findMany(
-		"links",
+	const items = await db.findMany(
+		"items",
 		{
 			$and: [
 				{ userId: req.session.user._id.toString() },
 				{
 					$or:[
-						{ desc: regex },
+						{ text: regex },
 						{ url: regex },
 						{ tags: regex }
 					]
@@ -658,14 +604,14 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 		limit,
 		offset);
 
-	const linksCollection = await db.getCollection("links");
+	const itemsCollection = await db.getCollection("items");
 
-	const linkCount = await linksCollection.countDocuments({
+	const itemCount = await itemsCollection.countDocuments({
 		$and: [
 			{ userId: req.session.user._id.toString() },
 			{
 				$or:[
-					{ desc: regex },
+					{ text: regex },
 					{ url: regex },
 					{ tags: regex }
 				]
@@ -673,16 +619,16 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 		]
 	});
 
-	const tagsData = await linksCollection.aggregate([
-		{ $match: { userId: req.session.user._id.toString(), $or: [ { desc: new RegExp(query, "i") }, { url: new RegExp(query, "i") }, { tags: new RegExp(query, "i") } ] } },
+	const tagsData = await itemsCollection.aggregate([
+		{ $match: { userId: req.session.user._id.toString(), $or: [ { text: new RegExp(query, "i") }, { url: new RegExp(query, "i") }, { tags: new RegExp(query, "i") } ] } },
 		{ $unwind: "$tags" },
 		{ $group: { _id: "$tags", count: { $sum: 1 } } },
 		{ $sort: { count: -1, _id: 1 }}
 	]).toArray();
 	
 	res.locals.query = query;
-	res.locals.linkCount = linkCount;
-	res.locals.links = links;
+	res.locals.itemCount = itemCount;
+	res.locals.items = items;
 	res.locals.tags = [];
 	res.locals.tagsData = tagsData;
 
@@ -691,12 +637,12 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 	res.locals.sort = sort;
 	res.locals.paginationBaseUrl = `/search?query=${query}`;
 
-	res.render("search-links");
+	res.render("search-items");
 }));
 
 router.get("/tags", asyncHandler(async (req, res, next) => {
-	const linksCollection = await db.getCollection("links");
-	const tagsData = await linksCollection.aggregate([
+	const itemsCollection = await db.getCollection("items");
+	const tagsData = await itemsCollection.aggregate([
 		{ $match: { userId: req.session.user._id.toString() } },
 		{ $unwind: "$tags" },
 		{ $group: { _id: "$tags", count: { $sum: 1 } } },

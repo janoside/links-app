@@ -62,22 +62,43 @@ router.get("/users", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/user/:username", asyncHandler(async (req, res, next) => {
-	var username = req.params.username;
+	const username = req.params.username;
 	
-	var user = await db.findOne("users", {username:username});
+	const user = await db.findOne("users", {username:username});
 
-	const linksCollection = await db.getCollection("links");
+	const itemsCollection = await db.getCollection("items");
 
-	const linkCount = await linksCollection.countDocuments({ username: username });
+	const itemCount = await itemsCollection.countDocuments({ username: username });
 
 	res.locals.user = user;
-	res.locals.linkCount = linkCount;
+	res.locals.itemCount = itemCount;
 
 	res.render("admin/user");
 }));
 
+router.get("/user/:username/add-role/:role", asyncHandler(async (req, res, next) => {
+	const username = req.params.username;
+	const role = req.params.role;
+
+	const user = await db.findOne("users", {username:username});
+
+	if (!user.roles) {
+		user.roles = [];
+	}
+
+	user.roles.push(role);
+
+	const usersCollection = await db.getCollection("users");
+	const updateResult = await usersCollection.updateOne({_id:user._id}, {$set: user});
+
+	req.session.userMessage = `Modified '${username}'`;
+	req.session.userMessageType = "success";
+
+	res.redirect(`/admin/user/${username}`);
+}));
+
 router.get("/user/:username/delete", asyncHandler(async (req, res, next) => {
-	var username = req.params.username;
+	const username = req.params.username;
 
 	await db.deleteOne("users", {username:username});
 
@@ -85,6 +106,18 @@ router.get("/user/:username/delete", asyncHandler(async (req, res, next) => {
 	req.session.userMessageType = "success";
 
 	res.redirect("/admin/users");
+}));
+
+
+router.get("/data-migrations", asyncHandler(async (req, res, next) => {
+	const dataMigrationsCollection = await db.getCollection("dataMigrations");
+	res.locals.dataMigrationsCount = await dataMigrationsCollection.countDocuments();
+	
+	const dataMigrations = await db.findMany("dataMigrations", {});
+
+	res.locals.dataMigrations = dataMigrations;
+
+	res.render("admin/dataMigrations");
 }));
 
 

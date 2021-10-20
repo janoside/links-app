@@ -1,0 +1,12 @@
+extends layout
+
+block content
+
+	h5
+		a(href=`/item/${item._id.toString()}`) Item
+		|  &raquo; Raw Data
+
+	.card
+		.card-body
+			pre
+				code #{JSON.stringify(item, null, 4)}

@@ -5,7 +5,6 @@ const debug = require("debug");
 const asyncHandler = require("express-async-handler");
 const appConfig = require("../app/config.js");
 const ObjectId = require("mongodb").ObjectId;
-const formidable = require("formidable");
 const fs = require("fs");
 const sharp = require("sharp");
 
@@ -21,7 +20,7 @@ const encryptor = encryptionUtils.encryptor(appConfig.encryptionPassword, appCon
 const s3Bucket = s3Utils.createBucket(appConfig.s3Bucket, appConfig.s3PathPrefix);
 
 
-router.get("/link/:linkId/:size", asyncHandler(async (req, res, next) => {
+router.get("/item/:itemId/:size", asyncHandler(async (req, res, next) => {
 	try {
 		if (!req.session.user) {
 			res.writeHead(403);
@@ -30,20 +29,18 @@ router.get("/link/:linkId/:size", asyncHandler(async (req, res, next) => {
 			return;
 		}
 
-		const linkId = req.params.linkId;
-		const link = await db.findOne("links", {_id:ObjectId(req.params.linkId)});
+		const itemId = req.params.itemId;
+		const item = await db.findOne("items", {_id:ObjectId(req.params.itemId)});
 
-		if (req.session.username != link.username) {
+		if (req.session.username != item.username) {
 			res.writeHead(403);
 			res.end("unauthorized");
 
 			return;
 		}
 
-		const s3Data = await s3Bucket.get(`img/${req.params.linkId}/${req.params.size}`);
+		const s3Data = await s3Bucket.get(`img/${req.params.itemId}/${req.params.size}`);
 		const imgBuffer = encryptor.decrypt(s3Data);
-
-		//console.log("img: " + utils.descBuffer(imgBuffer));
 
 		res.writeHead(200, {
 			'Content-Type': 'image/png',

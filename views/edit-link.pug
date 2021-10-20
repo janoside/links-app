@@ -4,22 +4,22 @@ block headBlock
 	title Edit Link
 
 block content
-	h1 Edit
+	h1 Edit Link
 	hr
 
-	if (link.hasImage)
+	if (item.hasImage)
 		.rounded.p-3.border.mb-4.d-inline-block
-			img(src=`./img/link/${link._id.toString()}/w${appConfig.images.mainWidth}`)
+			img(src=`./img/item/${item._id.toString()}/w${appConfig.images.mainWidth}`)
 
-	form(method="post", action=`/link/${link._id}/edit`, enctype="multipart/form-data")
+	form(method="post", action=`/item/${item._id}/edit`, enctype="multipart/form-data")
 		fieldset.mb-4
-			input#url.form-control(name="url", placeholder="url" value=link.url)
-
-		fieldset.mb-4
-			input#desc.form-control(name="desc", placeholder="desc", value=link.desc)
+			input#url.form-control(name="url", placeholder="url" value=item.url)
 
 		fieldset.mb-4
-			input#tags.form-control(name="tags", placeholder="tags", value=(link.tags ? link.tags.join(",") : ""))
+			input#text.form-control(name="text", placeholder="text / description", value=item.text)
+
+		fieldset.mb-4
+			input#tags.form-control(name="tags", placeholder="tags", value=(item.tags ? item.tags.join(",") : ""))
 
 		fieldset.mb-4
 			.row
@@ -34,7 +34,7 @@ block content
 				.col-md-6
 					
 
-					label(for="img") Image URL
+					label(for="imgUrl") Image URL
 					input#imgUrl.form-control(name="imgUrl", placeholder="image url")
 
 		.d-grid

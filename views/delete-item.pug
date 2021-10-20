@@ -3,13 +3,13 @@ extends layout
 block content
 
 	.container.mt-5
-		include shared/link-card.pug
+		include shared/item-card.pug
 
 		hr.mt-4
 
-		h6 Are you sure you want to delete this link?
+		h6 Are you sure you want to delete this item?
 
 		form(method="post")
 			button.btn.btn-danger.me-3(type="submit") Yes, delete
 		
-			a.btn.btn-primary(href=`/link/${link._id}`) No, don't delete
+			a.btn.btn-primary(href=`/item/${item._id}`) No, don't delete

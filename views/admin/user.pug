@@ -4,35 +4,37 @@ block adminContent
 	h1 User: #{user.username}
 	hr
 
-	.mb-4
-		table.table.table-striped
-			tr
-				th Username
-				td.text-monospace #{user.username}
+	.card
+		.card-body
+			.mb-4
+				table.table.table-striped
+					tr
+						th Username
+						td.text-monospace #{user.username}
 
-			tr
-				th Roles
-				td.text-monospace
-					if (user.roles)
-						| #{user.roles}
-					else
-						| -
+					tr
+						th Roles
+						td.text-monospace
+							if (user.roles)
+								| #{user.roles}
+							else
+								| -
+					
+					tr
+						th Created At
+						td.text-monospace #{utils.formatDate(user.createdAt)}
+					
+					tr
+						th Updated At
+						td.text-monospace #{utils.formatDate(user.updatedAt)}
+
+					tr
+						th Item(s)
+						td.text-monospace #{itemCount.toLocaleString()}
 			
-			tr
-				th Created At
-				td.text-monospace #{utils.formatDate(user.createdAt)}
+
+			hr
 			
-			tr
-				th Updated At
-				td.text-monospace #{utils.formatDate(user.updatedAt)}
-
-			tr
-				th Link(s)
-				td.text-monospace #{linkCount.toLocaleString()}
-	
-
-	hr
-	
-	.col-md-3.d-grid
-		a.btn.btn-danger(href=`/admin/user/${user.username}/delete`) Delete User
+			a.btn.btn-primary.me-3(href=`/admin/user/${user.username}/add-role/admin`) Promote to Admin
+			a.btn.btn-danger(href=`/admin/user/${user.username}/delete`) Delete User
 			

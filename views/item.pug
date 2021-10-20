@@ -1,0 +1,18 @@
+extends layout
+
+block headBlock
+	if (item.type == "link")
+		title Link: #{item.url}
+
+	else if (item.type == "note")
+		title Note: #{item._id}
+
+	else if (item.type == "image")
+		title Image: #{item._id}
+
+	else
+		title Item: #{item._id}
+
+block content
+	.mt-6
+		include shared/item-card.pug

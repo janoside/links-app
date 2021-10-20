@@ -1,0 +1,17 @@
+extends layout
+
+block headBlock
+	title Tagged #{tags.join(", ")}
+
+block content
+	+itemListPageHeader(itemCount, limit, offset, sort, paginationBaseUrl)
+		h1 #{itemCount.toLocaleString()} Item
+			| #{itemCount != 1 ? "s" : ""} for 
+			each tag in tags
+				span.badge.bg-primary.me-1
+					i.bi-tag-fill.me-2
+					| #{tag}
+
+	hr
+	
+	include ./shared/item-list.pug

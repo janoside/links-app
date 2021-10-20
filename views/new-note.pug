@@ -1,0 +1,18 @@
+extends layout
+
+block headBlock
+	title New Note
+
+block content
+	h1.mb-3 New Note
+	hr
+
+	form(method="post", action="/new-note")
+		fieldset.mb-4
+			textarea#text.form-control(name="text", placeholder="text (markdown)", rows="15")
+
+		fieldset.mb-4
+			input#tags.form-control(name="tags", placeholder="tags")
+
+		.d-grid
+			button.btn.btn-primary(type="submit") Save

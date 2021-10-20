@@ -93,9 +93,12 @@ expressApp.set("trust proxy", 1); // trust first proxy, needed for {cookie:{secu
 
 expressApp.use(session(sessionCookieConfig));
 
+global.projectRootDir = __dirname;
+global.uploadsDir = path.join(global.projectRootDir, "uploads");
+
 expressApp.use(logger('dev'));
-expressApp.use(express.json());
-expressApp.use(express.urlencoded({ extended: false, limit: '50mb' }));
+expressApp.use(express.json({ limit: '50mb' }));
+expressApp.use(express.urlencoded({ extended: true, limit: '50mb' }));
 expressApp.use(cookieParser());
 expressApp.use(express.static(path.join(__dirname, "public")));
 

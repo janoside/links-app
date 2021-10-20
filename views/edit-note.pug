@@ -1,0 +1,18 @@
+extends layout
+
+block headBlock
+	title Edit Note
+
+block content
+	h1 Edit Note
+	hr
+
+	form(method="post", action=`/edit-note/${item._id}`)
+		fieldset.mb-4
+			textarea#text.form-control(name="text", placeholder="text / description", rows="15") #{item.text}
+
+		fieldset.mb-4
+			input#tags.form-control(name="tags", placeholder="tags", value=(item.tags ? item.tags.join(",") : ""))
+
+		.d-grid
+			button.btn.btn-primary(type="submit") Save

@@ -1,22 +1,13 @@
 extends layout
 
 block headBlock
-	title New Link
+	title New Image
 
 block content
-	h1.mb-3 New Link
+	h1.mb-3 New Image
 	hr
 
-	form(method="post", action="/new-link", enctype="multipart/form-data")
-		fieldset.mb-4
-			input#url.form-control(name="url", placeholder="url")
-
-		fieldset.mb-4
-			input#text.form-control(name="text", placeholder="text / description")
-
-		fieldset.mb-4
-			input#tags.form-control(name="tags", placeholder="tags")
-
+	form(method="post", action="/new-image", enctype="multipart/form-data")
 		fieldset.mb-4
 			.row
 				.col-md-5
@@ -32,6 +23,15 @@ block content
 
 					label(for="imgUrl") Image URL
 					input#imgUrl.form-control(name="imgUrl", placeholder="image url")
+
+		fieldset.mb-4
+			input#url.form-control(name="url", placeholder="url")
+
+		fieldset.mb-4
+			input#text.form-control(name="text", placeholder="text / description")
+
+		fieldset.mb-4
+			input#tags.form-control(name="tags", placeholder="tags")
 
 		.d-grid
 			button.btn.btn-primary(type="submit") Save

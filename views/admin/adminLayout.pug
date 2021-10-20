@@ -8,5 +8,8 @@ block content
 			
 			li.nav-item
 				a.nav-link(href="/admin/users", class=((path == "/admin/users" || path.startsWith("/admin/user/")) ? "active" : false)) Users
+
+			li.nav-item
+				a.nav-link(href="/admin/data-migrations", class=(path == "/admin/data-migrations" ? "active" : false)) Migrations
 	
 	block adminContent

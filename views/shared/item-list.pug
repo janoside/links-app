@@ -34,14 +34,14 @@
 
 	.col-md-12.col-lg-10
 		.row.masonry
-			each link, linkIndex in links
+			each item, itemIndex in items
 				.col-12(class=`col-lg-${12/parseInt(userSettings.listColCount || "3")}`)
-					- var linkListPage = true;
-					include ./link-card.pug
+					- var itemListPage = true;
+					include ./item-card.pug
 
 
 		.my-4
 			hr.mb-4
 
-			if (linkCount > limit)
-				+pagination(limit, offset, sort, linkCount, paginationBaseUrl, "center")
+			if (itemCount > limit)
+				+pagination(limit, offset, sort, itemCount, paginationBaseUrl, "center")

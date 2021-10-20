@@ -1,0 +1,16 @@
+extends layout
+
+block headBlock
+	title Search: #{query}
+
+block content
+	+itemListPageHeader(itemCount, limit, offset, sort, paginationBaseUrl)
+		h1 #{itemCount.toLocaleString()} Item
+			| #{itemCount != 1 ? "s" : ""}  for 
+			span.badge.bg-primary
+				i.bi-search.me-2
+				| #{query}
+
+	hr
+
+	include ./shared/item-list.pug

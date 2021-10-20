@@ -91,14 +91,14 @@ mixin summaryItem(title, titleDesc, subtitle, subtitleDesc)
 	- locals.summaryItemIndex++;
 
 
-mixin linkListPageHeader(linkCount, limit, offset, sort, paginationBaseUrl)
+mixin itemListPageHeader(itemCount, limit, offset, sort, paginationBaseUrl)
 	.d-md-flex.justify-content-between
 		.text-center
 			block
 
 		.d-md-flex.align-items-end.mb-2
-			if (linkCount > limit)
-				+pagination(limit, offset, sort, linkCount, paginationBaseUrl, "center")
+			if (itemCount > limit)
+				+pagination(limit, offset, sort, itemCount, paginationBaseUrl, "center")
 
 			- var colCounts = ["4", "3", "2", "1"];
 			nav.ms-md-2.mt-2.mt-md-0.d-none.d-lg-inline-block

@@ -1,0 +1,41 @@
+extends layout
+
+block headBlock
+	title Edit Image
+
+block content
+	h1 Edit Image
+	hr
+
+	if (item.hasImage)
+		.rounded.p-3.border.mb-4.d-inline-block
+			img(src=`./img/item/${item._id.toString()}/w${appConfig.images.mainWidth}`)
+
+	form(method="post", action=`/item/${item._id}/edit`, enctype="multipart/form-data")
+		fieldset.mb-4
+			.row
+				.col-md-5
+					label(for="img") Image File
+						span.text-muted.ms-2 (optional)
+					input#img.form-control(name="img", type="file", placeholder="image file")
+
+				.col-md-1.pt-4.text-center
+					span - OR -
+
+				.col-md-6
+					
+
+					label(for="imgUrl") Image URL
+					input#imgUrl.form-control(name="imgUrl", placeholder="image url")
+						
+		fieldset.mb-4
+			input#url.form-control(name="url", placeholder="url" value=item.url)
+
+		fieldset.mb-4
+			input#text.form-control(name="text", placeholder="text / description", value=item.text)
+
+		fieldset.mb-4
+			input#tags.form-control(name="tags", placeholder="tags", value=(item.tags ? item.tags.join(",") : ""))
+
+		.d-grid
+			button.btn.btn-primary(type="submit") Save

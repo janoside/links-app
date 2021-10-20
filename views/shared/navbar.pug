@@ -5,11 +5,21 @@ nav.navbar.navbar-expand-md.navbar-dark.bg-header-footer
 			span.d-none.d-md-inline #{global.appConfig.siteName}
 		if (session.username)
 			ul.navbar-nav
-				li.nav-item.active
-					a.nav-link(href="/new-link") New Link
+				li.nav-item.me-2
+					a.nav-link(href="/new-link")
+						| +Link
 
-				li.nav-item.d-none.d-md-inline
-					a.nav-link(href="/tags") Tags
+				li.nav-item.me-2
+					a.nav-link(href="/new-note")
+						| +Note
+
+				li.nav-item.me-2
+					a.nav-link(href="/new-image")
+						| +Image
+
+				if (false)
+					li.nav-item.d-none.d-md-inline
+						a.nav-link(href="/tags") Tags
 
 		button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarNav", aria-controls="navbarNav")
 			span.navbar-toggler-icon
