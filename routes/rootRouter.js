@@ -414,12 +414,8 @@ router.post("/item/:itemId/delete", asyncHandler(async (req, res, next) => {
 
 	if (item.hasImage) {
 		for (let i = 0; i < item.imageSizes.length; i++) {
-			const x = await s3Bucket.del(appConfig.s3Bucket, `img/${itemId}/${item.imageSizes[i]}`);
-			console.log("xxx: " + JSON.stringify(x));
+			await s3Bucket.del(`img/${itemId}/${item.imageSizes[i]}`);
 		}
-
-		const y = await s3Bucket.del(appConfig.s3Bucket, `img/${itemId}/`);
-		console.log("xxyy: " + JSON.stringify(y));
 
 		debugLog(`Deleted ${item.imageSizes.length} image(s)`);
 	}
