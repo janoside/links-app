@@ -282,6 +282,10 @@ router.post("/new-note", asyncHandler(async (req, res, next) => {
 		item.text = req.body.text;
 	}
 
+	if (req.body.url) {
+		item.url = req.body.url;
+	}
+
 	if (req.body.tags) {
 		item.tags = req.body.tags.split(",").map(x => x.trim().toLowerCase());
 	}
@@ -300,6 +304,10 @@ router.post("/edit-note/:itemId", asyncHandler(async (req, res, next) => {
 
 	if (req.body.text) {
 		item.text = req.body.text;
+	}
+
+	if (req.body.url) {
+		item.url = req.body.url;
 	}
 
 	if (req.body.tags) {
