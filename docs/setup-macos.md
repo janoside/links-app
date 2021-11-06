@@ -3,3 +3,5 @@
     brew services start mongodb/brew/mongodb-community
     
     brew services list
+    
+    brew install awscli
