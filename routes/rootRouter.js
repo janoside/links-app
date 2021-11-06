@@ -109,15 +109,16 @@ router.post("/signup", asyncHandler(async (req, res, next) => {
 		return;
 	}
 
-	const user = {
+	let user = {
 		username: username,
 		passwordHash: passwordHash
 	};
 
-	const insertedUser = await db.insertOne("users", user);
+	const insertedUserId = await db.insertOne("users", user);
+	user = await app.authenticate(req.body.username, req.body.password);
 
 	req.session.username = username;
-	req.session.user = insertedUser;
+	req.session.user = user;
 
 	req.session.userMessage = "Success!";
 	req.session.userMessageType = "success";
