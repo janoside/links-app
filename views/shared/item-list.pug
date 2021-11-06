@@ -1,5 +1,5 @@
 .row
-	if (tagsData)
+	if (tagsData && false)
 		.col-md-0.col-lg-2.d-none.d-lg-block
 			each item in tagsData
 				if (tags.includes(item._id))
@@ -32,7 +32,7 @@
 			if (hiddenTagCount > 0)
 				a(href=`javascript:void(0)`, onclick=`$('.tag-item').removeClass('d-none'); $(this).hide(); return false;`) Show #{hiddenTagCount} hidden
 
-	.col-md-12.col-lg-10
+	.col-md-12.col-lg-12
 		.row.masonry
 			each item, itemIndex in items
 				.col-12(class=`col-lg-${12/parseInt(userSettings.listColCount || "3")}`)
@@ -40,8 +40,7 @@
 					include ./item-card.pug
 
 
-		.my-4
-			hr.mb-4
-
-			if (itemCount > limit)
+		if (itemCount > limit)
+			.my-4
+				hr.mb-4
 				+pagination(limit, offset, sort, itemCount, paginationBaseUrl, "center")

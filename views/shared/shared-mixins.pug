@@ -100,7 +100,7 @@ mixin itemListPageHeader(itemCount, limit, offset, sort, paginationBaseUrl)
 			if (itemCount > limit)
 				+pagination(limit, offset, sort, itemCount, paginationBaseUrl, "center")
 
-			- var colCounts = ["4", "3", "2", "1"];
+			- var colCounts = ["6", "5", "4", "3", "2", "1"];
 			nav.ms-md-2.mt-2.mt-md-0.d-none.d-lg-inline-block
 				ul.pagination.mb-0
 					each colCount in colCounts

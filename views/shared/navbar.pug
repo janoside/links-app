@@ -1,21 +1,25 @@
-nav.navbar.navbar-expand-md.navbar-dark.bg-header-footer
-	.container
+nav.navbar.navbar-expand-md.navbar-dark.bg-header-footer.px-0
+	.container-fluid.px-8
 		a.navbar-brand(href="/")
 			img.rounded.me-2.mt-n2.mb-n1(src="/img/icon/favicon-32x32.png" srcset="/img/icon/favicon-32x32.png 1x, /img/icon/apple-touch-icon.png 2x" alt="logo" style="width: 30px; height: 30px;")
 			span.d-none.d-md-inline #{global.appConfig.siteName}
 		if (session.username)
-			ul.navbar-nav
+			ul.navbar-nav.ms-4
 				li.nav-item.me-2
-					a.nav-link(href="/new-link")
-						| +Link
+					a.nav-link(href="/new-link", title="New Link", data-bs-toggle="tooltip", data-bs-placement="bottom")
+						i.bi-link-45deg.fs-5.text-white
 
 				li.nav-item.me-2
-					a.nav-link(href="/new-note")
-						| +Note
+					a.nav-link(href="/new-note", title="New Note", data-bs-toggle="tooltip", data-bs-placement="bottom")
+						i.bi-file-earmark-text.fs-5.text-white
 
 				li.nav-item.me-2
-					a.nav-link(href="/new-image")
-						| +Image
+					a.nav-link(href="/new-image", title="New Image", data-bs-toggle="tooltip", data-bs-placement="bottom")
+						i.bi-image.fs-5.text-white
+
+				li.nav-item.me-2
+					a.nav-link(href="/tags", title="View All Tags", data-bs-toggle="tooltip", data-bs-placement="bottom")
+						i.bi-tag-fill.fs-5.text-white
 
 				if (false)
 					li.nav-item.d-none.d-md-inline
@@ -26,11 +30,11 @@ nav.navbar.navbar-expand-md.navbar-dark.bg-header-footer
 		
 		div.collapse.navbar-collapse#navbarNav
 			ul.navbar-nav.me-auto
-				
+
 			
 			form.form-inline.me-3(method="get", action="/search")
-				div.input-group.input-group-sm
-					input.form-control.form-control-sm(type="text", name="query", placeholder="search...", value=(query))
+				div.input-group
+					input.form-control(type="text", name="query", placeholder="search...", value=(query))
 					button.btn.btn-primary(type="submit")
 						i.bi-search
 			
