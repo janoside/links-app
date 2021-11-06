@@ -17,5 +17,13 @@ block content
 		fieldset.mb-4
 			input#url.form-control(name="url", placeholder="url", value=item.url)
 
+		fieldset.mb-4
+			.form-check.form-check-inline
+				input.form-check-input(type="radio", name="textType", id="textTypeMarkdown", value="markdown", checked=(item.textType == "markdown" ? "checked" : false))
+				label.form-check-label(for="textTypeMarkdown") Markdown
+			.form-check.form-check-inline
+				input.form-check-input(type="radio", name="textType", id="textTypePlaintext", value="plaintext", checked=(item.textType == "plaintext" ? "checked" : false))
+				label.form-check-label(for="textTypePlaintext") Plaintext
+
 		.d-grid
 			button.btn.btn-primary(type="submit") Save

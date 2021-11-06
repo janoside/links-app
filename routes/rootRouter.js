@@ -287,6 +287,10 @@ router.post("/new-note", asyncHandler(async (req, res, next) => {
 		item.url = req.body.url;
 	}
 
+	if (req.body.textType) {
+		item.textType = req.body.textType;
+	}
+
 	if (req.body.tags) {
 		item.tags = req.body.tags.split(",").map(x => x.trim().toLowerCase());
 	}
@@ -313,6 +317,10 @@ router.post("/edit-note/:itemId", asyncHandler(async (req, res, next) => {
 
 	if (req.body.tags) {
 		item.tags = req.body.tags.split(",").map(x => x.trim().toLowerCase());
+	}
+
+	if (req.body.textType) {
+		item.textType = req.body.textType;
 	}
 
 	const itemsCollection = await db.getCollection("items");

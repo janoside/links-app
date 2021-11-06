@@ -54,3 +54,9 @@ $alert-border-scale: -60%;
 	border: solid 1px darken($card-bg, 10%) !important;
 	color: $body-color;
 }
+
+
+
+.markdown-body pre {
+	background-color: darken($body-bg, 4%);
+}

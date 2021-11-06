@@ -34,7 +34,36 @@ mixin itemAdminMenu
 		.item-body
 			.mb-2
 				if (item.text)
-					a.text-reset.text-decoration-none(href=`./item/${item._id}`) !{marked(item.text)}
+					if (itemListPage)
+						- var ellipsizeLength = 400;
+
+						a.text-reset.text-decoration-none(href=`./item/${item._id}`)
+							if (item.textType)
+								if (item.textType == "plaintext")
+									pre #{utils.ellipsize(item.text, ellipsizeLength)}
+
+								else if (item.textType == "markdown")
+									article.markdown-body !{marked(utils.ellipsize(item.text, ellipsizeLength))}
+
+								else
+									span.text-danger Unknown textType: #{item.textType}
+
+							else
+								| #{utils.ellipsize(item.text, ellipsizeLength)}
+
+
+					else
+						if (item.textType)
+							if (item.textType == "plaintext")
+								pre #{item.text}
+
+							else if (item.textType == "markdown")
+								article.markdown-body !{marked(item.text)}
+
+							else
+								span.text-danger Unknown textType: #{item.textType}
+						else
+							| #{item.text}
 
 
 				else if (!item.hasImage)

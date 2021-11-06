@@ -9,13 +9,21 @@ block content
 
 	form(method="post", action="/new-note")
 		fieldset.mb-4
-			textarea#text.form-control(name="text", placeholder="text (markdown)", rows="15")
+			textarea#text.form-control(name="text", placeholder="text", rows="15")
 
 		fieldset.mb-4
 			input#tags.form-control(name="tags", placeholder="tags")
 
 		fieldset.mb-4
 			input#url.form-control(name="url", placeholder="url")
+
+		fieldset.mb-4
+			.form-check.form-check-inline
+				input.form-check-input(type="radio", name="textType", id="textTypeMarkdown", value="markdown", checked)
+				label.form-check-label(for="textTypeMarkdown") Markdown
+			.form-check.form-check-inline
+				input.form-check-input(type="radio", name="textType", id="textTypePlaintext", value="plaintext")
+				label.form-check-label(for="textTypePlaintext") Plaintext
 
 		.d-grid
 			button.btn.btn-primary(type="submit") Save

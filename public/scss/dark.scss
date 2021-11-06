@@ -142,3 +142,8 @@ code {
 	background-color: lighten($card-bg, 15%);
 	color: $body-color;
 }
+
+
+.markdown-body pre {
+	background-color: lighten($card-bg, 6%);
+}
