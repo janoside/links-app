@@ -24,7 +24,7 @@ mixin itemAdminMenu
 .card.shadow-sm.mb-2
 	.card-body
 		if (item.hasImage)
-			.text-center
+			.text-center.mb-2
 				a(href=`./item/${item._id}`)
 					- var smallestImgSize = item.imageSizes[0];
 					- var largestImgSize = item.imageSizes[item.imageSizes.length - 1];
