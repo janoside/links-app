@@ -1,9 +1,9 @@
 mixin itemAdminMenu
-	a.btn.btn-light.btn-sm.border.p-1.py-0.me-2(href=`/item/${item._id}/edit`, title="Edit this item")
-		i.bi-pencil-square
-	a.btn.btn-light.btn-sm.border.p-1.py-0.me-2(href=`/item/${item._id}/raw`, title="View raw data")
-		i.bi-info-circle
-	a.btn.btn-light.btn-sm.border.p-1.py-0(href=`/item/${item._id}/delete`, title="Delete this item...")
+	a.me-3(href=`/item/${item._id}/edit`, title="Edit this item")
+		i.bi-pencil-square.text-primary
+	a.me-3(href=`/item/${item._id}/raw`, title="View raw data")
+		i.bi-info-circle.text-primary
+	a(href=`/item/${item._id}/delete`, title="Delete this item...")
 		i.bi-trash.text-danger
 
 	if (false)
@@ -110,10 +110,10 @@ mixin itemAdminMenu
 
 
 			.float-md-end.d-none.d-md-block.text-md-end
-				if (item.createdAt)
+				if (item.createdAt && !itemListPage)
 					| #{utils.formatDate(item.createdAt, "MMM d, yyyy")}
 
-				.d-none.d-md-block.text-end.pt-2
+				.d-none.d-md-block.text-end(class=(itemListPage ? false : "pt-2"))
 					if (session.user && item.userId == session.user._id)
 						+itemAdminMenu
 				
