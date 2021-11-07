@@ -108,6 +108,13 @@ $modal-content-color: $body-color;
 	border-width: 2px;
 }
 
+.alert-success {
+	color: $body-color;
+	background-color: darken(#198754, 10%);
+	border-color: lighten(#198754, 5%);
+	border-width: 2px;
+}
+
 
 
 .bg-main {
