@@ -89,6 +89,13 @@ $modal-content-color: $body-color;
 	border-width: 2px;
 }
 
+.alert-info {
+	color: $body-color;
+	background-color: darken(#cff4fc, 50%);
+	border-color: darken(#b6effb, 50%);
+	border-width: 2px;
+}
+
 .alert-danger {
 	color: $body-color;
 	background-color: #7d323b;
