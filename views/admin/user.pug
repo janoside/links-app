@@ -38,3 +38,9 @@ block adminContent
 			a.btn.btn-primary.me-3(href=`/admin/user/${user.username}/add-role/admin`) Promote to Admin
 			a.btn.btn-danger(href=`/admin/user/${user.username}/delete`) Delete User
 			
+
+			.mt-4
+				h4 Raw
+				hr
+				pre
+					code.json #{JSON.stringify(user, null, 4)}

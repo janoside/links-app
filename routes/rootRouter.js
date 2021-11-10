@@ -142,6 +142,11 @@ router.post("/login", asyncHandler(async (req, res, next) => {
 	const user = await app.authenticate(req.body.username, req.body.password);
 
 	if (user) {
+		user.lastLogin = new Date();
+
+		const usersCollection = await db.getCollection("users");
+		const updateResult = await usersCollection.updateOne({_id:user._id}, {$set:{lastLogin:user.lastLogin}});
+
 		req.session.username = user.username;
 		req.session.user = user;
 
@@ -666,5 +671,51 @@ router.get("/tags", asyncHandler(async (req, res, next) => {
 	
 	res.render("tags");
 }));
+
+
+router.get("/favorite-tags/add/:tag", asyncHandler(async (req, res, next) => {
+	let tag = req.params.tag;
+
+	if (!req.session.user.favoriteTags) {
+		req.session.user.favoriteTags = [];
+	}
+
+	req.session.user.favoriteTags.push(tag);
+	console.log(req.session.user);
+
+	const usersCollection = await db.getCollection("users");
+	const updateResult = await usersCollection.updateOne({_id:ObjectId(req.session.user._id)}, {$set:{favoriteTags:req.session.user.favoriteTags}});
+
+	console.log(updateResult);
+	req.session.userMessage = "Success!";
+	req.session.userMessageType = "success";
+
+	
+	res.redirect(req.headers.referer);
+}));
+
+router.get("/favorite-tags/remove/:tag", asyncHandler(async (req, res, next) => {
+	let tag = req.params.tag;
+
+	if (!req.session.user.favoriteTags) {
+		res.redirect(req.headers.referer);
+
+		return;
+	}
+
+	req.session.user.favoriteTags = req.session.user.favoriteTags.filter(e => { e !== tag });
+	console.log(req.session.user);
+
+	const usersCollection = await db.getCollection("users");
+	const updateResult = await usersCollection.updateOne({_id:ObjectId(req.session.user._id)}, {$set:{favoriteTags:req.session.user.favoriteTags}});
+
+	console.log(updateResult);
+	req.session.userMessage = "Success!";
+	req.session.userMessageType = "success";
+
+	
+	res.redirect(req.headers.referer);
+}));
+
 
 module.exports = router;

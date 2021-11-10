@@ -296,6 +296,18 @@ hr {
 
 
 
+h1 .badge {
+	padding: 0.4rem 0.55rem;
+	border-radius: 0.6rem;
+}
+
+a.badge:hover {
+	text-decoration: underline;
+	color: #fff;
+}
+
+
+
 
 pre {
 	white-space: pre;

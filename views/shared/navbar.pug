@@ -55,24 +55,52 @@
 
 	.d-flex.flex-wrap.align-items-center.justify-content-center.justify-content-lg-start.pt-2
 		ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-between.my-3.my-lg-0
-			li
-				a.nav-link.me-2.ps-0.pb-lg-0(href="/new-link", title="New Link", data-bs-toggle="tooltip", data-bs-placement="bottom")
-					i.bi-link-45deg.fs-5.text-white.align-middle
-					span.d-none.d-lg-inline.text-white.align-middle.ms-2 New Link
-			li
-				a.nav-link.me-2.pb-lg-0(href="/new-note", title="New Note", data-bs-toggle="tooltip", data-bs-placement="bottom")
-					i.bi-file-earmark-text.fs-5.text-white.align-middle
-					span.d-none.d-lg-inline.text-white.align-middle.ms-2 New Note
-			li
-				a.nav-link.me-2.pb-lg-0(href="/new-image", title="New Image", data-bs-toggle="tooltip", data-bs-placement="bottom")
-					i.bi-image.text-white.fs-5.text-white.align-middle
-					span.d-none.d-lg-inline.text-white.align-middle.ms-2 New Image
+			if (session.user)
+				li
+					a.nav-link.me-2.ps-0.pb-lg-0(href="/new-link", title="New Link", data-bs-toggle="tooltip", data-bs-placement="bottom")
+						i.bi-link-45deg.fs-5.text-white.align-middle
+						span.d-none.d-lg-inline.text-white.align-middle.ms-2 New Link
+				li
+					a.nav-link.me-2.pb-lg-0(href="/new-note", title="New Note", data-bs-toggle="tooltip", data-bs-placement="bottom")
+						i.bi-file-earmark-text.fs-5.text-white.align-middle
+						span.d-none.d-lg-inline.text-white.align-middle.ms-2 New Note
+				li
+					a.nav-link.me-2.pb-lg-0(href="/new-image", title="New Image", data-bs-toggle="tooltip", data-bs-placement="bottom")
+						i.bi-image.text-white.fs-5.text-white.align-middle
+						span.d-none.d-lg-inline.text-white.align-middle.ms-2 New Image
 
-			li
-				a.nav-link.pb-lg-0(href="/tags", title="View All Tags", data-bs-toggle="tooltip", data-bs-placement="bottom")
-					i.bi-tag-fill.fs-5.text-white.align-middle
-					span.d-none.d-lg-inline.text-white.align-middle.ms-2 View Tags
+				li
+					a.pb-lg-0.text-white.nav-link.dropdown-toggle#tagsDropdown(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+						i.bi-tag-fill.text-white.fs-5.text-white.align-middle
+						span.d-none.d-lg-inline.text-white.align-middle.ms-2 Tags
 
-		form.col-12.col-lg-auto.mb-lg-0(method="get", action="/search")
-			input.form-control(type="search", name="query", placeholder="Search...", value=(query))
+					.dropdown-menu.dropdown-menu-end(aria-labelledby="tagsDropdown")
+						span.dropdown-header Tags
+
+						a.dropdown-item(href="/tags")
+							i.bi-list.me-2
+							| View All
+
+						.dropdown-divider
+
+						span.dropdown-header Favorite Tags
+
+						if (session.user.favoriteTags)
+							each tag in session.user.favoriteTags
+								a.dropdown-item(href=`/tags/${tag}`)
+									i.bi-tag-fill.me-2
+									| #{tag}
+
+						else
+							span.dropdown-item -
+
+
+					if (false)
+						a.nav-link.pb-lg-0(href="/tags", title="View All Tags", data-bs-toggle="tooltip", data-bs-placement="bottom")
+							i.bi-tag-fill.fs-5.text-white.align-middle
+							span.d-none.d-lg-inline.text-white.align-middle.ms-2 View Tags
+
+		if (session.username)
+			form.col-12.col-lg-auto.mb-lg-0(method="get", action="/search")
+				input.form-control(type="search", name="query", placeholder="Search...", value=(query))
 		

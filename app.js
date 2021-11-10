@@ -153,6 +153,9 @@ expressApp.use(async (req, res, next) => {
 		userSettings.uiTheme = "light";
 	}
 
+
+	res.locals.user = req.session.user;
+
 	
 
 	res.locals.url = req.url;
