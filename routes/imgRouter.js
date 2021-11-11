@@ -44,7 +44,8 @@ router.get("/item/:itemId/:size", asyncHandler(async (req, res, next) => {
 
 		res.writeHead(200, {
 			'Content-Type': 'image/png',
-			'Content-Length': imgBuffer.length
+			'Content-Length': imgBuffer.length,
+			"Cache-Control": `max-age=${60 * 60 * 24 * 365}`
 		});
 
 		res.end(imgBuffer, "binary");
