@@ -72,7 +72,7 @@ mixin itemAdminMenu
 
 
 			else if (!item.hasImage)
-				.mb-2
+				div(class=(item.tags || (item.createdAt && !itemListPage) ? "mb-3" : false))
 					a.text-reset.text-decoration-none.text-muted(href=`./item/${item._id}`) (no description)
 
 			if (item.url)
