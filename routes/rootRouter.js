@@ -300,6 +300,42 @@ router.post("/new-note", asyncHandler(async (req, res, next) => {
 		item.tags = req.body.tags.split(",").map(x => x.trim().toLowerCase());
 	}
 
+	if (req.body.dueDate) {
+		let dueDate = DateTime.fromISO(req.body.dueDate);
+		
+		if (dueDate.invalid) {
+			dueDate = DateTime.fromSQL(req.body.dueDate);
+		}
+
+		if (!dueDate.invalid) {
+			item.dueDate = dueDate;
+		}
+	}
+
+	if (req.body.startDate) {
+		let startDate = DateTime.fromISO(req.body.startDate);
+		
+		if (startDate.invalid) {
+			startDate = DateTime.fromSQL(req.body.startDate);
+		}
+
+		if (!startDate.invalid) {
+			item.startDate = startDate;
+		}
+	}
+
+	if (req.body.endDate) {
+		let endDate = DateTime.fromISO(req.body.endDate);
+		
+		if (endDate.invalid) {
+			endDate = DateTime.fromSQL(req.body.endDate);
+		}
+
+		if (!endDate.invalid) {
+			item.endDate = endDate;
+		}
+	}
+
 	const savedItemId = await db.insertOne("items", item);
 
 	req.session.userMessage = "Saved!";
@@ -326,6 +362,42 @@ router.post("/edit-note/:itemId", asyncHandler(async (req, res, next) => {
 
 	if (req.body.textType) {
 		item.textType = req.body.textType;
+	}
+
+	if (req.body.dueDate) {
+		let dueDate = DateTime.fromISO(req.body.dueDate);
+		
+		if (dueDate.invalid) {
+			dueDate = DateTime.fromSQL(req.body.dueDate);
+		}
+
+		if (!dueDate.invalid) {
+			item.dueDate = dueDate;
+		}
+	}
+
+	if (req.body.startDate) {
+		let startDate = DateTime.fromISO(req.body.startDate);
+		
+		if (startDate.invalid) {
+			startDate = DateTime.fromSQL(req.body.startDate);
+		}
+
+		if (!startDate.invalid) {
+			item.startDate = startDate;
+		}
+	}
+
+	if (req.body.endDate) {
+		let endDate = DateTime.fromISO(req.body.endDate);
+		
+		if (endDate.invalid) {
+			endDate = DateTime.fromSQL(req.body.endDate);
+		}
+
+		if (!endDate.invalid) {
+			item.endDate = endDate;
+		}
 	}
 
 	const itemsCollection = await db.getCollection("items");

@@ -8,16 +8,35 @@ block content
 	hr
 
 	form(method="post", action=`/edit-note/${item._id}`)
-		fieldset.mb-4
-			textarea#text.form-control(name="text", placeholder="text / description", rows="15") #{item.text}
+		fieldset.mb-3
+			textarea#text.form-control(name="text", placeholder="Text / Description", rows="15") #{item.text}
 
-		fieldset.mb-4
-			input#tags.form-control(name="tags", placeholder="tags", value=(item.tags ? item.tags.join(",") : ""))
+		.row
+			.col-md-6
+				fieldset.mb-3
+					label(for="tags") Tags
+					input#tags.form-control(name="tags", placeholder="Tags", value=(item.tags ? item.tags.join(",") : ""))
 
-		fieldset.mb-4
-			input#url.form-control(name="url", placeholder="url", value=item.url)
+			.col-md-6
+				fieldset.mb-3
+					label(for="url") URL
+					input#url.form-control(name="url", placeholder="URL", value=item.url)
 
-		fieldset.mb-4
+		fieldset.mb-3
+			.row
+				.col-md-4
+					label(for="dueDate") Due Date
+					input#imgUrl.form-control(name="dueDate", placeholder="Due date", value=item.dueDate)
+
+				.col-md-4
+					label(for="startDate") Start Date
+					input#imgUrl.form-control(name="startDate", placeholder="Start date", value=item.startDate)
+
+				.col-md-4
+					label(for="endDate") End Date
+					input#imgUrl.form-control(name="endDate", placeholder="End date", value=item.endDate)
+
+		fieldset.mb-3
 			.form-check.form-check-inline
 				input.form-check-input(type="radio", name="textType", id="textTypeMarkdown", value="markdown", checked=(item.textType == "markdown" ? "checked" : false))
 				label.form-check-label(for="textTypeMarkdown") Markdown

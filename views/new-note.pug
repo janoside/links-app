@@ -8,14 +8,33 @@ block content
 	hr
 
 	form(method="post", action="/new-note")
-		fieldset.mb-4
-			textarea#text.form-control(name="text", placeholder="text", rows="15")
+		fieldset.mb-3
+			textarea#text.form-control(name="text", placeholder="Text", rows="15")
 
-		fieldset.mb-4
-			input#tags.form-control(name="tags", placeholder="tags")
+		.row
+			.col-md-6
+				fieldset.mb-3
+					label(for="tags") Tags
+					input#tags.form-control(name="tags", placeholder="Tags")
 
-		fieldset.mb-4
-			input#url.form-control(name="url", placeholder="url")
+			.col-md-6
+				fieldset.mb-3
+					label(for="url") URL
+					input#url.form-control(name="url", placeholder="URL")
+
+		fieldset.mb-3
+			.row
+				.col-md-4
+					label(for="dueDate") Due Date
+					input#imgUrl.form-control(name="dueDate", placeholder="Due date")
+
+				.col-md-4
+					label(for="startDate") Start Date
+					input#imgUrl.form-control(name="startDate", placeholder="Start date")
+
+				.col-md-4
+					label(for="endDate") End Date
+					input#imgUrl.form-control(name="endDate", placeholder="End date")
 
 		fieldset.mb-4
 			.form-check.form-check-inline

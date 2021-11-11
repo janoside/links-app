@@ -76,6 +76,42 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 		item.tags = fields.tags.split(",").map(x => x.trim().toLowerCase());
 	}
 
+	if (fields.dueDate) {
+		let dueDate = DateTime.fromISO(fields.dueDate);
+		
+		if (dueDate.invalid) {
+			dueDate = DateTime.fromSQL(fields.dueDate);
+		}
+
+		if (!dueDate.invalid) {
+			item.dueDate = dueDate;
+		}
+	}
+
+	if (fields.startDate) {
+		let startDate = DateTime.fromISO(fields.startDate);
+		
+		if (startDate.invalid) {
+			startDate = DateTime.fromSQL(fields.startDate);
+		}
+
+		if (!startDate.invalid) {
+			item.startDate = startDate;
+		}
+	}
+
+	if (fields.endDate) {
+		let endDate = DateTime.fromISO(fields.endDate);
+		
+		if (endDate.invalid) {
+			endDate = DateTime.fromSQL(fields.endDate);
+		}
+
+		if (!endDate.invalid) {
+			item.endDate = endDate;
+		}
+	}
+
 
 	let itemId = existingItemId;
 	if (existingItemId == null) {

@@ -1,7 +1,7 @@
 mixin itemAdminMenu
-	a.me-3(href=`/item/${item._id}/edit`, title="Edit this item", data-bs-toggle="tooltip")
+	a.me-5(href=`/item/${item._id}/edit`, title="Edit this item", data-bs-toggle="tooltip")
 		i.bi-pencil-square.text-primary
-	a.me-3(href=`/item/${item._id}/raw`, title="View raw data", data-bs-toggle="tooltip")
+	a.me-5(href=`/item/${item._id}/raw`, title="View raw data", data-bs-toggle="tooltip")
 		i.bi-info-circle.text-primary
 	a(href=`/item/${item._id}/delete`, title="Delete this item...", data-bs-toggle="tooltip")
 		i.bi-trash.text-danger
@@ -23,13 +23,18 @@ mixin itemAdminMenu
 
 .card.shadow-sm.mb-3.mb-md-2
 	.card-body
+		if (item.dueDate)
+			span.badge.bg-info.mb-2(title=`Due Date: ${utils.formatDate(item.dueDate, "MMM d, yyyy")}`, data-bs-toggle="tooltip")
+				i.bi-clock
+				span.ms-1 #{utils.formatDate(item.dueDate, "MMM d, yyyy")}
+
 		if (item.hasImage)
 			.text-center(class=(item.text ? "mb-2" : (!itemListPage ? "mb-3" : false)))
 				a(href=`./item/${item._id}`)
 					- var smallestImgSize = item.imageSizes[0];
 					- var largestImgSize = item.imageSizes[item.imageSizes.length - 1];
 					- var imageSize = (itemListPage ? smallestImgSize : largestImgSize);
-					img.rounded-1.text-center(src=`./img/item/${item._id.toString()}/${imageSize}`, style="max-width: 100%;")
+					img.rounded-1.text-center(data-lazysrc=`./img/item/${item._id.toString()}/${imageSize}`, style="max-width: 100%;")
 
 		.item-body
 			if (item.text)
@@ -103,6 +108,6 @@ mixin itemAdminMenu
 			.d-flex.d-lg-none.justify-content-between.fs-4
 				+itemAdminMenu
 
-			.d-none.d-lg-flex.justify-content-start
+			.d-none.d-lg-flex.justify-content-start.fs-6
 				+itemAdminMenu
 				

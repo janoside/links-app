@@ -8,12 +8,12 @@ block content
 	hr
 
 	form(method="post", action="/new-image", enctype="multipart/form-data")
-		fieldset.mb-4
+		fieldset.mb-3
 			.row
 				.col-md-5
 					label(for="img") Image File
 						span.text-muted.ms-2 (optional)
-					input#img.form-control(name="img", type="file", placeholder="image file")
+					input#img.form-control(name="img", type="file", placeholder="Image File")
 
 				.col-md-1.pt-4.text-center
 					span - OR -
@@ -22,16 +22,37 @@ block content
 					
 
 					label(for="imgUrl") Image URL
-					input#imgUrl.form-control(name="imgUrl", placeholder="image url")
+					input#imgUrl.form-control(name="imgUrl", placeholder="Image URL")
 
-		fieldset.mb-4
-			input#url.form-control(name="url", placeholder="url")
+		fieldset.mb-3
+			label(for="text") Text / Description
+			input#text.form-control(name="text", placeholder="Text / Description")
 
-		fieldset.mb-4
-			input#text.form-control(name="text", placeholder="text / description")
+		.row
+			.col-md-6
+				fieldset.mb-3
+					label(for="tags") Tags
+					input#tags.form-control(name="tags", placeholder="Tags")
 
-		fieldset.mb-4
-			input#tags.form-control(name="tags", placeholder="tags")
+			.col-md-6
+				fieldset.mb-3
+					label(for="url") URL
+					input#url.form-control(name="url", placeholder="URL")
+
+		fieldset.mb-3
+			.row
+				.col-md-4
+					label(for="dueDate") Due Date
+					input#imgUrl.form-control(name="dueDate", placeholder="Due date")
+
+				.col-md-4
+					label(for="startDate") Start Date
+					input#imgUrl.form-control(name="startDate", placeholder="Start date")
+
+				.col-md-4
+					label(for="endDate") End Date
+					input#imgUrl.form-control(name="endDate", placeholder="End date")
+
 
 		.d-grid
 			button.btn.btn-primary(type="submit") Save

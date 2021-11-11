@@ -66,9 +66,10 @@ $dropdown-header-color: darken($body-color, 25%);
 $dropdown-box-shadow: 0 1.5rem 1rem rgba(#000, .35);
 
 
-$input-bg: darken(#fff, 0%);
-//$input-border-color: lighten($input-bg, 9%);
-$input-color: #212529;
+$input-bg: lighten($main-bg, 4%);
+$input-focus-bg: lighten($input-bg, 3%);
+$input-border-color: lighten($input-bg, 12%);
+$input-placeholder-color: #6c757d;
 
 
 $modal-content-bg: $body-bg;
@@ -121,6 +122,9 @@ $modal-content-color: $body-color;
 	border-color: lighten(#198754, 5%);
 	border-width: 2px;
 }
+
+
+
 
 
 
