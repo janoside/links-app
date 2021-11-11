@@ -154,6 +154,10 @@ $modal-content-color: $body-color;
 	background-color: lighten($card-bg, 5%);
 }
 
+.card hr {
+	opacity: 0.125;
+}
+
 code {
 	padding: 0px 30px;
 	border-radius: 3px;

@@ -21,10 +21,10 @@ mixin itemAdminMenu
 					i.bi-trash.me-2
 					| Delete this item
 
-.card.shadow-sm.mb-2
+.card.shadow-sm.mb-3.mb-md-2
 	.card-body
 		if (item.hasImage)
-			.text-center(class=(item.text ? "mb-2" : false))
+			.text-center(class=(item.text ? "mb-2" : (!itemListPage ? "mb-3" : false)))
 				a(href=`./item/${item._id}`)
 					- var smallestImgSize = item.imageSizes[0];
 					- var largestImgSize = item.imageSizes[item.imageSizes.length - 1];
@@ -43,7 +43,7 @@ mixin itemAdminMenu
 									pre #{utils.ellipsize(item.text, ellipsizeLength)}
 
 								else if (item.textType == "markdown")
-									article.markdown-body !{marked(utils.ellipsize(item.text, ellipsizeLength))}
+									article.markdown-body !{marked.parse(utils.ellipsize(item.text, ellipsizeLength))}
 
 								else
 									span.text-danger Unknown textType: #{item.textType}
@@ -58,7 +58,7 @@ mixin itemAdminMenu
 								pre #{item.text}
 
 							else if (item.textType == "markdown")
-								article.markdown-body !{marked(item.text)}
+								article.markdown-body !{marked.parse(item.text)}
 
 							else
 								span.text-danger Unknown textType: #{item.textType}
@@ -77,7 +77,7 @@ mixin itemAdminMenu
 					a(href=item.url, target="_blank") #{hostname}
 		
 		if (item.tags || (item.createdAt && !itemListPage))
-			hr
+			hr.mx-n3
 
 		if (item.tags)
 			div(class=(item.createdAt && !itemListPage ? "mb-2" : false))
@@ -100,6 +100,9 @@ mixin itemAdminMenu
 
 	if (session.user && item.userId == session.user._id)
 		.card-footer
-			.d-flex.justify-content-between.justify-content-xl-start
+			.d-flex.d-lg-none.justify-content-between.fs-4
+				+itemAdminMenu
+
+			.d-none.d-lg-flex.justify-content-start
 				+itemAdminMenu
 				
