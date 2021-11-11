@@ -150,6 +150,10 @@ $modal-content-color: $body-color;
 	color: $body-color;
 }
 
+.card-footer {
+	background-color: lighten($card-bg, 5%);
+}
+
 code {
 	padding: 0px 30px;
 	border-radius: 3px;

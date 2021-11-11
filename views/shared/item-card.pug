@@ -1,9 +1,9 @@
 mixin itemAdminMenu
-	a.me-3(href=`/item/${item._id}/edit`, title="Edit this item")
+	a.me-3(href=`/item/${item._id}/edit`, title="Edit this item", data-bs-toggle="tooltip")
 		i.bi-pencil-square.text-primary
-	a.me-3(href=`/item/${item._id}/raw`, title="View raw data")
+	a.me-3(href=`/item/${item._id}/raw`, title="View raw data", data-bs-toggle="tooltip")
 		i.bi-info-circle.text-primary
-	a(href=`/item/${item._id}/delete`, title="Delete this item...")
+	a(href=`/item/${item._id}/delete`, title="Delete this item...", data-bs-toggle="tooltip")
 		i.bi-trash.text-danger
 
 	if (false)
@@ -24,16 +24,16 @@ mixin itemAdminMenu
 .card.shadow-sm.mb-2
 	.card-body
 		if (item.hasImage)
-			.text-center.mb-2
+			.text-center(class=(item.text ? "mb-2" : false))
 				a(href=`./item/${item._id}`)
 					- var smallestImgSize = item.imageSizes[0];
 					- var largestImgSize = item.imageSizes[item.imageSizes.length - 1];
 					- var imageSize = (itemListPage ? smallestImgSize : largestImgSize);
-					img.text-center(src=`./img/item/${item._id.toString()}/${imageSize}`, style="max-width: 100%;")
+					img.rounded-1.text-center(src=`./img/item/${item._id.toString()}/${imageSize}`, style="max-width: 100%;")
 
 		.item-body
-			.mb-2
-				if (item.text)
+			if (item.text)
+				.mb-2
 					if (itemListPage)
 						- var ellipsizeLength = 400;
 
@@ -66,7 +66,8 @@ mixin itemAdminMenu
 							| #{item.text}
 
 
-				else if (!item.hasImage)
+			else if (!item.hasImage)
+				.mb-2
 					a.text-reset.text-decoration-none.text-muted(href=`./item/${item._id}`) (no description)
 
 			if (item.url)
@@ -75,45 +76,30 @@ mixin itemAdminMenu
 				p
 					a(href=item.url, target="_blank") #{hostname}
 		
-		hr
+		if (item.tags || (item.createdAt && !itemListPage))
+			hr
 
-		.clearfix
-			.float-start
-				if (item.tags)
-					.mb-2
-						each tag, tagIndex in item.tags
-							if (tags)
-								- var newTags = [];
-								- tags.forEach(x => newTags.push(x));
-								- if (!newTags.includes(tag)) { newTags.push(tag); }
+		if (item.tags)
+			div(class=(item.createdAt && !itemListPage ? "mb-2" : false))
+				each tag, tagIndex in item.tags
+					if (tags)
+						- var newTags = [];
+						- tags.forEach(x => newTags.push(x));
+						- if (!newTags.includes(tag)) { newTags.push(tag); }
 
-								a.badge.bg-primary.me-1(href=`/tags/${newTags.join(",")}`)
-									i.bi-tag-fill.me-1
-									| #{tag}
-							else
-								a.badge.bg-primary.me-1(href=`/tags/${tag}`)
-									i.bi-tag-fill.me-1
-									| #{tag}
+						a.badge.bg-primary.me-1(href=`/tags/${newTags.join(",")}`)
+							i.bi-tag-fill.me-1
+							| #{tag}
+					else
+						a.badge.bg-primary.me-1(href=`/tags/${tag}`)
+							i.bi-tag-fill.me-1
+							| #{tag}
 
-				if (item.createdAt)
-					.d-block.d-md-none
-						| #{utils.formatDate(item.createdAt, "MMM d, yyyy")}
+		if (item.createdAt && !itemListPage)
+			div #{utils.formatDate(item.createdAt, "MMM d, yyyy")}
 
-
-			.float-end.d-md-none
-				if (session.user && item.userId == session.user._id)
-					div.text-end(class=(item.date ? "mt-2" : false))
-						+itemAdminMenu
-				
-				else
-					// no quote-management dropdown
-
-
-			.float-md-end.d-none.d-md-block.text-md-end
-				if (item.createdAt && !itemListPage)
-					| #{utils.formatDate(item.createdAt, "MMM d, yyyy")}
-
-				.d-none.d-md-block.text-end(class=(itemListPage ? false : "pt-2"))
-					if (session.user && item.userId == session.user._id)
-						+itemAdminMenu
+	if (session.user && item.userId == session.user._id)
+		.card-footer
+			.d-flex.justify-content-between.justify-content-xl-start
+				+itemAdminMenu
 				
