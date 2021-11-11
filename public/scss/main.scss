@@ -317,9 +317,22 @@ pre {
 	line-height: 1.5;
 }
 
+.markdown-body table {
+	display: block;
+	width: 100%;
+	width: max-content;
+	max-width: 100%;
+	overflow: auto;
+}
+
 .markdown-body p, .markdown-body blockquote, .markdown-body ul, .markdown-body ol, .markdown-body dl, .markdown-body table, .markdown-body pre, .markdown-body details {
 	margin-top: 0;
 	margin-bottom: 1rem;
+}
+
+.markdown-body table th, .markdown-body table td {
+	padding: 6px 13px;
+	border: 1px solid #bbb;
 }
 
 .markdown-body pre {

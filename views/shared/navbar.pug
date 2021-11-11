@@ -102,5 +102,8 @@
 
 		if (session.username)
 			form.col-12.col-lg-auto.mb-lg-0(method="get", action="/search")
-				input.form-control(type="search", name="query", placeholder="Search...", value=(query))
+				.input-group
+					input.form-control(type="search", name="query", placeholder="Search...", value=(query))
+					button.btn.btn-light(type="submit")
+						i.bi-search
 		

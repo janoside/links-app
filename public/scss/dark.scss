@@ -173,3 +173,7 @@ code {
 .markdown-body pre {
 	background-color: lighten($card-bg, 6%);
 }
+
+.markdown-body table th, .markdown-body table td {
+	border: 1px solid lighten($card-bg, 15%);
+}
