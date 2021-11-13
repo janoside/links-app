@@ -1,109 +1,120 @@
-.p-3
-	.d-flex.justify-content-between
-		div
-			a.mb-2.mb-lg-0.text-white.text-decoration-none(href="/")
-				img.rounded(src="/img/icon/favicon-32x32.png" srcset="/img/icon/favicon-32x32.png 1x, /img/icon/apple-touch-icon.png 2x" alt="logo" style="width: 40px; height: 40px;")
-				span.fs-4.align-middle.ms-2 #{global.appConfig.siteName}
-
-		if (session.username)
+.bg-header-footer.mb-5
+	.p-3
+		.d-flex.justify-content-between
 			div
-				a.btn.btn-primary#navbarDropdown.text-white.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-					i.bi-person-circle.me-2
+				a.mb-2.mb-lg-0.text-white.text-decoration-none(href="/")
+					img.rounded(src="/img/icon/favicon-32x32.png" srcset="/img/icon/favicon-32x32.png 1x, /img/icon/apple-touch-icon.png 2x" alt="logo" style="width: 40px; height: 40px;")
+					span.fs-4.align-middle.ms-2 #{global.appConfig.siteName}
 
-				.dropdown-menu.dropdown-menu-end(aria-labelledby="navbarDropdown")
-					span.dropdown-header #{session.username}
-
-					.dropdown-divider
-
-					a.dropdown-item(href="/account")
+			if (session.username)
+				div
+					a.btn.btn-primary#navbarDropdown.text-white.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 						i.bi-person-circle.me-2
-						| My Account
 
-					a.dropdown-item(href="/settings")
-						i.bi-gear.me-2
-						| Settings
-
-					if (session.user && session.user.roles && session.user.roles.includes("admin"))
-						a.dropdown-item(href="/admin")
-							i.bi-shield-lock.me-2
-							| Admin
-
-					.dropdown-divider
-
-					a.dropdown-item(href=`./changeSetting?name=uiTheme&value=dark`)
-						.d-flex.justify-content-between
-							div
-								i.bi-moon.me-2
-								| Dark
-							div
-								if (userSettings.uiTheme == "dark")
-									i.bi-check.fs-5
-
-					a.dropdown-item(href=`./changeSetting?name=uiTheme&value=light`)
-						.d-flex.justify-content-between
-							div
-								i.bi-sun.me-2
-								| Light
-							div
-								if (userSettings.uiTheme == "light")
-									i.bi-check.fs-5
-
-					.dropdown-divider
-					a.dropdown-item(href="/logout")
-						i.bi-box-arrow-right.me-2
-						| Logout
-
-	.d-flex.flex-wrap.align-items-center.justify-content-center.justify-content-lg-start.pt-2
-		ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-between.my-3.my-lg-0
-			if (session.user)
-				li
-					a.nav-link.me-2.ps-0.pb-lg-0(href="/new-link", title="New Link", data-bs-toggle="tooltip", data-bs-placement="bottom")
-						i.bi-link-45deg.fs-5.text-white.align-middle
-						span.d-none.d-lg-inline.text-white.align-middle.ms-1 Link
-				li
-					a.nav-link.me-2.pb-lg-0(href="/new-note", title="New Note", data-bs-toggle="tooltip", data-bs-placement="bottom")
-						i.bi-file-earmark-text.fs-5.text-white.align-middle
-						span.d-none.d-lg-inline.text-white.align-middle.ms-1 Note
-				li
-					a.nav-link.me-2.pb-lg-0(href="/new-image", title="New Image", data-bs-toggle="tooltip", data-bs-placement="bottom")
-						i.bi-image.text-white.fs-5.text-white.align-middle
-						span.d-none.d-lg-inline.text-white.align-middle.ms-1 Image
-
-				li
-					a.pb-lg-0.text-white.nav-link.dropdown-toggle#tagsDropdown(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
-						i.bi-tag-fill.text-white.fs-5.text-white.align-middle
-						span.d-none.d-lg-inline.text-white.align-middle.ms-1 Tags
-
-					.dropdown-menu.dropdown-menu-end(aria-labelledby="tagsDropdown")
-						span.dropdown-header Tags
-
-						a.dropdown-item(href="/tags")
-							i.bi-list.me-2
-							| View All
+					.dropdown-menu.dropdown-menu-end(aria-labelledby="navbarDropdown")
+						span.dropdown-header #{session.username}
 
 						.dropdown-divider
 
-						span.dropdown-header Favorite Tags
+						a.dropdown-item(href="/account")
+							i.bi-person-circle.me-2
+							| My Account
 
-						if (session.user.favoriteTags)
-							each tag in session.user.favoriteTags
-								a.dropdown-item(href=`/tags/${tag}`)
-									i.bi-tag-fill.me-2
-									| #{tag}
+						a.dropdown-item(href="/settings")
+							i.bi-gear.me-2
+							| Settings
 
-						else
-							span.dropdown-item -
+						if (session.user && session.user.roles && session.user.roles.includes("admin"))
+							a.dropdown-item(href="/admin")
+								i.bi-shield-lock.me-2
+								| Admin
+
+						.dropdown-divider
+
+						a.dropdown-item(href=`./changeSetting?name=uiTheme&value=dark`)
+							.d-flex.justify-content-between
+								div
+									i.bi-moon.me-2
+									| Dark
+								div
+									if (userSettings.uiTheme == "dark")
+										i.bi-check.fs-5
+
+						a.dropdown-item(href=`./changeSetting?name=uiTheme&value=light`)
+							.d-flex.justify-content-between
+								div
+									i.bi-sun.me-2
+									| Light
+								div
+									if (userSettings.uiTheme == "light")
+										i.bi-check.fs-5
+
+						.dropdown-divider
+						a.dropdown-item(href="/logout")
+							i.bi-box-arrow-right.me-2
+							| Logout
+
+		.d-flex.flex-wrap.align-items-center.justify-content-center.justify-content-lg-start.pt-2
+			ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-between.my-3.my-lg-0
+				if (session.user)
+					li
+						a.nav-link.me-2.ps-0.pb-lg-0(href="/new-link", title="New Link", data-bs-toggle="tooltip", data-bs-placement="bottom")
+							i.bi-link-45deg.fs-5.text-white.align-middle
+							span.d-none.d-lg-inline.text-white.align-middle.ms-1 Link
+					li
+						a.nav-link.me-2.pb-lg-0(href="/new-note", title="New Note", data-bs-toggle="tooltip", data-bs-placement="bottom")
+							i.bi-file-earmark-text.fs-5.text-white.align-middle
+							span.d-none.d-lg-inline.text-white.align-middle.ms-1 Note
+					li
+						a.nav-link.me-2.pb-lg-0(href="/new-image", title="New Image", data-bs-toggle="tooltip", data-bs-placement="bottom")
+							i.bi-image.text-white.fs-5.text-white.align-middle
+							span.d-none.d-lg-inline.text-white.align-middle.ms-1 Image
+
+					li
+						a.pb-lg-0.text-white.nav-link.dropdown-toggle#tagsDropdown(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+							i.bi-tag-fill.text-white.fs-5.text-white.align-middle
+							span.d-none.d-lg-inline.text-white.align-middle.ms-1 Tags
+
+						.dropdown-menu.dropdown-menu-end(aria-labelledby="tagsDropdown")
+							span.dropdown-header Tags
+
+							a.dropdown-item(href="/tags")
+								i.bi-list.me-2
+								| View All
+
+							.dropdown-divider
+
+							span.dropdown-header Favorite Tags
+
+							if (session.user.favoriteTags)
+								each tag in session.user.favoriteTags
+									a.dropdown-item(href=`/tags/${tag}`)
+										i.bi-tag-fill.me-2
+										| #{tag}
+
+							else
+								span.dropdown-item -
 
 
-					if (false)
-						a.nav-link.pb-lg-0(href="/tags", title="View All Tags", data-bs-toggle="tooltip", data-bs-placement="bottom")
-							i.bi-tag-fill.fs-5.text-white.align-middle
-							span.d-none.d-lg-inline.text-white.align-middle.ms-2 View Tags
+						if (false)
+							a.nav-link.pb-lg-0(href="/tags", title="View All Tags", data-bs-toggle="tooltip", data-bs-placement="bottom")
+								i.bi-tag-fill.fs-5.text-white.align-middle
+								span.d-none.d-lg-inline.text-white.align-middle.ms-2 View Tags
 
-		if (session.username)
-			form.col-12.col-lg-auto.mb-lg-0(method="get", action="/search")
-				.input-group
-					input.form-control(type="search", name="query", placeholder="Search...", value=(query))
-					button.btn.btn-light(type="submit")
-						i.bi-search
-		
+			if (session.username)
+				form.col-12.col-lg-auto.mb-lg-0(method="get", action="/search")
+					.input-group
+						input.form-control(type="search", name="query", placeholder="Search...", value=(query))
+						button.btn.btn-light(type="submit")
+							i.bi-search
+
+	if (session.user.favoriteTags)
+		.p-0.bg-header-footer-highlight.border-bottom
+			.d-flex.flex-wrap.align-items-center.justify-content-center.justify-content-lg-start.py-1.ps-2
+				ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-between.my-3.my-lg-0
+					each tag in session.user.favoriteTags
+						li
+							a.nav-link.px-2.pe-3.text-white(href=`/tags/${tag}`)
+								i.bi-tag-fill.me-2
+								| #{tag}
+				
