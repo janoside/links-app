@@ -35,7 +35,19 @@ $container-max-widths: (
 	xxxl: 1600px
 ) !default;*/
 
-$grid-gutter-width: 0.5rem;
+$grid-gutter-width: 1.0rem;
+
+$card-border-width: 0;
+
+
+$box-shadow:                  0 .5rem 1rem rgba(#000, .35) !default;
+$box-shadow-sm:               0 .125rem .25rem rgba(#000, .275) !default;
+$box-shadow-lg:               0 1rem 3rem rgba(#000, .375) !default;
+$box-shadow-inset:            inset 0 1px 2px rgba(#000, .275) !default;
+
+
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
 
 
 $btn-padding-y-sm: 0.2rem;
@@ -294,6 +306,14 @@ hr {
 	text-decoration: none;
 }
 
+.non-underline-link {
+	text-decoration: none;
+}
+
+.non-underline-link:hover {
+	text-decoration: underline;
+}
+
 
 
 h1 .badge {
@@ -306,6 +326,18 @@ a.badge:hover {
 	color: #fff;
 }
 
+
+
+
+.item-list h1, .item-list h2, .item-list h3 {
+	font-size: 1.25rem;
+	font-weight: bold;
+}
+
+.item-list h4, .item-list h5, .item-list h6 {
+	font-size: 1rem;
+	font-weight: bold;
+}
 
 
 
@@ -358,4 +390,10 @@ pre {
 .markdown-body ul ul, .markdown-body ul ol, .markdown-body ol ol, .markdown-body ol ul {
 	margin-top: 0;
 	margin-bottom: 0;
+}
+
+.markdown-body blockquote {
+	padding: 0 1em;
+	color: $gray-600;
+	border-left: .25em solid $text-muted;
 }

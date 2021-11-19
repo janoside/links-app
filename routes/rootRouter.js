@@ -53,6 +53,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			},
 			{
 				sort: [
+					["pinned", -1],
 					["createdAt", dateSortVal]
 				]
 			},
@@ -446,6 +447,15 @@ router.get("/item/:itemId/edit", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
 	const item = await db.findOne("items", {_id:ObjectId(itemId)});
 
+	if (item.locked) {
+		req.session.userMessage = "This item is locked. It must be unlocked before it may be edited.";
+		req.session.userMessageType = "warning";
+
+		res.redirect(`/item/${itemId}`);
+
+		return;
+	}
+
 	res.locals.item = item;
 
 	if (!item.type || item.type == "link") {
@@ -493,6 +503,15 @@ router.get("/item/:itemId/delete", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
 	const item = await db.findOne("items", {_id:ObjectId(itemId)});
 
+	if (item.locked) {
+		req.session.userMessage = "This item is locked. It must be unlocked before it may be deleted.";
+		req.session.userMessageType = "warning";
+
+		res.redirect(`/item/${itemId}`);
+
+		return;
+	}
+
 	res.locals.item = item;
 
 	res.render("delete-item");
@@ -518,6 +537,54 @@ router.post("/item/:itemId/delete", asyncHandler(async (req, res, next) => {
 	req.session.userMessageType = "success";
 
 	res.redirect("/");
+}));
+
+router.get("/item/:itemId/pin", asyncHandler(async (req, res, next) => {
+	const itemId = req.params.itemId;
+
+	const itemsCollection = await db.getCollection("items");
+	const result = await itemsCollection.updateOne({_id:ObjectId(itemId)}, {$set: {pinned: true}});
+
+	req.session.userMessage = "Item pinned";
+	req.session.userMessageType = "success";
+
+	res.redirect(req.headers.referer);
+}));
+
+router.get("/item/:itemId/unpin", asyncHandler(async (req, res, next) => {
+	const itemId = req.params.itemId;
+
+	const itemsCollection = await db.getCollection("items");
+	const result = await itemsCollection.updateOne({_id:ObjectId(itemId)}, {$unset: {pinned: true}});
+
+	req.session.userMessage = "Item unpinned";
+	req.session.userMessageType = "success";
+
+	res.redirect(req.headers.referer);
+}));
+
+router.get("/item/:itemId/lock", asyncHandler(async (req, res, next) => {
+	const itemId = req.params.itemId;
+
+	const itemsCollection = await db.getCollection("items");
+	const result = await itemsCollection.updateOne({_id:ObjectId(itemId)}, {$set: {locked: true}});
+
+	req.session.userMessage = "Item locked";
+	req.session.userMessageType = "success";
+
+	res.redirect(req.headers.referer);
+}));
+
+router.get("/item/:itemId/unlock", asyncHandler(async (req, res, next) => {
+	const itemId = req.params.itemId;
+
+	const itemsCollection = await db.getCollection("items");
+	const result = await itemsCollection.updateOne({_id:ObjectId(itemId)}, {$unset: {locked: true}});
+
+	req.session.userMessage = "Item unlocked";
+	req.session.userMessageType = "success";
+
+	res.redirect(req.headers.referer);
 }));
 
 router.get("/items", asyncHandler(async (req, res, next) => {
@@ -583,6 +650,40 @@ router.get("/items", asyncHandler(async (req, res, next) => {
 	res.locals.paginationBaseUrl = `/items`;
 
 	res.render("user-items");
+}));
+
+router.get("/pinned", asyncHandler(async (req, res, next) => {
+	const items = await db.findMany(
+		"items",
+		{
+			userId: req.session.user._id.toString(),
+			pinned: true
+		},
+		{
+			sort: [
+				["createdAt", -1]
+			]
+		});
+
+	const itemsCollection = await db.getCollection("items");
+
+	const itemCount = await itemsCollection.countDocuments({
+		userId: req.session.user._id.toString(),
+		pinned: true
+	});
+
+	const tagsData = await itemsCollection.aggregate([
+		{ $match: { userId: req.session.user._id.toString(), pinned: true } },
+		{ $unwind: "$tags" },
+		{ $group: { _id: "$tags", count: { $sum: 1 } } },
+		{ $sort: { count: -1, _id: 1 }}
+	]).toArray();
+
+	res.locals.itemCount = itemCount;
+	res.locals.items = items;
+	res.locals.tagsData = tagsData;
+
+	res.render("pinned-items");
 }));
 
 router.get("/tags/:tags", asyncHandler(async (req, res, next) => {

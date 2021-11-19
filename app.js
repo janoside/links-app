@@ -156,6 +156,10 @@ expressApp.use(async (req, res, next) => {
 
 	res.locals.user = req.session.user;
 
+	const itemsCollection = await db.getCollection("items");
+
+	res.locals.pinnedItemCount = await itemsCollection.countDocuments({ userId: req.session.user._id.toString(), pinned:true });
+
 	
 
 	res.locals.url = req.url;
