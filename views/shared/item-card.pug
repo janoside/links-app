@@ -1,7 +1,6 @@
 mixin itemAdminMenu
-	if (!item.locked)
-		a.me-5(href=`/item/${item._id}/edit`, title="Edit this item", data-bs-toggle="tooltip")
-			i.bi-pencil-square.text-primary
+	a.me-5(href=`/item/${item._id}/edit`, title="Edit this item", data-bs-toggle="tooltip")
+		i.bi-pencil-square.text-primary
 
 	if (item.pinned)
 		a.me-5(href=`/item/${item._id}/unpin`, title="Unpin this item", data-bs-toggle="tooltip")

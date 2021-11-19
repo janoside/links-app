@@ -447,15 +447,6 @@ router.get("/item/:itemId/edit", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
 	const item = await db.findOne("items", {_id:ObjectId(itemId)});
 
-	if (item.locked) {
-		req.session.userMessage = "This item is locked. It must be unlocked before it may be edited.";
-		req.session.userMessageType = "warning";
-
-		res.redirect(`/item/${itemId}`);
-
-		return;
-	}
-
 	res.locals.item = item;
 
 	if (!item.type || item.type == "link") {
