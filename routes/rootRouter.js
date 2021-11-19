@@ -849,9 +849,6 @@ router.get("/favorite-tags/add/:tag", asyncHandler(async (req, res, next) => {
 	const usersCollection = await db.getCollection("users");
 	const updateResult = await usersCollection.updateOne({_id:ObjectId(req.session.user._id)}, {$set:{favoriteTags:req.session.user.favoriteTags}});
 
-	// clear this out so that it gets re-computed and cached
-	req.session.favoriteTagCounts = null;
-
 	req.session.userMessage = "Success!";
 	req.session.userMessageType = "success";
 
