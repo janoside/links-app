@@ -124,4 +124,6 @@
 							a.nav-link.px-2.pe-3.text-white(href=`/tags/${tag}`)
 								i.bi-tag-fill.me-1
 								| #{tag}
+								if (favoriteTagCounts && favoriteTagCounts[tag])
+									span.badge.bg-light.text-dark.ms-1 #{favoriteTagCounts[tag].toLocaleString()}
 				

@@ -42,7 +42,7 @@ html
 		script(src="./js/imagesloaded.pkgd.min.js", integrity="sha384-YnGSHPPWEUDKMHFPOVmNP7Xyfwx5G0CHet6IoNgiX6CbFZS8gCeIfEgB1MgPwjdI")
 
 		script.
-			function ReLoadImages(){
+			function ReLoadImages() {
 				$('img[data-lazysrc]').each( function(){
 					//* set the img src from data-src
 					$( this ).attr( 'src', $( this ).attr( 'data-lazysrc' ) );
