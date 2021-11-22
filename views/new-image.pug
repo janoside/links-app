@@ -4,55 +4,55 @@ block headBlock
 	title New Image
 
 block content
-	h1.mb-3 New Image
-	hr
+	.center-col
+		h1.mb-3 New Image
 
-	form(method="post", action="/new-image", enctype="multipart/form-data")
-		fieldset.mb-3
+		form(method="post", action="/new-image", enctype="multipart/form-data")
+			fieldset.mb-3
+				.row
+					.col-md-5
+						label(for="img") Image File
+							span.text-muted.ms-2 (optional)
+						input#img.form-control(name="img", type="file", placeholder="Image File")
+
+					.col-md-1.pt-4.text-center
+						span - OR -
+
+					.col-md-6
+						
+
+						label(for="imgUrl") Image URL
+						input#imgUrl.form-control(name="imgUrl", placeholder="Image URL")
+
+			fieldset.mb-3
+				label(for="text") Text / Description
+				input#text.form-control(name="text", placeholder="Text / Description")
+
 			.row
-				.col-md-5
-					label(for="img") Image File
-						span.text-muted.ms-2 (optional)
-					input#img.form-control(name="img", type="file", placeholder="Image File")
-
-				.col-md-1.pt-4.text-center
-					span - OR -
+				.col-md-6
+					fieldset.mb-3
+						label(for="tags") Tags
+						input#tags.form-control(name="tags", placeholder="Tags")
 
 				.col-md-6
-					
+					fieldset.mb-3
+						label(for="url") URL
+						input#url.form-control(name="url", placeholder="URL")
 
-					label(for="imgUrl") Image URL
-					input#imgUrl.form-control(name="imgUrl", placeholder="Image URL")
+			fieldset.mb-3
+				.row
+					.col-md-4
+						label(for="dueDate") Due Date
+						input#imgUrl.form-control(name="dueDate", placeholder="Due date")
 
-		fieldset.mb-3
-			label(for="text") Text / Description
-			input#text.form-control(name="text", placeholder="Text / Description")
+					.col-md-4
+						label(for="startDate") Start Date
+						input#imgUrl.form-control(name="startDate", placeholder="Start date")
 
-		.row
-			.col-md-6
-				fieldset.mb-3
-					label(for="tags") Tags
-					input#tags.form-control(name="tags", placeholder="Tags")
-
-			.col-md-6
-				fieldset.mb-3
-					label(for="url") URL
-					input#url.form-control(name="url", placeholder="URL")
-
-		fieldset.mb-3
-			.row
-				.col-md-4
-					label(for="dueDate") Due Date
-					input#imgUrl.form-control(name="dueDate", placeholder="Due date")
-
-				.col-md-4
-					label(for="startDate") Start Date
-					input#imgUrl.form-control(name="startDate", placeholder="Start date")
-
-				.col-md-4
-					label(for="endDate") End Date
-					input#imgUrl.form-control(name="endDate", placeholder="End date")
+					.col-md-4
+						label(for="endDate") End Date
+						input#imgUrl.form-control(name="endDate", placeholder="End date")
 
 
-		.d-grid
-			button.btn.btn-primary(type="submit") Save
+			.d-grid
+				button.btn.btn-primary(type="submit") Save

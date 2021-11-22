@@ -4,45 +4,45 @@ block headBlock
 	title New Note
 
 block content
-	h1.mb-3 New Note
-	hr
+	.center-col
+		h1.mb-3 New Note
 
-	form(method="post", action="/new-note")
-		fieldset.mb-3
-			textarea#text.form-control(name="text", placeholder="Text", rows="15")
+		form(method="post", action="/new-note")
+			fieldset.mb-3
+				textarea#text.form-control(name="text", placeholder="Text", rows="30")
 
-		.row
-			.col-md-6
-				fieldset.mb-3
-					label(for="tags") Tags
-					input#tags.form-control(name="tags", placeholder="Tags")
-
-			.col-md-6
-				fieldset.mb-3
-					label(for="url") URL
-					input#url.form-control(name="url", placeholder="URL")
-
-		fieldset.mb-3
 			.row
-				.col-md-4
-					label(for="dueDate") Due Date
-					input#imgUrl.form-control(name="dueDate", placeholder="Due date")
+				.col-md-6
+					fieldset.mb-3
+						label(for="tags") Tags
+						input#tags.form-control(name="tags", placeholder="Tags")
 
-				.col-md-4
-					label(for="startDate") Start Date
-					input#imgUrl.form-control(name="startDate", placeholder="Start date")
+				.col-md-6
+					fieldset.mb-3
+						label(for="url") URL
+						input#url.form-control(name="url", placeholder="URL")
 
-				.col-md-4
-					label(for="endDate") End Date
-					input#imgUrl.form-control(name="endDate", placeholder="End date")
+			fieldset.mb-3
+				.row
+					.col-md-4
+						label(for="dueDate") Due Date
+						input#imgUrl.form-control(name="dueDate", placeholder="Due date")
 
-		fieldset.mb-4
-			.form-check.form-check-inline
-				input.form-check-input(type="radio", name="textType", id="textTypeMarkdown", value="markdown", checked)
-				label.form-check-label(for="textTypeMarkdown") Markdown
-			.form-check.form-check-inline
-				input.form-check-input(type="radio", name="textType", id="textTypePlaintext", value="plaintext")
-				label.form-check-label(for="textTypePlaintext") Plaintext
+					.col-md-4
+						label(for="startDate") Start Date
+						input#imgUrl.form-control(name="startDate", placeholder="Start date")
 
-		.d-grid
-			button.btn.btn-primary(type="submit") Save
+					.col-md-4
+						label(for="endDate") End Date
+						input#imgUrl.form-control(name="endDate", placeholder="End date")
+
+			fieldset.mb-4
+				.form-check.form-check-inline
+					input.form-check-input(type="radio", name="textType", id="textTypeMarkdown", value="markdown", checked)
+					label.form-check-label(for="textTypeMarkdown") Markdown
+				.form-check.form-check-inline
+					input.form-check-input(type="radio", name="textType", id="textTypePlaintext", value="plaintext")
+					label.form-check-label(for="textTypePlaintext") Plaintext
+
+			.d-grid
+				button.btn.btn-primary(type="submit") Save
