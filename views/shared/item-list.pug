@@ -36,8 +36,7 @@
 		.row.masonry
 			each item, itemIndex in items
 				.col-12(class=`col-lg-${12/parseInt(userSettings.listColCount || "3")}`)
-					- var itemListPage = true;
-					include ./item-card.pug
+					+itemCard(item, {listPage:true})
 
 
 		if (itemCount > limit)

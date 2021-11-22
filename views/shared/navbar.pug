@@ -1,14 +1,14 @@
-.bg-header-footer.mb-5
-	.p-3
+.bg-header-footer.mb-4
+	.p-3.pb-2
 		.d-flex.justify-content-between
 			div
 				a.mb-2.mb-lg-0.text-white.text-decoration-none(href="/")
-					img.rounded(src="/img/icon/favicon-32x32.png" srcset="/img/icon/favicon-32x32.png 1x, /img/icon/apple-touch-icon.png 2x" alt="logo" style="width: 40px; height: 40px;")
+					img.rounded(src="/img/icon/favicon-32x32.png" srcset="/img/icon/favicon-32x32.png 1x, /img/icon/apple-touch-icon.png 2x" alt="logo" style="width: 32px; height: 32px;")
 					span.fs-4.align-middle.ms-2 #{global.appConfig.siteName}
 
 			if (session.username)
 				div
-					a.btn.btn-primary#navbarDropdown.text-white.nav-link.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+					a.btn.btn-primary.btn-sm#navbarDropdown.text-white.nav-link.px-2.py-1.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 						i.bi-person-circle.me-2
 
 					.dropdown-menu.dropdown-menu-end(aria-labelledby="navbarDropdown")
@@ -54,24 +54,24 @@
 							i.bi-box-arrow-right.me-2
 							| Logout
 
-		.d-flex.flex-wrap.align-items-center.justify-content-center.justify-content-lg-start.pt-2
+		.d-flex.flex-wrap.align-items-center.justify-content-center.justify-content-lg-start.pt-1
 			ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-between.my-3.my-lg-0
 				if (session.user)
 					li
-						a.nav-link.me-2.ps-0.pb-lg-0(href="/new-link", title="New Link", data-bs-toggle="tooltip", data-bs-placement="bottom")
+						a.nav-link.me-2.ps-0.pb-lg-0.fw-light(href="/new-link", title="New Link", data-bs-toggle="tooltip", data-bs-placement="bottom")
 							i.bi-link-45deg.fs-5.text-white.align-middle
 							span.d-none.d-lg-inline.text-white.align-middle.ms-1 Link
 					li
-						a.nav-link.me-2.pb-lg-0(href="/new-note", title="New Note", data-bs-toggle="tooltip", data-bs-placement="bottom")
+						a.nav-link.me-2.pb-lg-0.fw-light(href="/new-note", title="New Note", data-bs-toggle="tooltip", data-bs-placement="bottom")
 							i.bi-file-earmark-text.fs-5.text-white.align-middle
 							span.d-none.d-lg-inline.text-white.align-middle.ms-1 Note
 					li
-						a.nav-link.me-2.pb-lg-0(href="/new-image", title="New Image", data-bs-toggle="tooltip", data-bs-placement="bottom")
+						a.nav-link.me-2.pb-lg-0.fw-light(href="/new-image", title="New Image", data-bs-toggle="tooltip", data-bs-placement="bottom")
 							i.bi-image.text-white.fs-5.text-white.align-middle
 							span.d-none.d-lg-inline.text-white.align-middle.ms-1 Image
 
 					li
-						a.pb-lg-0.text-white.nav-link.dropdown-toggle#tagsDropdown(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+						a.pb-lg-0.text-white.nav-link.dropdown-toggle.fw-light#tagsDropdown(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 							i.bi-tag-fill.text-white.fs-5.text-white.align-middle
 							span.d-none.d-lg-inline.text-white.align-middle.ms-1 Tags
 
@@ -113,7 +113,7 @@
 			ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-between.my-3.my-lg-0
 				if (pinnedItemCount > 0)
 					li
-						a.nav-link.px-2.pe-3.text-white(href=`/pinned`)
+						a.nav-link.py-1.px-2.pe-3.text-white.fw-light(href=`/pinned`)
 							i.bi-pin-fill.me-1
 							| Pinned
 							span.badge.bg-light.text-dark.ms-1 #{pinnedItemCount.toLocaleString()}
@@ -121,7 +121,7 @@
 				if (session.user && session.user.favoriteTags)
 					each tag in session.user.favoriteTags
 						li
-							a.nav-link.px-2.pe-3.text-white(href=`/tags/${tag}`)
+							a.nav-link.py-1.px-2.pe-3.text-white.fw-light(href=`/tags/${tag}`)
 								i.bi-tag-fill.me-1
 								| #{tag}
 								if (favoriteTagCounts && favoriteTagCounts[tag])

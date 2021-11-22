@@ -14,4 +14,10 @@ block headBlock
 		title Item: #{item._id}
 
 block content
-	include shared/item-card.pug
+	.center-col
+		.card.shadow-sm.mb-3
+			.card-body
+				+itemAdminMenu(item)
+				
+
+		+itemCard(item, {listPage:false, topTagsAndDate:true})

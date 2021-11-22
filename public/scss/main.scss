@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Roboto+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+
 $spacer: 1rem;
 $spacers: (
 	0: 0,
@@ -46,7 +48,19 @@ $box-shadow-lg:               0 1rem 3rem rgba(#000, .375) !default;
 $box-shadow-inset:            inset 0 1px 2px rgba(#000, .275) !default;
 
 
+:root {
+	--bs-font-monospace: Roboto Mono,ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
+}
+
+
+$font-family-sans-serif: "Open Sans", "Lucida Grande", Helvetica, Arial, sans-serif;
+$font-family-monospace: Roboto Mono,ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
+$font-weight-normal: 	400;
+$font-weight-light:  	300;
+
+
 @import "../../node_modules/bootstrap/scss/bootstrap";
+
 
 
 
@@ -66,7 +80,7 @@ $border-radius-lg:            .5rem !default;
 
 
 $badge-border-radius: 0.2rem;
-$badge-font-weight: 400;
+$badge-font-weight: 300;
 
 
 $tooltip-max-width: 350px;
@@ -146,16 +160,10 @@ code {
 
 
 
-body {
-	/*font-size: 14px;*/
-	/*font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;*/
-	/*font: 14px 'Open Sans', "Lucida Grande", Helvetica, Arial, sans-serif;*/
-	
-	font: 14px "Montserrat", "Lucida Grande", Helvetica, Arial, sans-serif !important;
-}
+
 
 .font-serif {
-	font-family: Georgia, Garamond, serif !important;
+	font-family: charter, Georgia, Garamond, serif !important;
 }
 
 hr {
@@ -172,14 +180,15 @@ img.header-image {
 
 //$font-family-monospace: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
 
+
 //.font-monospace {
 	/*font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji !important;*/
 	/*font-family: "Source Code Pro", monospace !important;*/
 //}
 
-code, .font-json, .font-data, .font-plaintext {
+/*code, .font-json, .font-data, .font-plaintext {
 	font-family: "Source Code Pro", monospace !important;
-}
+}*/
 
 .hr-thick {
 	height: 3px !important;
@@ -326,6 +335,11 @@ a.badge:hover {
 	color: #fff;
 }
 
+.center-col {
+	margin: auto;
+	max-width: 800px;
+}
+
 
 
 
@@ -397,3 +411,9 @@ pre {
 	color: $gray-600;
 	border-left: .25em solid $text-muted;
 }
+
+.markdown-body :last-child {
+	margin-bottom: 0;
+}
+
+

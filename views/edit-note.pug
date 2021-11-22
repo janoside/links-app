@@ -4,45 +4,46 @@ block headBlock
 	title Edit Note
 
 block content
-	h1 Edit Note
-	hr
+	.center-col
+		h1 Edit Note
+			a.fs-5.ms-3.non-underline-link(href=`/item/${item._id}`) Cancel
 
-	form(method="post", action=`/edit-note/${item._id}`)
-		fieldset.mb-3
-			textarea#text.form-control(name="text", placeholder="Text / Description", rows="15") #{item.text}
+		form(method="post", action=`/edit-note/${item._id}`)
+			fieldset.mb-3
+				textarea#text.form-control(name="text", placeholder="Text / Description", rows="30") #{item.text}
 
-		.row
-			.col-md-6
-				fieldset.mb-3
-					label(for="tags") Tags
-					input#tags.form-control(name="tags", placeholder="Tags", value=(item.tags ? item.tags.join(",") : ""))
-
-			.col-md-6
-				fieldset.mb-3
-					label(for="url") URL
-					input#url.form-control(name="url", placeholder="URL", value=item.url)
-
-		fieldset.mb-3
 			.row
-				.col-md-4
-					label(for="dueDate") Due Date
-					input#imgUrl.form-control(name="dueDate", placeholder="Due date", value=item.dueDate)
+				.col-md-6
+					fieldset.mb-3
+						label(for="tags") Tags
+						input#tags.form-control(name="tags", placeholder="Tags", value=(item.tags ? item.tags.join(",") : ""))
 
-				.col-md-4
-					label(for="startDate") Start Date
-					input#imgUrl.form-control(name="startDate", placeholder="Start date", value=item.startDate)
+				.col-md-6
+					fieldset.mb-3
+						label(for="url") URL
+						input#url.form-control(name="url", placeholder="URL", value=item.url)
 
-				.col-md-4
-					label(for="endDate") End Date
-					input#imgUrl.form-control(name="endDate", placeholder="End date", value=item.endDate)
+			fieldset.mb-3
+				.row
+					.col-md-4
+						label(for="dueDate") Due Date
+						input#imgUrl.form-control(name="dueDate", placeholder="Due date", value=item.dueDate)
 
-		fieldset.mb-3
-			.form-check.form-check-inline
-				input.form-check-input(type="radio", name="textType", id="textTypeMarkdown", value="markdown", checked=(item.textType == "markdown" ? "checked" : false))
-				label.form-check-label(for="textTypeMarkdown") Markdown
-			.form-check.form-check-inline
-				input.form-check-input(type="radio", name="textType", id="textTypePlaintext", value="plaintext", checked=(item.textType == "plaintext" ? "checked" : false))
-				label.form-check-label(for="textTypePlaintext") Plaintext
+					.col-md-4
+						label(for="startDate") Start Date
+						input#imgUrl.form-control(name="startDate", placeholder="Start date", value=item.startDate)
 
-		.d-grid
-			button.btn.btn-primary(type="submit") Save
+					.col-md-4
+						label(for="endDate") End Date
+						input#imgUrl.form-control(name="endDate", placeholder="End date", value=item.endDate)
+
+			fieldset.mb-3
+				.form-check.form-check-inline
+					input.form-check-input(type="radio", name="textType", id="textTypeMarkdown", value="markdown", checked=(item.textType == "markdown" ? "checked" : false))
+					label.form-check-label(for="textTypeMarkdown") Markdown
+				.form-check.form-check-inline
+					input.form-check-input(type="radio", name="textType", id="textTypePlaintext", value="plaintext", checked=(item.textType == "plaintext" ? "checked" : false))
+					label.form-check-label(for="textTypePlaintext") Plaintext
+
+			.d-grid
+				button.btn.btn-primary(type="submit") Save

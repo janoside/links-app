@@ -20,10 +20,14 @@ $input-placeholder-color: darken(#adb5bd, 10%);
 
 
 
-
+$article-color-base: rgba(0, 0, 0, 0.84);
+$article-color-blockquote: rgba(0, 0, 0, 0.68);
+$article-color-subtitle: rgba(0, 0, 0, 0.54);
+$article-color-selected-text: lavender;
 
 
 @import "./main";
+@import "./article";
 
 
 
