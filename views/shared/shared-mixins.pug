@@ -150,70 +150,69 @@ mixin card()
 
 mixin itemCard(item, options={})
 	.card.shadow-sm.mb-3
-		.card-body(class=(options.listPage ? false : "m-4"))
+		.card-body(class=(options.listPage ? false : "m-lg-4"))
 			if (options.topTagsAndDate)
-				.mt-n3
+				.mt-lg-n3.mx-lg-n3
 					+itemTagsAndDate(item, options)
-				hr.mt-3.mb-4.mx-n3
+				hr.mt-3.mb-4.mx-n6
 
 			+itemBody(item, options)
 
 		if (!options.topTagsAndDate && session.user && item.userId == session.user._id)
 			.card-footer(class=(item.pinned ? "bg-dark" : false))
-				.d-flex.d-lg-none.justify-content-between.fs-4
-					+itemAdminMenu(item)
+				+itemAdminMenu(item)
 
-				.d-none.d-lg-flex.justify-content-start.fs-6
-					+itemAdminMenu(item)
 
 
 mixin itemAdminMenu(item, options={})
-	a.me-5(href=`/item/${item._id}/edit`, title="Edit this item", data-bs-toggle="tooltip")
-		i.bi-pencil-square.text-primary
+	.d-flex.justify-content-between.justify-content-lg-start.fs-4
+		a.me-5(href=`/item/${item._id}/edit`, title="Edit this item", data-bs-toggle="tooltip")
+			i.bi-pencil-square.text-primary
 
-	if (item.pinned)
-		a.me-5(href=`/item/${item._id}/unpin`, title="Unpin this item", data-bs-toggle="tooltip")
-			i.bi-pin-fill.text-success
+		if (item.pinned)
+			a.me-5(href=`/item/${item._id}/unpin`, title="Unpin this item", data-bs-toggle="tooltip")
+				i.bi-pin-fill.text-success
 
-	else
-		a.me-5(href=`/item/${item._id}/pin`, title="Pin this item", data-bs-toggle="tooltip")
-			i.bi-pin-angle-fill.text-primary
+		else
+			a.me-5(href=`/item/${item._id}/pin`, title="Pin this item", data-bs-toggle="tooltip")
+				i.bi-pin-angle-fill.text-primary
 
-	if (item.locked)
-		a.me-5(href=`/item/${item._id}/unlock`, title="Unlock this item", data-bs-toggle="tooltip")
-			i.bi-lock-fill.text-success
+		if (item.locked)
+			a.me-5(href=`/item/${item._id}/unlock`, title="Unlock this item", data-bs-toggle="tooltip")
+				i.bi-lock-fill.text-success
 
-	else
-		a.me-5(href=`/item/${item._id}/lock`, title="Lock this item", data-bs-toggle="tooltip")
-			i.bi-unlock-fill.text-primary
+		else
+			a.me-5(href=`/item/${item._id}/lock`, title="Lock this item", data-bs-toggle="tooltip")
+				i.bi-unlock-fill.text-primary
 
-	a.me-5(href=`/item/${item._id}/raw`, title="View raw data", data-bs-toggle="tooltip")
-		i.bi-info-circle.text-primary
+		a.me-5(href=`/item/${item._id}/raw`, title="View raw data", data-bs-toggle="tooltip")
+			i.bi-info-circle.text-primary
 
-	if (!item.locked)
-		a(href=`/item/${item._id}/delete`, title="Delete this item...", data-bs-toggle="tooltip")
-			i.bi-trash.text-danger
+		if (!item.locked)
+			a(href=`/item/${item._id}/delete`, title="Delete this item...", data-bs-toggle="tooltip")
+				i.bi-trash.text-danger
 
 
 mixin itemTagsAndDate(item, options={})
-	if (item.tags)
-		div(class=(item.createdAt && !options.listPage ? "mb-2" : false))
-			each tag, tagIndex in item.tags
-				if (tags)
-					- var newTags = [];
-					- tags.forEach(x => newTags.push(x));
-					- if (!newTags.includes(tag)) { newTags.push(tag); }
+	.d-flex.justify-content-between
+		if (item.tags)
+			div(class=(item.createdAt && !options.listPage ? "mb-2" : false))
+				each tag, tagIndex in item.tags
+					if (tags)
+						- var newTags = [];
+						- tags.forEach(x => newTags.push(x));
+						- if (!newTags.includes(tag)) { newTags.push(tag); }
 
-					a.badge.bg-primary.me-1.non-underline-link(href=`/tags/${newTags.join(",")}`)
-						i.bi-tag-fill.me-1
-						| #{tag}
-				else
-					a.badge.bg-primary.me-1.non-underline-link(href=`/tags/${tag}`)
-						i.bi-tag-fill.me-1
-						| #{tag}
+						a.badge.bg-primary.me-1.non-underline-link(href=`/tags/${newTags.join(",")}`)
+							i.bi-tag-fill.me-1
+							| #{tag}
+					else
+						a.badge.bg-primary.me-1.non-underline-link(href=`/tags/${tag}`)
+							i.bi-tag-fill.me-1
+							| #{tag}
 
-	if (item.createdAt && !options.listPage)
-		div #{utils.formatDate(item.createdAt, "MMM d, yyyy")}
+		if (item.createdAt && !options.listPage)
+			.text-end #{utils.formatDate(item.createdAt, "MMM d, yyyy")}
 
 mixin itemBody(item, options)
 	if (item.dueDate)

@@ -116,7 +116,7 @@
 						a.nav-link.py-1.px-2.pe-3.text-white.fw-light(href=`/pinned`)
 							i.bi-pin-fill.me-1
 							| Pinned
-							span.badge.bg-light.text-dark.ms-1 #{pinnedItemCount.toLocaleString()}
+							span.small.ms-tiny (#{pinnedItemCount.toLocaleString()})
 
 				if (session.user && session.user.favoriteTags)
 					each tag in session.user.favoriteTags
@@ -125,5 +125,5 @@
 								i.bi-tag-fill.me-1
 								| #{tag}
 								if (favoriteTagCounts && favoriteTagCounts[tag])
-									span.badge.bg-light.text-dark.ms-1 #{favoriteTagCounts[tag].toLocaleString()}
+									span.small.ms-tiny (#{favoriteTagCounts[tag].toLocaleString()})
 				
