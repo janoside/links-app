@@ -204,7 +204,7 @@ mixin itemAdminMenuInternal(item, options={})
 
 
 mixin itemTagsAndDate(item, options={})
-	.d-flex.justify-content-between(class=(!options.listPage ? "mb-3 mt-n4" : false))
+	.d-flex.justify-content-between(class=(!options.listPage ? "mb-3 mt-lg-n4" : false))
 		div
 			if (item.tags)
 				each tag, tagIndex in item.tags
