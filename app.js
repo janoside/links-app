@@ -156,27 +156,30 @@ expressApp.use(async (req, res, next) => {
 
 	res.locals.user = req.session.user;
 
-	const itemsCollection = await db.getCollection("items");
+	if (req.session.user) {
+		const itemsCollection = await db.getCollection("items");
 
-	res.locals.pinnedItemCount = await itemsCollection.countDocuments({ userId: req.session.user._id.toString(), pinned:true });
+		res.locals.pinnedItemCount = await itemsCollection.countDocuments({ userId: req.session.user._id.toString(), pinned:true });
 
-	
-	const favoriteTagsData = await itemsCollection.aggregate([
-		{ $match: { userId: req.session.user._id.toString(), tags: {$in: req.session.user.favoriteTags} } },
-		{ $unwind: "$tags" },
-		{ $group: { _id: "$tags", count: { $sum: 1 } } },
-		{ $sort: { count: -1, _id: 1 }}
-	]).toArray();
+		
+		const favoriteTagsData = await itemsCollection.aggregate([
+			{ $match: { userId: req.session.user._id.toString(), tags: {$in: req.session.user.favoriteTags} } },
+			{ $unwind: "$tags" },
+			{ $group: { _id: "$tags", count: { $sum: 1 } } },
+			{ $sort: { count: -1, _id: 1 }}
+		]).toArray();
 
-	let favoriteTagCounts = {};
-	for (let i = 0; i < favoriteTagsData.length; i++) {
-		let x = favoriteTagsData[i];
+		let favoriteTagCounts = {};
+		for (let i = 0; i < favoriteTagsData.length; i++) {
+			let x = favoriteTagsData[i];
 
-		favoriteTagCounts[x._id] = x.count;
+			favoriteTagCounts[x._id] = x.count;
+		}
+
+		req.session.favoriteTagCounts = favoriteTagCounts;
+		res.locals.favoriteTagCounts = req.session.favoriteTagCounts;
 	}
-
-	req.session.favoriteTagCounts = favoriteTagCounts;
-	res.locals.favoriteTagCounts = req.session.favoriteTagCounts;
+	
 	
 
 	res.locals.url = req.url;
