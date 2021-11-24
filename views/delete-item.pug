@@ -3,15 +3,15 @@ extends layout
 block content
 
 	.center-col
-		h6 Are you sure you want to delete this item?
+		.card.shadow-sm.mb-3
+			.card-body
+				h6 Are you sure you want to delete this item?
 
-		form(method="post")
-			button.btn.btn-danger.me-3(type="submit") Yes, delete
-		
-			a.btn.btn-primary(href=`/item/${item._id}`) No, don't delete
+				form(method="post")
+					button.btn.btn-danger.me-3(type="submit") Yes, delete
+				
+					a.btn.btn-primary(href=`/item/${item._id}`) No, don't delete
 
-		hr.my-4
-
-		+itemCard(item, {})
+		+itemCard(item, {topTagsAndDate:true})
 
 		
