@@ -106,10 +106,6 @@ $dropdown-min-width: 11rem;
 	background-color: $body-bg !important;
 }
 
-code {
-	background-color: transparent !important;
-}
-
 .text-darken {
 	filter: brightness(80%);
 }
@@ -359,6 +355,10 @@ pre {
 	white-space: pre;
 }
 
+code {
+	color: $body-color;
+}
+
 .markdown-body {
 	line-height: 1.5;
 }
@@ -410,6 +410,14 @@ pre {
 	padding: 0 1em;
 	color: $gray-600;
 	border-left: .25em solid $text-muted;
+}
+
+.markdown-body code, .markdown-body tt {
+	padding: .2em .4em;
+	margin: 0;
+	font-size: 85%;
+	background-color: var(--color-neutral-muted);
+	border-radius: 6px;
 }
 
 .markdown-body :last-child {

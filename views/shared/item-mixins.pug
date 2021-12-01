@@ -131,7 +131,7 @@ mixin itemBody(item, options)
 		if (item.url)
 			- var hostname = "unknown";
 			- try { hostname = new URL(item.url).hostname; } catch (e) {}
-			p
+			.mt-2
 				a(href=item.url, target="_blank") #{hostname}
 	
 	if (!options.topTagsAndDate)

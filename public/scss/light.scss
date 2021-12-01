@@ -70,3 +70,7 @@ $article-color-selected-text: lavender;
 .markdown-body pre {
 	background-color: darken($body-bg, 4%);
 }
+
+.markdown-body code, .markdown-body tt {
+	background-color: darken($body-bg, 8%);
+}
