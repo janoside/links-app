@@ -4,29 +4,29 @@
 	"description": "A cool links app.",
 	"main": "app.js",
 	"dependencies": {
-		"@janoside/app-utils": "github:janoside/app-utils#c8dfe845",
+		"@janoside/app-utils": "github:janoside/app-utils#3e4933c8",
 		"aws-sdk": "^2.1026.0",
-		"axios": "^0.24.0",
+		"axios": "^0.26.1",
 		"bootstrap": "5.1.3",
 		"bootstrap-icons": "^1.7.0",
-		"busboy": "^0.3.1",
+		"busboy": "^1.6.0",
 		"cookie-parser": "^1.4.4",
 		"debug": "^4.3.2",
-		"dotenv": "^10.0.0",
+		"dotenv": "^16.0.0",
 		"express": "^4.17.1",
 		"express-async-handler": "^1.1.4",
 		"express-session": "^1.17.2",
-		"http-errors": "^1.8.0",
+		"http-errors": "^2.0.0",
 		"luxon": "^2.0.2",
 		"marked": "^4.0.1",
-		"mongodb": "^4.1.4",
+		"mongodb": "^4.5.0",
 		"morgan": "^1.10.0",
 		"pug": "^3.0.2",
-		"sharp": "^0.29.2",
-		"simple-git": "^2.46.0"
+		"sharp": "^0.30.4",
+		"simple-git": "^3.7.1"
 	},
 	"devDependencies": {
-		"node-sass": "^6.0.1",
+		"node-sass": "^7.0.1",
 		"npm-run-all": "^4.1.5"
 	},
 	"scripts": {

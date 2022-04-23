@@ -229,7 +229,7 @@ const saveItemRoute = async (existingItemId, itemType, req, res, next) => {
 	const userId = req.session.user._id.toString();
 	const username = req.session.user.username;
 
-	var busboy = new Busboy({ headers: req.headers });
+	var busboy = Busboy({ headers: req.headers });
 	busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
 		file.on('data', (data) => {
 			const dataBuffer = Buffer.from(data);
@@ -248,7 +248,7 @@ const saveItemRoute = async (existingItemId, itemType, req, res, next) => {
 			fields[fieldname] = val;
 		}
 	});
-	busboy.on('finish', async () => {
+	busboy.on('close', async () => {
 		let item = null;
 
 		try {

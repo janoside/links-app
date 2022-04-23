@@ -8,9 +8,11 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const session = require("express-session");
 const { marked } = require("marked");
-const simpleGit = require("simple-git");
 const { DateTime } = require("luxon");
 const app = require("./app/app.js");
+
+const simpleGit = require('simple-git');
+simpleGit().clean(simpleGit.CleanOptions.FORCE);
 
 const appUtils = require("@janoside/app-utils");
 const utils = appUtils.utils;
