@@ -20,8 +20,9 @@ block content
 				+itemAdminMenu(item, {orientation:"h"})
 				
 		.d-lg-flex.flex-lg-row
-			.d-none.d-lg-block.card.shadow-sm.me-2(style="height: 300px;")
+			.d-none.d-lg-block.card.shadow-sm.me-2(style="min-width: 52px; height: 300px;")
 				.card-body.my-3.my-lg-2(style="height: 100%;")
 					+itemAdminMenu(item, {orientation:"v"})
-		
-			+itemCard(item, {listPage:false, topTagsAndDate:true})
+			
+			.flex-grow-1
+				+itemCard(item, {listPage:false, topTagsAndDate:true})
