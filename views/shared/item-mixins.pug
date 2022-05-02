@@ -5,7 +5,7 @@ mixin itemCard(item, options={})
 				.mt-lg-n3.mx-lg-n3
 					+itemTagsAndDate(item, options)
 
-				hr.mt-3.mb-5.mx-n6
+				hr.mt-3.mb-5.mx-lg-n6.mx-n3
 
 			+itemBody(item, options)
 
@@ -17,10 +17,10 @@ mixin itemCard(item, options={})
 
 
 mixin itemAdminMenu(item, options={})
-	.d-none.d-lg-flex.justify-content-between.fs-5
+	.d-none.d-lg-flex.justify-content-between.fs-5(class=("v" == options.orientation) ? "flex-column pb-3" : "flex-row", style="height: 100%;")
 		+itemAdminMenuInternal(item, options)
 
-	.d-flex.d-lg-none.justify-content-between.fs-4
+	.d-flex.d-lg-none.justify-content-between.fs-4(class=("v" == options.orientation) ? "flex-column pb-3" : "flex-row", style="height: 100%;")
 		+itemAdminMenuInternal(item, options)
 
 

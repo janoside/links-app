@@ -15,9 +15,13 @@ block headBlock
 
 block content
 	.center-col
-		.card.shadow-sm.mb-3
+		.d-block.d-lg-none.card.shadow-sm.mb-3
 			.card-body.mx-3.mx-lg-2
-				+itemAdminMenu(item)
+				+itemAdminMenu(item, {orientation:"h"})
 				
-
-		+itemCard(item, {listPage:false, topTagsAndDate:true})
+		.d-lg-flex.flex-lg-row
+			.d-none.d-lg-block.card.shadow-sm.me-2(style="height: 300px;")
+				.card-body.my-3.my-lg-2(style="height: 100%;")
+					+itemAdminMenu(item, {orientation:"v"})
+		
+			+itemCard(item, {listPage:false, topTagsAndDate:true})

@@ -40,6 +40,18 @@ html
 		script(src="./js/masonry.pkgd.min.js", integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D", async)
 		script(src="./js/imagesloaded.pkgd.min.js", integrity="sha384-YnGSHPPWEUDKMHFPOVmNP7Xyfwx5G0CHet6IoNgiX6CbFZS8gCeIfEgB1MgPwjdI")
 
+		if (userMessage || userMessageMarkdown)
+			script.
+				var toastElementList = [].slice.call(document.querySelectorAll('.toast'))
+				var toastList = toastElementList.map(function (toastElement) {
+					return new bootstrap.Toast(toastElement, {});
+				});
+
+				var userMessageToastElement = document.getElementById('userMessageToast');
+				var userMessageToast = bootstrap.Toast.getOrCreateInstance(userMessageToastElement);
+				userMessageToast.show();
+
+
 		script.
 			function ReLoadImages() {
 				$('img[data-lazysrc]').each( function(){
