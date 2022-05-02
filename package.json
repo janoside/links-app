@@ -6,7 +6,7 @@
 	"dependencies": {
 		"@janoside/app-utils": "github:janoside/app-utils#3e4933c8",
 		"aws-sdk": "^2.1026.0",
-		"axios": "^0.26.1",
+		"axios": "^0.27.2",
 		"bootstrap": "5.1.3",
 		"bootstrap-icons": "^1.7.0",
 		"busboy": "^1.6.0",
@@ -26,18 +26,18 @@
 		"simple-git": "^3.7.1"
 	},
 	"devDependencies": {
-		"node-sass": "^7.0.1",
+		"sass": "^1.51.0",
 		"npm-run-all": "^4.1.5"
 	},
 	"scripts": {
 		"start": "node --trace-deprecation ./bin/main.js",
 		"test": "node --trace-deprecation ./bin/test.js",
 		"integrity": "node ./bin/frontend-resource-integrity.js",
-		"css-light-debug": "node-sass --output-style expanded --source-map scss --precision 6 ./public/scss/light.scss ./public/style/light.css",
-		"css-dark-debug": "node-sass --output-style expanded --source-map scss --precision 6 ./public/scss/dark.scss ./public/style/dark.css",
+		"css-light-debug": "sass --style expanded --source-map scss ./public/scss/light.scss ./public/style/light.css",
+		"css-dark-debug": "sass --style expanded --source-map scss ./public/scss/dark.scss ./public/style/dark.css",
 		"css-debug": "npm-run-all css-light-debug css-dark-debug",
-		"css-light": "node-sass --output-style compressed --precision 6 ./public/scss/light.scss ./public/style/light.css",
-		"css-dark": "node-sass --output-style compressed --precision 6 ./public/scss/dark.scss ./public/style/dark.css",
+		"css-light": "sass --style compressed --precision 6 ./public/scss/light.scss ./public/style/light.css",
+		"css-dark": "sass --style compressed --precision 6 ./public/scss/dark.scss ./public/style/dark.css",
 		"css": "npm-run-all css-light css-dark",
 		"test-s3": "node ./bin/test-s3.js",
 		"test-encryptor": "node ./bin/test-encryptor.js"
