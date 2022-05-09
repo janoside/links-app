@@ -14,6 +14,8 @@ global.appConfig = {
 	secureSite: process.env.SECURE_SITE == "true",
 	cookiePassword: process.env.COOKIE_PASSWORD || "c-is-for-cookie",
 
+	baseUrl: process.env.SITE_BASE_URL,
+
 	encryptionPassword: process.env.ENCRYPTION_PASSWORD,
 	pbkdf2Salt: process.env.PBKDF2_SALT,
 
@@ -40,5 +42,15 @@ global.appConfig = {
 		}
 	}
 };
+
+if (!global.appConfig.baseUrl) {
+	global.appConfig.baseUrl = (global.appConfig.secureSite ? "https://" : "http://") + global.appConfig.siteDomain;
+	
+	if (global.appConfig.serverPort != (global.appConfig.secureSite ? 443 : 80)) {
+		global.appConfig.baseUrl += (":" + global.appConfig.serverPort);
+	}
+
+	global.appConfig.baseUrl += "/";
+}
 
 module.exports = global.appConfig;

@@ -228,14 +228,16 @@ mixin timeAgo(timeAgoTime, only1Element=false)
 				span #{utils.shortenTimeDiff(timeAgo.format())}
 
 
-mixin copyTextButton(text)
-	small.ms-2
-		if (false)
-			a(href="javascript:void(0)", title="Copy", data-clipboard-text=text, data-bs-toggle="tooltip", onclick=`copyTextToClipboard("${text}"); $(".icon-copy").toggle(); $(this).find(".icon-copied").toggle(); setTimeout(() => { $(this).find(".icon-copy").toggle(); $(this).find(".icon-copied").toggle(); }, 2000); return false;`)
-				i.bi-clipboard.text-info.icon-copy
-				i.bi-check.text-success.icon-copied(style="display: none;")
+mixin copyTextButton(text, defaultTooltip="Copy")
+	if (false)
+		a(href="javascript:void(0)", title="Copy", data-clipboard-text=text, data-bs-toggle="tooltip", onclick=`copyTextToClipboard("${text}"); $(".icon-copy").toggle(); $(this).find(".icon-copied").toggle(); setTimeout(() => { $(this).find(".icon-copy").toggle(); $(this).find(".icon-copied").toggle(); }, 2000); return false;`)
+			i.bi-clipboard.text-info.icon-copy
+			i.bi-check.text-success.icon-copied(style="display: none;")
 
-		a(href="javascript:void(0)", title="Copy", data-clipboard-text=text, data-bs-toggle="tooltip", onclick=`copyTextToClipboard("${text}"); $(this).attr("title", "Copied!").tooltip("_fixTitle").tooltip("show"); $(this).mouseleave(function() { $(this).tooltip("hide"); $(this).attr("data-bs-original-title", "Copy"); });`)
+	a(href="javascript:void(0)", title=defaultTooltip, data-clipboard-text=text, data-bs-toggle="tooltip", onclick=`copyTextToClipboard("${text}"); $(this).attr("title", "Copied!").tooltip("_fixTitle").tooltip("show"); $(this).mouseleave(function() { $(this).tooltip("hide"); $(this).attr("data-bs-original-title", "${defaultTooltip}"); });`)
+		if (block)
+			block
+		else
 			i.bi-clipboard.text-info
 
 

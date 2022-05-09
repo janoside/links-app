@@ -579,6 +579,15 @@ router.get("/item/:itemId/unlock", asyncHandler(async (req, res, next) => {
 	res.redirect(req.headers.referer);
 }));
 
+router.get("/share/:itemId", asyncHandler(async (req, res, next) => {
+	const itemId = req.params.itemId;
+	const item = await db.findOne("items", {_id:ObjectId(itemId)});
+
+	res.locals.item = item;
+
+	res.render("share");
+}));
+
 router.get("/items", asyncHandler(async (req, res, next) => {
 	if (!req.session.user) {
 		res.redirect("/");

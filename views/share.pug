@@ -1,0 +1,20 @@
+extends layout
+
+block headBlock
+	if (item.type == "link")
+		title Link: #{item.url}
+
+	else if (item.type == "note")
+		title Note: #{item._id}
+
+	else if (item.type == "image")
+		title Image: #{item._id}
+
+	else
+		title Item: #{item._id}
+
+block content
+	.center-col
+		.d-lg-flex.flex-lg-row
+			.flex-grow-1
+				+itemCard(item, {publicShare:true, listPage:false, topTagsAndDate:true})

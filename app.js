@@ -108,6 +108,8 @@ expressApp.use(async (req, res, next) => {
 	res.locals.appConfig = global.appConfig;
 	res.locals.session = req.session;
 
+	res.locals.baseUrl = global.appConfig.baseUrl;
+
 	// rememberme auto-login
 	if (!req.session.username && req.cookies.rememberme) {
 		var rememberme = JSON.parse(req.cookies.rememberme);

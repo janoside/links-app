@@ -57,5 +57,28 @@ router.get("/item/:itemId/:size", asyncHandler(async (req, res, next) => {
 	}
 }));
 
+router.get("/item-share/:itemId/:size", asyncHandler(async (req, res, next) => {
+	try {
+		const itemId = req.params.itemId;
+		const item = await db.findOne("items", {_id:ObjectId(req.params.itemId)});
+
+		const s3Data = await s3Bucket.get(`img/${req.params.itemId}/${req.params.size}`);
+		const imgBuffer = encryptor.decrypt(s3Data);
+
+		res.writeHead(200, {
+			'Content-Type': 'image/png',
+			'Content-Length': imgBuffer.length,
+			"Cache-Control": `max-age=${60 * 60 * 24 * 365}`
+		});
+
+		res.end(imgBuffer, "binary");
+
+	} catch (err) {
+		utils.logError("238ryewgww", err);
+
+		res.end("error");
+	}
+}));
+
 
 module.exports = router;

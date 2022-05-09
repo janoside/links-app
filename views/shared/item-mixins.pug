@@ -25,6 +25,9 @@ mixin itemAdminMenu(item, options={})
 
 
 mixin itemAdminMenuInternal(item, options={})
+	+copyTextButton(`${baseUrl}share/${item._id}`, "Copy shareable link")
+		i.bi-share.text-info
+
 	a(href=`/item/${item._id}/edit`, title="Edit this item", data-bs-toggle="tooltip")
 		i.bi-pencil-square.text-primary
 
@@ -86,7 +89,7 @@ mixin itemBody(item, options)
 				- var smallestImgSize = item.imageSizes[0];
 				- var largestImgSize = item.imageSizes[item.imageSizes.length - 1];
 				- var imageSize = (options.listPage ? smallestImgSize : largestImgSize);
-				img.rounded-1.text-center(data-lazysrc=`./img/item/${item._id.toString()}/${imageSize}`, style="max-width: 100%;")
+				img.rounded-1.text-center(data-lazysrc=`./img/item${options.publicShare ? "-share" : ""}/${item._id.toString()}/${imageSize}`, style="max-width: 100%;")
 
 	- var articleTagIncluded = (item.tags && ["article", "essay"].some(x => item.tags.includes(x)));
 	.item-body(class=(options.listPage ? false : articleTagIncluded ? `article` : false))
