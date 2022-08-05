@@ -237,6 +237,9 @@ const saveItemRoute = async (existingItemId, itemType, req, res, next) => {
 			if (fields[fieldname] == null) {
 				fields[fieldname] = dataBuffer;
 
+				// "filename" here actually gives us a dict with filename, encoding, and mimeType *shrug*
+				fields[`${fieldname}.metadata`] = filename;
+
 			} else {
 				fields[fieldname] = Buffer.concat([fields[fieldname], dataBuffer]);
 			}
@@ -419,6 +422,14 @@ router.post("/new-image", asyncHandler(async (req, res, next) => {
 	saveItemRoute(null, "image", req, res, next);
 }));
 
+router.get("/new-file", asyncHandler(async (req, res, next) => {
+	res.render("new-file");
+}));
+
+router.post("/new-file", asyncHandler(async (req, res, next) => {
+	saveItemRoute(null, "file", req, res, next);
+}));
+
 router.get("/item/:itemId", asyncHandler(async (req, res, next) => {
 	if (!req.session.user) {
 		req.session.redirectUrl = req.path;
@@ -523,6 +534,10 @@ router.post("/item/:itemId/delete", asyncHandler(async (req, res, next) => {
 		}
 
 		debugLog(`Deleted ${item.imageSizes.length} image(s)`);
+	}
+
+	if (item.hasFile) {
+		await s3Bucket.del(`file/${itemId}`);
 	}
 	
 	req.session.userMessage = "Item deleted.";

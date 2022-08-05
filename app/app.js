@@ -128,8 +128,16 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 		throw new Error("Use image file OR image URL, not both.");
 	}
 
+	if (fields.file && fields.fileUrl) {
+		throw new Error("Use file OR file URL, not both.");
+	}
+
 	if (fields.img) {
 		debugLog("Uploaded image file: " + utils.descBuffer(fields.img, "base64"));
+	}
+
+	if (fields.file) {
+		debugLog("Uploaded file: " + utils.descBuffer(fields.file, "base64"));
 	}
 
 	if (fields.imgUrl) {
@@ -139,11 +147,31 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 		debugLog("Downloaded image: " + utils.descBuffer(fields.img) + ", from URL: " + fields.imgUrl);
 	}
 
+	if (fields.fileUrl) {
+		const response = await axios.get(fields.fileUrl, { responseType: 'arraybuffer' });
+		fields.file = Buffer.from(response.data, "binary");
+
+		debugLog("Downloaded file: " + utils.descBuffer(fields.file) + ", from URL: " + fields.fileUrl);
+	}
+
 	if (fields.img) {
 		const processedImageSizes = await processAndUploadImages(fields.img, itemId);
 
 		item.hasImage = true;
 		item.imageSizes = processedImageSizes;
+
+		const updateResult = await itemsCollection.updateOne({_id:ObjectId(itemId)}, {$set: item});
+	}
+
+	if (fields.file) {
+		const filepath = await uploadFile(fields.file, itemId);
+
+		item.hasFile = true;
+		item.filepath = filepath;
+
+		if (fields["file.metadata"]) {
+			item.fileMetadata = fields["file.metadata"];
+		}
 
 		const updateResult = await itemsCollection.updateOne({_id:ObjectId(itemId)}, {$set: item});
 	}
@@ -184,6 +212,20 @@ async function processAndUploadImages(imageBuffer, itemId) {
 	}
 
 	return imageSizes;
+}
+
+async function uploadFile(fileBuffer, itemId) {
+	debugLog(`Processing file buffer: ${utils.descBuffer(fileBuffer)}`);
+
+	let fileItems = [];
+
+	let ciphertextRaw = encryptor.encrypt(fileBuffer);
+
+	let filepath = `file/${itemId}`;
+
+	await s3Bucket.put(ciphertextRaw, filepath);
+
+	return filepath;
 }
 
 

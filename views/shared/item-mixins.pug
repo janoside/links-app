@@ -99,6 +99,13 @@ mixin itemBody(item, options)
 				- var imageSize = (options.listPage ? smallestImgSize : largestImgSize);
 				img.rounded-1.text-center(data-lazysrc=`./img/item${options.publicShare ? "-share" : ""}/${item._id.toString()}/${imageSize}`, style="max-width: 100%;")
 
+	if (item.hasFile)
+		div(class=(item.text ? "mb-2" : (!options.listPage ? "mb-3" : false)))
+			.text-center
+				iframe(src=`./file/item/${item._id}`, style="width: 100%; height: 800px;")
+
+			a.text-start(href=`./file/item/${item._id}`) view raw
+
 	- var articleTagIncluded = (item.tags && ["article", "essay"].some(x => item.tags.includes(x)));
 	.item-body(class=(options.listPage ? false : articleTagIncluded ? `article` : false))
 		if (item.text)
