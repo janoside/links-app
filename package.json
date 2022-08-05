@@ -1,6 +1,6 @@
 {
 	"name": "links.rest",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "A cool links app.",
 	"main": "app.js",
 	"dependencies": {
