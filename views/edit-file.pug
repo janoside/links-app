@@ -1,0 +1,64 @@
+extends layout
+
+block headBlock
+	title Edit File
+
+block content
+	.center-col
+		h1 Edit File
+			a.fs-5.ms-3.non-underline-link(href=`/item/${item._id}`) Cancel
+
+		if (item.hasImage)
+			.card.shadow-sm.mb-4
+				.card-body.text-center
+					img.rounded-1(src=`./img/item/${item._id.toString()}/w${appConfig.images.mainWidth}`)
+
+		form(method="post", action=`/item/${item._id}/edit`, enctype="multipart/form-data")
+			fieldset.mb-3
+				.row
+					.col-md-5
+						label(for="img") File Upload
+							span.text-muted.ms-2
+						input#file.form-control(name="file", type="file", placeholder="File")
+
+					.col-md-1.pt-4.text-center
+						span - OR -
+
+					.col-md-6
+						label(for="fileUrl") File URL
+						input#fileUrl.form-control(name="fileUrl", placeholder="File URL")
+			
+			.row
+				.col-md-6
+					fieldset.mb-3
+						label(for="tags") Tags
+						input#tags.form-control(name="tags", placeholder="Tags", value=(item.tags ? item.tags.join(",") : ""))
+
+				.col-md-6
+					fieldset.mb-3
+						label(for="url") URL
+						input#url.form-control(name="url", placeholder="URL" value=item.url)
+
+			fieldset.mb-3
+				label(for="text") Text / Description
+				input#text.form-control(name="text", placeholder="Text / Description", value=item.text)
+
+
+			fieldset.mb-3
+				.row
+					.col-md-4
+						label(for="dueDate") Due Date
+						input#imgUrl.form-control(name="dueDate", placeholder="Due date", value=item.dueDate)
+
+					.col-md-4
+						label(for="startDate") Start Date
+						input#imgUrl.form-control(name="startDate", placeholder="Start date", value=item.startDate)
+
+					.col-md-4
+						label(for="endDate") End Date
+						input#imgUrl.form-control(name="endDate", placeholder="End date", value=item.endDate)
+
+
+
+			.d-grid
+				button.btn.btn-primary(type="submit") Save

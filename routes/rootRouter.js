@@ -470,6 +470,9 @@ router.get("/item/:itemId/edit", asyncHandler(async (req, res, next) => {
 	} else if (item.type == "image") {
 		res.render("edit-image");
 
+	} else if (item.type == "file") {
+		res.render("edit-file");
+
 	} else {
 		throw new Error("Unknown item type: " + item.type);
 	}
