@@ -8,7 +8,6 @@ const appConfig = require("../app/config.js");
 const ObjectId = require("mongodb").ObjectId;
 const fs = require("fs");
 const sharp = require("sharp");
-const axios = require("axios");
 const Busboy = require('busboy');
 const { DateTime } = require("luxon");
 

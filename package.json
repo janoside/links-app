@@ -6,7 +6,7 @@
 	"dependencies": {
 		"@janoside/app-utils": "github:janoside/app-utils#3e4933c8",
 		"aws-sdk": "^2.1026.0",
-		"axios": "^0.27.2",
+		"axios": "^1.1.3",
 		"bootstrap": "5.1.3",
 		"bootstrap-icons": "^1.7.0",
 		"busboy": "^1.6.0",
@@ -17,12 +17,12 @@
 		"express-async-handler": "^1.1.4",
 		"express-session": "^1.17.2",
 		"http-errors": "^2.0.0",
-		"luxon": "^2.0.2",
+		"luxon": "^3.1.0",
 		"marked": "^4.0.1",
 		"mongodb": "^4.5.0",
 		"morgan": "^1.10.0",
 		"pug": "^3.0.2",
-		"sharp": "^0.30.4",
+		"sharp": "^0.31.2",
 		"simple-git": "^3.7.1"
 	},
 	"devDependencies": {
