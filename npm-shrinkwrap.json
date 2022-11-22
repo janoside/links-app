@@ -12,7 +12,7 @@
 				"@janoside/app-utils": "github:janoside/app-utils#3e4933c8",
 				"aws-sdk": "^2.1026.0",
 				"axios": "^1.1.3",
-				"bootstrap": "5.1.3",
+				"bootstrap": "5.2.3",
 				"bootstrap-icons": "^1.7.0",
 				"busboy": "^1.6.0",
 				"cookie-parser": "^1.4.4",
@@ -1317,9 +1317,9 @@
 			}
 		},
 		"node_modules/aws-sdk": {
-			"version": "2.1259.0",
-			"resolved": "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1259.0.tgz",
-			"integrity": "sha512-ku0sXQ0HOpvhMfu9yszqek4T+xvR9pXemxn3ruG3raIv9Hag0bpZoSqxm6rFtlZV9C26bB47ef5A5+HbkPk8PQ==",
+			"version": "2.1260.0",
+			"resolved": "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1260.0.tgz",
+			"integrity": "sha512-iciXVukPbhmh44xcF+5/CO15jtESqRkXuEH54XaU8IpCzbYkAcPBaS29vLRN2SRuN1Dy2S3X7SaZZxFJWLAHrg==",
 			"dependencies": {
 				"buffer": "4.9.2",
 				"events": "1.1.1",
@@ -1337,9 +1337,9 @@
 			}
 		},
 		"node_modules/axios": {
-			"version": "1.1.3",
-			"resolved": "https://registry.npmjs.org/axios/-/axios-1.1.3.tgz",
-			"integrity": "sha512-00tXVRwKx/FZr/IDVFt4C+f9FYairX517WoGCL6dpOntqLkZofjhu43F/Xl44UOpqa+9sLFDrG/XAnFsUYgkDA==",
+			"version": "1.2.0",
+			"resolved": "https://registry.npmjs.org/axios/-/axios-1.2.0.tgz",
+			"integrity": "sha512-zT7wZyNYu3N5Bu0wuZ6QccIf93Qk1eV8LOewxgjOZFd2DenOs98cJ7+Y6703d0wkaXGY6/nZd4EweJaHz9uzQw==",
 			"dependencies": {
 				"follow-redirects": "^1.15.0",
 				"form-data": "^4.0.0",
@@ -1477,15 +1477,21 @@
 			"integrity": "sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A=="
 		},
 		"node_modules/bootstrap": {
-			"version": "5.1.3",
-			"resolved": "https://registry.npmjs.org/bootstrap/-/bootstrap-5.1.3.tgz",
-			"integrity": "sha512-fcQztozJ8jToQWXxVuEyXWW+dSo8AiXWKwiSSrKWsRB/Qt+Ewwza+JWoLKiTuQLaEPhdNAJ7+Dosc9DOIqNy7Q==",
-			"funding": {
-				"type": "opencollective",
-				"url": "https://opencollective.com/bootstrap"
-			},
+			"version": "5.2.3",
+			"resolved": "https://registry.npmjs.org/bootstrap/-/bootstrap-5.2.3.tgz",
+			"integrity": "sha512-cEKPM+fwb3cT8NzQZYEu4HilJ3anCrWqh3CHAok1p9jXqMPsPTBhU25fBckEJHJ/p+tTxTFTsFQGM+gaHpi3QQ==",
+			"funding": [
+				{
+					"type": "github",
+					"url": "https://github.com/sponsors/twbs"
+				},
+				{
+					"type": "opencollective",
+					"url": "https://opencollective.com/bootstrap"
+				}
+			],
 			"peerDependencies": {
-				"@popperjs/core": "^2.10.2"
+				"@popperjs/core": "^2.11.6"
 			}
 		},
 		"node_modules/bootstrap-icons": {

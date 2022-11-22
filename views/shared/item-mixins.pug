@@ -62,7 +62,7 @@ mixin itemTagsAndDate(item, options={})
 			if (item.tags)
 				each tag, tagIndex in item.tags
 					if (options.publicShare)
-						span.badge.bg-primary.me-1
+						span.badge.text-bg-primary.me-1
 							i.bi-tag-fill.me-1
 							| #{tag}
 
@@ -72,11 +72,11 @@ mixin itemTagsAndDate(item, options={})
 							- tags.forEach(x => newTags.push(x));
 							- if (!newTags.includes(tag)) { newTags.push(tag); }
 
-							a.badge.bg-primary.me-1.non-underline-link(href=`/tags/${newTags.join(",")}`)
+							a.badge.text-bg-primary.me-1.non-underline-link(href=`/tags/${newTags.join(",")}`)
 								i.bi-tag-fill.me-1
 								| #{tag}
 						else
-							a.badge.bg-primary.me-1.non-underline-link(href=`/tags/${tag}`)
+							a.badge.text-bg-primary.me-1.non-underline-link(href=`/tags/${tag}`)
 								i.bi-tag-fill.me-1
 								| #{tag}
 
@@ -87,7 +87,7 @@ mixin itemTagsAndDate(item, options={})
 
 mixin itemBody(item, options)
 	if (item.dueDate)
-		span.badge.bg-info.mb-2(title=`Due Date: ${utils.formatDate(item.dueDate, "MMM d, yyyy")}`, data-bs-toggle="tooltip")
+		span.badge.text-bg-info.mb-2(title=`Due Date: ${utils.formatDate(item.dueDate, "MMM d, yyyy")}`, data-bs-toggle="tooltip")
 			i.bi-clock
 			span.ms-1 #{utils.formatDate(item.dueDate, "MMM d, yyyy")}
 

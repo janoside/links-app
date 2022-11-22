@@ -188,19 +188,19 @@ mixin timestamp(timestamp, includeAgo=true, formatString)
 
 
 mixin darkBadge(text)
-	span.badge.bg-dark.border.border-dark.me-2 #{text ? text : ""}
+	span.badge.text-bg-dark.border.border-dark.me-2 #{text ? text : ""}
 		if (block)
 			block
 
 
 mixin lightBadge(text)
-	span.badge.bg-light.text-dark.border.me-2 #{text ? text : ""}
+	span.badge.text-bg-light.border.me-2 #{text ? text : ""}
 		if (block)
 			block
 
 
 mixin primaryBadge(text, endMargin=true)
-	span.badge.bg-primary(class=(endMargin ? "me-2" : false)) #{text ? text : ""}
+	span.badge.text-bg-primary(class=(endMargin ? "me-2" : false)) #{text ? text : ""}
 		if (block)
 			block
 

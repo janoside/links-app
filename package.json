@@ -7,7 +7,7 @@
 		"@janoside/app-utils": "github:janoside/app-utils#3e4933c8",
 		"aws-sdk": "^2.1026.0",
 		"axios": "^1.1.3",
-		"bootstrap": "5.1.3",
+		"bootstrap": "5.2.3",
 		"bootstrap-icons": "^1.7.0",
 		"busboy": "^1.6.0",
 		"cookie-parser": "^1.4.4",

@@ -190,3 +190,9 @@ code {
 .markdown-body table th, .markdown-body table td {
 	border: 1px solid lighten($card-bg, 15%);
 }
+
+
+
+::selection {
+	background-color: $article-color-selected-text;
+}

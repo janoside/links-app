@@ -8,7 +8,7 @@
 							small
 								i.bi-tag-fill.me-2
 								| #{item._id} 
-								span.badge.bg-light.text-dark.ms-1 #{item.count.toLocaleString()}
+								span.badge.text-bg-light.ms-1 #{item.count.toLocaleString()}
 
 
 			- var maxVisibleTagCount = 50;
@@ -22,7 +22,7 @@
 							small
 								i.bi-tag-fill.me-2
 								| #{item._id} 
-								span.badge.bg-light.text-dark.ms-1 #{item.count.toLocaleString()}
+								span.badge.text-bg-light.ms-1 #{item.count.toLocaleString()}
 
 						if (!tags.includes(item._id) && tags.length > 0)
 							a.btn.btn-sm.btn-secondary.ms-1.mb-2(href=`/tags/${tags.slice().concat([item._id]).join(",")}`, title=`Add filter: ${item._id}`, data-bs-toggle="tooltip")
