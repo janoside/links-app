@@ -4,7 +4,7 @@
 	"description": "A cool links app.",
 	"main": "app.js",
 	"dependencies": {
-		"@janoside/app-utils": "github:janoside/app-utils#3e4933c8",
+		"app-utils": "file:./app/app-utils",
 		"aws-sdk": "^2.1026.0",
 		"axios": "^1.1.3",
 		"bootstrap": "5.2.3",

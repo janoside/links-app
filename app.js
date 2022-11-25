@@ -14,7 +14,7 @@ const app = require("./app/app.js");
 const simpleGit = require('simple-git');
 simpleGit().clean(simpleGit.CleanOptions.FORCE);
 
-const appUtils = require("@janoside/app-utils");
+const appUtils = require("./app/app-utils");
 const utils = appUtils.utils;
 
 const debugLog = require("debug")("app:app");

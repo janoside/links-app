@@ -8,7 +8,7 @@ const app = require("../app/app.js");
 
 const debugLog = debug("app:rootRouter");
 
-const appUtils = require("@janoside/app-utils");
+const appUtils = require("../app/app-utils");
 const utils = appUtils.utils;
 
 

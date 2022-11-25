@@ -2,7 +2,7 @@ const debug = require("debug");
 
 const appConfig = require("./config.js");
 
-const appUtils = require("@janoside/app-utils");
+const appUtils = require("./app-utils");
 const passwordUtils = appUtils.passwordUtils;
 
 const mongoClient = appUtils.mongoClient;

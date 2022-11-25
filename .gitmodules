@@ -1,0 +1,3 @@
+[submodule "app/app-utils"]
+	path = app/app-utils
+	url = git@github.com:janoside/app-utils.git

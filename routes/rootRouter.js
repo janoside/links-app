@@ -13,7 +13,7 @@ const { DateTime } = require("luxon");
 
 const debugLog = debug("app:rootRouter");
 
-const appUtils = require("@janoside/app-utils");
+const appUtils = require("../app/app-utils");
 const utils = appUtils.utils;
 const passwordUtils = appUtils.passwordUtils;
 const encryptionUtils = appUtils.encryptionUtils;

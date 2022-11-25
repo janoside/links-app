@@ -9,7 +9,7 @@
 			"version": "1.1.0",
 			"license": "MIT",
 			"dependencies": {
-				"@janoside/app-utils": "github:janoside/app-utils#3e4933c8",
+				"app-utils": "file:./app/app-utils",
 				"aws-sdk": "^2.1026.0",
 				"axios": "^1.1.3",
 				"bootstrap": "5.2.3",
@@ -1128,73 +1128,6 @@
 				"node": ">=6.9.0"
 			}
 		},
-		"node_modules/@janoside/app-utils": {
-			"version": "1.0.0",
-			"resolved": "git+ssh://git@github.com/janoside/app-utils.git#3e4933c8601846d5c0c0d1b3225ac8e3d355a4a4",
-			"license": "MIT",
-			"dependencies": {
-				"aws-sdk": "^2.987.0",
-				"axios": "^0.26.1",
-				"debug": "^4.3.4",
-				"dotenv": "^16.0.0",
-				"luxon": "^2.3.2",
-				"mongodb": "^4.5.0",
-				"sharp": "^0.30.4",
-				"simple-git": "^3.7.1"
-			}
-		},
-		"node_modules/@janoside/app-utils/node_modules/axios": {
-			"version": "0.26.1",
-			"resolved": "https://registry.npmjs.org/axios/-/axios-0.26.1.tgz",
-			"integrity": "sha512-fPwcX4EvnSHuInCMItEhAGnaSEXRBjtzh9fOtsE6E1G6p7vl7edEeZe11QHf18+6+9gR5PbKV/sGKNaD8YaMeA==",
-			"dependencies": {
-				"follow-redirects": "^1.14.8"
-			}
-		},
-		"node_modules/@janoside/app-utils/node_modules/luxon": {
-			"version": "2.5.0",
-			"resolved": "https://registry.npmjs.org/luxon/-/luxon-2.5.0.tgz",
-			"integrity": "sha512-IDkEPB80Rb6gCAU+FEib0t4FeJ4uVOuX1CQ9GsvU3O+JAGIgu0J7sf1OarXKaKDygTZIoJyU6YdZzTFRu+YR0A==",
-			"engines": {
-				"node": ">=12"
-			}
-		},
-		"node_modules/@janoside/app-utils/node_modules/semver": {
-			"version": "7.3.8",
-			"resolved": "https://registry.npmjs.org/semver/-/semver-7.3.8.tgz",
-			"integrity": "sha512-NB1ctGL5rlHrPJtFDVIVzTyQylMLu9N9VICA6HSFJo8MCGVTMW6gfpicwKmmK/dAjTOrqu5l63JJOpDSrAis3A==",
-			"dependencies": {
-				"lru-cache": "^6.0.0"
-			},
-			"bin": {
-				"semver": "bin/semver.js"
-			},
-			"engines": {
-				"node": ">=10"
-			}
-		},
-		"node_modules/@janoside/app-utils/node_modules/sharp": {
-			"version": "0.30.7",
-			"resolved": "https://registry.npmjs.org/sharp/-/sharp-0.30.7.tgz",
-			"integrity": "sha512-G+MY2YW33jgflKPTXXptVO28HvNOo9G3j0MybYAHeEmby+QuD2U98dT6ueht9cv/XDqZspSpIhoSW+BAKJ7Hig==",
-			"hasInstallScript": true,
-			"dependencies": {
-				"color": "^4.2.3",
-				"detect-libc": "^2.0.1",
-				"node-addon-api": "^5.0.0",
-				"prebuild-install": "^7.1.1",
-				"semver": "^7.3.7",
-				"simple-get": "^4.0.1",
-				"tar-fs": "^2.1.1",
-				"tunnel-agent": "^0.6.0"
-			},
-			"engines": {
-				"node": ">=12.13.0"
-			},
-			"funding": {
-				"url": "https://opencollective.com/libvips"
-			}
-		},
 		"node_modules/@kwsites/file-exists": {
 			"version": "1.1.1",
 			"resolved": "https://registry.npmjs.org/@kwsites/file-exists/-/file-exists-1.1.1.tgz",
@@ -1283,6 +1216,22 @@
 			},
 			"engines": {
 				"node": ">= 8"
+			}
+		},
+		"node_modules/app-utils": {
+			"name": "@janoside/app-utils",
+			"version": "1.0.0",
+			"resolved": "file:app/app-utils",
+			"license": "MIT",
+			"dependencies": {
+				"aws-sdk": "^2.987.0",
+				"axios": "^1.1.3",
+				"debug": "^4.3.4",
+				"dotenv": "^16.0.0",
+				"luxon": "^3.0.4",
+				"mongodb": "^4.5.0",
+				"sharp": "^0.31.1",
+				"simple-git": "^3.7.1"
 			}
 		},
 		"node_modules/array-flatten": {
