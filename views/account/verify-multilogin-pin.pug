@@ -1,0 +1,28 @@
+extends ../layout
+
+block headBlock
+	title Verify Multi-Login PIN
+
+block content
+	h1 Verify Multi-Login PIN
+	hr
+
+	+card
+		span Username
+		span.fw-bold #{username}
+
+		form(method="post", action=`/account/verify-multilogin-pin/${username}`)
+			fieldset.mb-4
+				label.mb-2(for="multiloginPin") PIN
+				input.form-control(id="multiloginPin", name="multiloginPin", type="password", pattern="[0-9]*", placeholder="pin", required="true")
+
+			
+			.d-grid
+				button.btn.btn-primary(type="submit") Verify
+			
+
+block bodyEnd
+	script.
+		$(document).ready(function() {
+			$("#multiloginPin").focus();
+		});

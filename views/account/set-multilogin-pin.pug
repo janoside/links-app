@@ -1,0 +1,23 @@
+extends ../layout
+
+block headBlock
+	title Set Multi-Login PIN
+
+block content
+	h1 Set Multi-Login PIN
+	hr
+
+	+card
+		p After setting this PIN, you can use this account with a multi-login setup, which allows easy switching between accounts you own.
+		p The PIN should be 6 digits long.
+
+		form(method="post", action="/account/set-multilogin-pin")
+			fieldset.mb-4
+				label.mb-2(for="pin") PIN
+				input.form-control(id="pin", name="pin", type="password", pattern="[0-9]*", placeholder="pin", required="true")
+
+			
+			.d-grid
+				button.btn.btn-primary(type="submit") Save
+			
+							

@@ -330,3 +330,41 @@ mixin pagination(limit, offset, sort, itemCount, baseUrl, justification="start",
 
 
 
+
+
+mixin adminModalAndButton(buttonText)
+	button.btn.btn-warning(type="button", data-bs-toggle="modal", data-bs-target="#sessionModal")
+		i.bi-shield-lock-fill.me-2
+		span #{buttonText}
+
+	.modal(id="sessionModal", tabindex="-1", aria-labelledby="session json", aria-hidden="true")
+		.modal-dialog.modal-xl
+			.modal-content
+				.modal-header
+					h5.modal-title #{buttonText}
+					button.btn-close(type="button", data-bs-dismiss="modal", aria-label="Close")
+				.modal-body
+					block
+
+
+
+mixin loginForm(targetAction, showRememberMe)
+	form(method="post", action=targetAction)
+
+		fieldset.mb-4
+			label.mb-2(for="username") Username
+			input.form-control(id="username", name="username", type="text", placeholder="username", required="true")
+
+		fieldset.mb-4
+			label.mb-2(for="password") Password
+			input.form-control(id="password", name="password", type="password", placeholder="password")
+		
+		if (showRememberMe)
+			fieldset.mb-4
+				label.mb-2(for="rememberme")
+					input.me-2(id="rememberme", name="rememberme", type="checkbox")
+					| Stay logged in
+			
+
+		.d-grid
+			button.btn.btn-primary(type="submit") Login

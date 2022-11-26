@@ -47,6 +47,34 @@ async function authenticate(username, password, passwordPreHashed=false) {
 	return user;
 }
 
+async function verifyMultiloginPin(username, multiloginPin, preHashed=false) {
+	var user = await db.findOne("users", {username:username});
+
+	if (user == null) {
+		debugLog(`User authentication failed: ${username} doesn't exist`);
+
+		return null;
+	}
+
+	var pinMatch = false;
+	if (preHashed) {
+		pinMatch = (multiloginPin == user.multiloginPinHash);
+
+	} else {
+		pinMatch = await passwordUtils.verify(multiloginPin, user.multiloginPinHash);
+	}
+
+	if (!pinMatch) {
+		debugLog(`PIN authentication failed: ${username} - PIN mismatch`);
+
+		return null;
+	}
+
+	debugLog(`PIN authenticated: ${username}`);
+
+	return user;
+}
+
 async function createOrUpdateItem(existingItemId, userId, username, itemType, fields) {
 	//console.log(fields);
 	const itemsCollection = await db.getCollection("items");
@@ -231,6 +259,7 @@ async function uploadFile(fileBuffer, itemId) {
 
 module.exports = {
 	authenticate: authenticate,
+	verifyMultiloginPin: verifyMultiloginPin,
 	createOrUpdateItem: createOrUpdateItem,
 	processAndUploadImages: processAndUploadImages
 }

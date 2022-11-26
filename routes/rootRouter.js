@@ -150,6 +150,7 @@ router.post("/login", asyncHandler(async (req, res, next) => {
 
 		req.session.username = user.username;
 		req.session.user = user;
+		req.session.accounts = [user];
 
 		req.session.userMessage = "Success!";
 		req.session.userMessageType = "success";
@@ -192,10 +193,6 @@ router.get("/logout", async (req, res, next) => {
 
 	res.redirect("/");
 });
-
-router.get("/settings", asyncHandler(async (req, res, next) => {
-	res.render("settings");
-}));
 
 router.get("/account", asyncHandler(async (req, res, next) => {
 	res.render("account");

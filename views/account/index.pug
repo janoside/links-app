@@ -1,0 +1,59 @@
+extends ../layout
+
+block headBlock
+	title My Account
+
+block content
+	h1 My Account
+	hr
+
+	+card
+		h5.mb-0 Tools
+		hr
+
+		- var buttons = [["/export", "Export All", "bi-download", "Export all of your links"]];
+
+		.d-none.d-md-block
+			each item in buttons
+				a.btn.btn-primary.me-2(href=item[0], title=item[3], data-bs-toggle="tooltip", target="_blank")
+					i.me-2(class=item[2])
+					| #{item[1]}
+
+			
+		.d-md-none
+			each item in buttons
+				.d-grid
+					a.btn.btn-primary(href=item[0], title=item[3], data-bs-toggle="tooltip", target="_blank")
+						i.me-2(class=item[2])
+						| #{item[1]}
+	
+	+card
+		h5.mb-0 Settings
+		hr
+
+		span Multi-login PIN: 
+		if (user.multiloginPinHash)
+			span.text-success Set
+			i.bi-check2.text-success.ms-1
+
+			span.ms-2 (
+				a(href=`/account/set-multilogin-pin`) Change PIN
+				span )
+		else
+			span.text-warning.me-2 Unset
+			span (
+				a(href=`/account/set-multilogin-pin`) Set PIN
+				span )
+
+
+	if (user.roles && user.roles.includes("admin"))
+		+card
+			h5.mb-0 Admin Extensions
+			hr
+
+			+adminModalAndButton("Session Data")
+				pre
+					code.json #{JSON.stringify(session, null, 4)}
+
+			
+							

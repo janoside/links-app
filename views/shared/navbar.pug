@@ -12,17 +12,27 @@
 						i.bi-person-circle.me-2
 
 					.dropdown-menu.dropdown-menu-end(aria-labelledby="navbarDropdown")
-						span.dropdown-header #{session.username}
+						span.dropdown-header.text-success.fw-bold
+							span #{session.username}
+							span.text-tiny.text-muted.fw-light.ms-2 (active)
+
+						if (session.accounts)
+							each account in session.accounts
+								if (account.username != session.user.username)
+									a.dropdown-item(href=`/account/verify-multilogin-pin/${account.username}`)
+										| #{account.username}
+
+						.dropdown-divider
+
+						a.dropdown-item(href="/account/add-account")
+							i.bi-person-plus.me-2
+							| Login another account
 
 						.dropdown-divider
 
 						a.dropdown-item(href="/account")
 							i.bi-person-circle.me-2
 							| My Account
-
-						a.dropdown-item(href="/settings")
-							i.bi-gear.me-2
-							| Settings
 
 						if (session.user && session.user.roles && session.user.roles.includes("admin"))
 							a.dropdown-item(href="/admin")

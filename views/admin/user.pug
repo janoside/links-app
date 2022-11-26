@@ -16,7 +16,12 @@ block adminContent
 						th Roles
 						td.text-monospace
 							if (user.roles)
-								| #{user.roles}
+								each role in user.roles
+									if (role == "admin")
+										span.text-warning.fw-bold.me-2 #{role}
+											i.bi-shield-lock-fill.ms-1
+									else
+										span.me-2 #{role}
 							else
 								| -
 					
@@ -35,7 +40,9 @@ block adminContent
 
 			hr
 			
-			a.btn.btn-primary.me-3(href=`/admin/user/${user.username}/add-role/admin`) Promote to Admin
+			if (!user.roles.includes("admin"))
+				a.btn.btn-primary.me-3(href=`/admin/user/${user.username}/add-role/admin`) Promote to Admin
+
 			a.btn.btn-danger(href=`/admin/user/${user.username}/delete`) Delete User
 			
 
