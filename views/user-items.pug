@@ -5,9 +5,7 @@ block headBlock
 
 block content
 	+itemListPageHeader(itemCount, limit, offset, sort, paginationBaseUrl)
-		h1 #{itemCount.toLocaleString()} Item
-			| #{itemCount != 1 ? "s" : ""}
-
-	hr
+		+pageTitle(`${itemCount.toLocaleString()} Item${itemCount != 1 ? "s" : ""}`)
+		
 
 	include ./shared/item-list.pug

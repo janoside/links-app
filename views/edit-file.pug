@@ -5,7 +5,7 @@ block headBlock
 
 block content
 	.center-col
-		h1 Edit File
+		+pageTitle("Edit File")
 			a.fs-5.ms-3.non-underline-link(href=`/item/${item._id}`) Cancel
 
 		if (item.hasImage)

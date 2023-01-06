@@ -1,10 +1,8 @@
 extends layout
 
 block content
-	h1 #{tagsData.length.toLocaleString()} Tag
-		| #{tagsData.length != 1 ? "s" : ""}
+	+pageTitle(`${tagsData.length.toLocaleString()} Tag${tagsData.length != 1 ? "s" : ""}`)
 	
-	hr
 
 	if (tagsData)
 		each item in tagsData

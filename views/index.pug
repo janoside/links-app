@@ -5,8 +5,8 @@ block headBlock
 
 block content
 	if (session.username)
-		h1 Home
-		hr
+		+pageTitle("Home")
+		
 
 		.d-block.d-md-none.mb-3
 			form(method="get", action="/search")

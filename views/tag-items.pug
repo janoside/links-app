@@ -5,8 +5,9 @@ block headBlock
 
 block content
 	+itemListPageHeader(itemCount, limit, offset, sort, paginationBaseUrl)
-		h1 #{itemCount.toLocaleString()} Item
-			| #{itemCount != 1 ? "s" : ""} for 
+		+pageTitle(`${itemCount.toLocaleString()} Item${itemCount != 1 ? "s" : ""} for`)
+		
+
 			each tag in tags
 				span.badge.text-bg-primary.me-1
 					i.bi-tag-fill.me-2
@@ -21,6 +22,6 @@ block content
 						a.ms-2(href=`/favorite-tags/add/${tag}`, title="Add Tag to Favorites", data-bs-toggle="tooltip")
 							i.small.bi-bookmark-plus.text-primary
 
-	hr
+
 	
 	include ./shared/item-list.pug

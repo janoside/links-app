@@ -5,7 +5,8 @@ block headBlock
 
 block content
 	.center-col
-		h1.mb-3 New Note
+		+pageTitle("New Note")
+		
 
 		form(method="post", action="/new-note")
 			fieldset.mb-3

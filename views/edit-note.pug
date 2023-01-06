@@ -5,7 +5,7 @@ block headBlock
 
 block content
 	.center-col
-		h1 Edit Note
+		+pageTitle("Edit Note")
 			a.fs-5.ms-3.non-underline-link(href=`/item/${item._id}`) Cancel
 
 		form(method="post", action=`/edit-note/${item._id}`)

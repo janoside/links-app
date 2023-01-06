@@ -1,11 +1,16 @@
 mixin pageTitle(text, subtext, copyableSubtext=false)
-	h1.fw-light.word-wrap.mb-4
-		| #{text}
-		br
-		span.text-tiny #{subtext}
-			if (copyableSubtext)
-				small
-					+copyTextButton(subtext)
+	h1.fw-light.word-wrap.mb-5
+		span.me-2 #{text}
+
+		if (subtext)
+			br
+			span.text-tiny #{subtext}
+				if (copyableSubtext)
+					small
+						+copyTextButton(subtext)
+
+		if (block)
+			block
 	
 	//hr.mb-3
 

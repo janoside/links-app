@@ -1,53 +1,52 @@
 extends adminLayout
 
 block adminContent
-	h1 User: #{user.username}
-	hr
+	+pageTitle(`User: ${user.username}`)
 
-	.card
-		.card-body
-			.mb-4
-				table.table.table-striped
-					tr
-						th Username
-						td.text-monospace #{user.username}
 
-					tr
-						th Roles
-						td.text-monospace
-							if (user.roles)
-								each role in user.roles
-									if (role == "admin")
-										span.text-warning.fw-bold.me-2 #{role}
-											i.bi-shield-lock-fill.ms-1
-									else
-										span.me-2 #{role}
-							else
-								| -
-					
-					tr
-						th Created At
-						td.text-monospace #{utils.formatDate(user.createdAt)}
-					
-					tr
-						th Updated At
-						td.text-monospace #{utils.formatDate(user.updatedAt)}
+	+card
+		.mb-4
+			table.table.table-striped
+				tr
+					th Username
+					td.text-monospace #{user.username}
 
-					tr
-						th Item(s)
-						td.text-monospace #{itemCount.toLocaleString()}
-			
+				tr
+					th Roles
+					td.text-monospace
+						if (user.roles)
+							each role in user.roles
+								if (role == "admin")
+									span.text-warning.fw-bold.me-2 #{role}
+										i.bi-shield-lock-fill.ms-1
+								else
+									span.me-2 #{role}
+						else
+							| -
+				
+				tr
+					th Created At
+					td.text-monospace #{utils.formatDate(user.createdAt)}
+				
+				tr
+					th Updated At
+					td.text-monospace #{utils.formatDate(user.updatedAt)}
 
+				tr
+					th Item(s)
+					td.text-monospace #{itemCount.toLocaleString()}
+		
+
+		hr
+		
+		if (!user.roles.includes("admin"))
+			a.btn.btn-primary.me-3(href=`/admin/user/${user.username}/add-role/admin`) Promote to Admin
+
+		a.btn.btn-danger(href=`/admin/user/${user.username}/delete`) Delete User
+		
+
+		.mt-4
+			h4 Raw
 			hr
-			
-			if (!user.roles.includes("admin"))
-				a.btn.btn-primary.me-3(href=`/admin/user/${user.username}/add-role/admin`) Promote to Admin
-
-			a.btn.btn-danger(href=`/admin/user/${user.username}/delete`) Delete User
-			
-
-			.mt-4
-				h4 Raw
-				hr
-				pre
-					code.json #{JSON.stringify(user, null, 4)}
+			pre
+				code.json #{JSON.stringify(user, null, 4)}

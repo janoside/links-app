@@ -1,28 +1,27 @@
 extends adminLayout
 
 block adminContent
-	h1 Admin
-	hr
+	+pageTitle("Admin")
 
-	.card
-		.card-body
-			table.table.table-striped
-				tr
-					th App Version
-					td.text-monospace #{global.appVersion}
 
-				tr
-					th Sourcecode Version
-					td.text-monospace #{global.sourcecodeVersion}
-				
-				tr
-					th Sourcecode Date
-					td.text-monospace #{global.sourcecodeDate}
-				
-				tr
-					th App Startup
-					td.text-monospace #{utils.formatDate(global.appStartDate)}
+	+card
+		table.table.table-striped
+			tr
+				th App Version
+				td.text-monospace #{global.appVersion}
 
-				tr
-					th Node Version
-					td.text-monospace #{global.nodeVersion}
+			tr
+				th Sourcecode Version
+				td.text-monospace #{global.sourcecodeVersion}
+			
+			tr
+				th Sourcecode Date
+				td.text-monospace #{global.sourcecodeDate}
+			
+			tr
+				th App Startup
+				td.text-monospace #{utils.formatDate(global.appStartDate)}
+
+			tr
+				th Node Version
+				td.text-monospace #{global.nodeVersion}
