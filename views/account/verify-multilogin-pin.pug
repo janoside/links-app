@@ -1,28 +1,21 @@
 extends ../layout
 
+include ../shared/account-mixins.pug
+
+
 block headBlock
 	title Verify Multi-Login PIN
 
 block content
-	h1 Verify Multi-Login PIN
-	hr
+	+pageTitle("Verify PIN")
 
-	+card
-		span Username
-		span.fw-bold #{username}
 
-		form(method="post", action=`/account/verify-multilogin-pin/${username}`)
-			fieldset.mb-4
-				label.mb-2(for="multiloginPin") PIN
-				input.form-control(id="multiloginPin", name="multiloginPin", type="password", pattern="[0-9]*", placeholder="pin", required="true")
+	+contentSection(`Username: ${username}`)
+		+pinEntry(`/account/verify-multilogin-pin/${username}`, "Verify")
 
-			
-			.d-grid
-				button.btn.btn-primary(type="submit") Verify
+
+
 			
 
 block bodyEnd
-	script.
-		$(document).ready(function() {
-			$("#multiloginPin").focus();
-		});
+	

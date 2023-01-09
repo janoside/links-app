@@ -31,7 +31,7 @@ async function authenticate(username, password, passwordPreHashed=false) {
 	var passwordMatch = false;
 	if (passwordPreHashed) {
 		passwordMatch = (password == user.passwordHash);
-
+		
 	} else {
 		passwordMatch = await passwordUtils.verify(password, user.passwordHash);
 	}

@@ -132,8 +132,14 @@ router.post("/signup", asyncHandler(async (req, res, next) => {
 			httpOnly: appConfig.secureSite
 		});
 
+		res.cookie("remembermeAccounts", JSON.stringify([props]), {
+			maxAge: (3 * utils.monthMillis()),
+			httpOnly: appConfig.secureSite
+		});
+
 	} else {
 		res.clearCookie("rememberme");
+		res.clearCookie("remembermeAccounts");
 	}
 
 	res.redirect("/");
@@ -163,8 +169,14 @@ router.post("/login", asyncHandler(async (req, res, next) => {
 				httpOnly: appConfig.secureSite
 			});
 
+			res.cookie("remembermeAccounts", JSON.stringify([props]), {
+				maxAge: (3 * utils.monthMillis()),
+				httpOnly: appConfig.secureSite
+			});
+
 		} else {
 			res.clearCookie("rememberme");
+			res.clearCookie("remembermeAccounts");
 		}
 
 		if (req.session.redirectUrl) {
@@ -190,6 +202,7 @@ router.get("/logout", async (req, res, next) => {
 	req.session.user = null;
 
 	res.clearCookie("rememberme");
+	res.clearCookie("remembermeAccounts");
 
 	res.redirect("/");
 });

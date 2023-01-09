@@ -62,7 +62,17 @@ router.post("/add-account", async (req, res, next) => {
 		req.session.userMessage = "Success!";
 		req.session.userMessageType = "success";
 
-		// don't touch "rememberme" cookie - leave autologin only for primary account
+		
+		// special remembermeAccounts that aggregates accounts
+		let remembermeAccounts = JSON.parse(req.cookies.remembermeAccounts);
+		const accountProps = {username:req.body.username, passwordHash:user.passwordHash};
+		remembermeAccounts.push(accountProps);
+
+		res.cookie("remembermeAccounts", JSON.stringify(remembermeAccounts), {
+			maxAge: (3 * utils.monthMillis()),
+			httpOnly: appConfig.secureSite
+		});
+
 
 		if (req.session.redirectUrl) {
 			const redirectUrl = req.session.redirectUrl;
@@ -128,12 +138,15 @@ router.get("/set-multilogin-pin", async (req, res, next) => {
 });
 
 router.post("/set-multilogin-pin", async (req, res, next) => {
-	const pinHash = await passwordUtils.hash(req.body.pin);
+	const pinHash = await passwordUtils.hash(req.body.multiloginPin);
 
 	req.session.user.multiloginPinHash = pinHash;
 
 	const usersCollection = await db.getCollection("users");
 	const updateResult = await usersCollection.updateOne({_id:ObjectId(req.session.user._id)}, {$set:{multiloginPinHash:req.session.user.multiloginPinHash}});
+
+	req.session.userMessage = "PIN updated";
+	req.session.userMessageType = "success";
 
 	res.redirect("/account");
 });

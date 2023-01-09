@@ -1,0 +1,53 @@
+mixin pinEntry(postPath, buttonText)
+	script.
+		function bullets(count) {
+			let str = "";
+			for (let i = 0; i < count; i++) {
+				str += "•";
+			}
+
+			return str;
+		}
+
+		function pinNumber(i) {
+			// •
+			$("#pin-input").val($("#pin-input").val() + "" + i);
+			$("#pin-text").text(bullets($("#pin-input").val().length));
+			$("#pin-text2").text($("#pin-input").val().length.toLocaleString());
+		}
+
+		function pinBackspace() {
+			var pinVal = $("#pin-input").val();
+			if (pinVal.length > 0) {
+				pinVal = pinVal.substring(0, pinVal.length - 1);
+			}
+
+			$("#pin-input").val(pinVal);
+			$("#pin-text").text(bullets($("#pin-input").val().length));
+			$("#pin-text2").text($("#pin-input").val().length.toLocaleString());
+		}
+
+	- var buttonNumberColumns = [ [1, 4, 7], [2, 5, 8, 0], [3, 6, 9, "del"] ];
+
+	form(method="post", action=postPath)
+		.d-block
+			.d-flex.justify-content-center
+				.d-flex
+					each buttonNumberColumn in buttonNumberColumns
+						.d-flex.flex-column.me-4
+							each buttonNumber in buttonNumberColumn
+								if (buttonNumber == "del")
+									a#delete-button.btn.btn-danger.btn-lg.mb-4(style="width: 55px;", onclick=`pinBackspace(); return false;`)
+										i.bi-arrow-left
+								else
+									a.btn.btn-primary.btn-lg.mb-4.number-button(data-number=`${buttonNumber}`, onclick=`pinNumber(${buttonNumber}); return false;`, style="width: 55px;") #{buttonNumber}
+
+			.d-flex.justify-content-center.my-4
+				span#pin-text.lead(style="font-size: 50px;")
+				span.ms-3#pin-text2.lead
+
+			input#pin-input(type="hidden", name="multiloginPin")
+
+		
+		.d-grid
+			button.btn.btn-primary(type="submit") #{buttonText}

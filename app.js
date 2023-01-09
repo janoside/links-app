@@ -121,6 +121,29 @@ expressApp.use(async (req, res, next) => {
 			req.session.username = rememberme.username;
 			req.session.user = user;
 		}
+
+
+		if (!req.cookies.remembermeAccounts) {
+			res.cookie("remembermeAccounts", JSON.stringify([rememberme]), {
+				maxAge: (3 * utils.monthMillis()),
+				httpOnly: appConfig.secureSite
+			});
+		}
+	}
+
+	// remembermeAccunts auto-load
+	if (!req.session.accounts && req.cookies.remembermeAccounts) {
+		var remembermeAccounts = JSON.parse(req.cookies.remembermeAccounts);
+		
+		req.session.accounts = [];
+		for (let i = 0; i < remembermeAccounts.length; i++) {
+			let account = remembermeAccounts[i];
+
+			var user = await app.authenticate(account.username, account.passwordHash, true);
+			if (user) {
+				req.session.accounts.push(user);
+			}
+		}
 	}
 
 	if (req.session.userMessage) {
