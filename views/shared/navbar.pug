@@ -123,22 +123,24 @@
 						button.btn.btn-primary(type="submit")
 							i.bi-search
 
-	.p-0.bg-header-footer-highlight.border-bottom
-		.d-flex.flex-wrap.align-items-top.justify-content-center.justify-content-lg-start.py-1.ps-2
-			ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-between.my-3.my-lg-0
-				if (pinnedItemCount > 0)
-					li
-						a.nav-link.py-1.px-2.pe-3.text-white.fw-light(href=`/pinned`)
-							i.bi-pin-fill.me-1
-							| Pinned
-							span.small.ms-tiny (#{pinnedItemCount.toLocaleString()})
 
-				if (session.user && session.user.favoriteTags)
-					each tag in session.user.favoriteTags
-						li.d-none.d-lg-block
-							a.nav-link.py-1.px-2.pe-3.text-white.fw-light(href=`/tags/${tag}`)
-								i.bi-tag-fill.me-1
-								| #{tag}
-								if (favoriteTagCounts && favoriteTagCounts[tag])
-									span.small.ms-tiny (#{favoriteTagCounts[tag].toLocaleString()})
+	if (pinnedItemCount > 0 || session.user && session.user.favoriteTags)
+		.p-0.bg-header-footer-highlight.border-bottom
+			.d-flex.flex-wrap.align-items-top.justify-content-center.justify-content-lg-start.py-1.ps-2
+				ul.nav.col-12.col-lg-auto.me-lg-auto.mb-2.justify-content-between.my-3.my-lg-0
+					if (pinnedItemCount > 0)
+						li
+							a.nav-link.py-1.px-2.pe-3.text-white.fw-light(href=`/pinned`)
+								i.bi-pin-fill.me-1
+								| Pinned
+								span.small.ms-tiny (#{pinnedItemCount.toLocaleString()})
+
+					if (session.user && session.user.favoriteTags)
+						each tag in session.user.favoriteTags
+							li.d-none.d-lg-block
+								a.nav-link.py-1.px-2.pe-3.text-white.fw-light(href=`/tags/${tag}`)
+									i.bi-tag-fill.me-1
+									| #{tag}
+									if (favoriteTagCounts && favoriteTagCounts[tag])
+										span.small.ms-tiny (#{favoriteTagCounts[tag].toLocaleString()})
 				
