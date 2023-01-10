@@ -1,5 +1,5 @@
 mixin pageTitle(text, subtext, copyableSubtext=false)
-	h1.fw-light.word-wrap.mb-3.mb-lg-5
+	h1.fw-light.word-wrap.mb-2.mb-lg-5
 		span.me-2 #{text}
 
 		if (subtext)
@@ -124,26 +124,26 @@ mixin itemListPageHeader(itemCount, limit, offset, sort, paginationBaseUrl)
 				ul.pagination.mb-0.justify-content-center.justify-content-md-start
 					if (sort == "date-desc")
 						li.page-item.disabled
-							a.page-link.text-body(href="#", aria-disabled="true")
+							a.page-link.text-body.text-bg-primary.py-1(href="#", aria-disabled="true")
 								i.bi-check.me-2
 								span New
 								i.bi-arrow-up.ms-1
 								
 					else
 						li.page-item
-							a.page-link(href=`${paginationBaseUrl}?sort=date-desc`, type="button") New
+							a.page-link.py-1(href=`${paginationBaseUrl}?sort=date-desc`, type="button") New
 								i.bi-arrow-up.ms-1
 
 					if (sort == "date-asc")
 						li.page-item.disabled
-							a.page-link.text-body(href="#", aria-disabled="true")
+							a.page-link.text-body.text-bg-primary.py-1(href="#", aria-disabled="true")
 								i.bi-check.me-1
 								span Old
 								i.bi-arrow-up.ms-1
 								
 					else
 						li.page-item
-							a.page-link(href=`${paginationBaseUrl}?sort=date-asc`, type="button") Old
+							a.page-link.py-1(href=`${paginationBaseUrl}?sort=date-asc`, type="button") Old
 								i.bi-arrow-up.ms-1
 
 
