@@ -1,4 +1,4 @@
-.bg-header-footer.mb-4
+.bg-header-footer.mb-2.mb-lg-4
 	.p-3.pb-2
 		.d-flex.justify-content-between
 			div
@@ -135,7 +135,7 @@
 
 				if (session.user && session.user.favoriteTags)
 					each tag in session.user.favoriteTags
-						li
+						li.d-none.d-lg-block
 							a.nav-link.py-1.px-2.pe-3.text-white.fw-light(href=`/tags/${tag}`)
 								i.bi-tag-fill.me-1
 								| #{tag}
