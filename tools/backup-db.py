@@ -12,7 +12,13 @@ from dotenv import load_dotenv
 from botocore.exceptions import ClientError
 from termcolor import colored
 
-load_dotenv()
+env_dir = pathlib.Path(__file__).parent.parent.absolute()
+env_path = os.path.join(env_dir, ".env")
+
+print(colored(f"\nLoading env file from {env_path}", "cyan"))
+
+load_dotenv(env_path)
+
 
 # variables
 db_username = os.getenv('DB_USERNAME')
