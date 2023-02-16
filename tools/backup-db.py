@@ -7,6 +7,7 @@ import boto3
 import logging
 import sys
 import termcolor
+import pathlib
 
 from dotenv import load_dotenv
 from botocore.exceptions import ClientError
