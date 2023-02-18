@@ -77,7 +77,7 @@ s3_path = f"backups/{server_name}/{time_str}.tar.gz"
 
 
 # Backup directory
-base_backup_dir = "../db-backups"
+base_backup_dir = f"../db-backups/{site_name}"
 backup_dir = f'{base_backup_dir}/{time_str}'
 
 # Tar file of backup directory
