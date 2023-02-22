@@ -7,8 +7,12 @@
 					span.fs-4.align-middle.ms-2 #{global.appConfig.siteName}
 
 			if (session.username)
-				div
-					a.btn.btn-primary.btn-sm#navbarDropdown.text-white.nav-link.px-2.py-1.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+				.d-flex.gap-2
+					if (session.user && session.user.roles && session.user.roles.includes("admin"))
+						a.btn.btn-warning.px-2(href="/admin")
+							i.bi-shield-lock.mx-1
+
+					a.btn.btn-primary#navbarDropdown.text-white.nav-link.px-2.py-1.dropdown-toggle(href="javascript:void(0)", role="button", data-bs-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
 						i.bi-person-circle.me-2
 
 					.dropdown-menu.dropdown-menu-end(aria-labelledby="navbarDropdown")
@@ -33,11 +37,6 @@
 						a.dropdown-item(href="/account")
 							i.bi-person-circle.me-2
 							| My Account
-
-						if (session.user && session.user.roles && session.user.roles.includes("admin"))
-							a.dropdown-item(href="/admin")
-								i.bi-shield-lock.me-2
-								| Admin
 
 						.dropdown-divider
 
