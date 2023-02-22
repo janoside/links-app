@@ -30,7 +30,7 @@ router.get("/item/:itemId/:size", asyncHandler(async (req, res, next) => {
 		}
 
 		const itemId = req.params.itemId;
-		const item = await db.findOne("items", {_id:ObjectId(req.params.itemId)});
+		const item = await db.findOne("items", {_id:req.params.itemId});
 
 		if (req.session.username != item.username) {
 			res.writeHead(403);
@@ -60,7 +60,7 @@ router.get("/item/:itemId/:size", asyncHandler(async (req, res, next) => {
 router.get("/item-share/:itemId/:size", asyncHandler(async (req, res, next) => {
 	try {
 		const itemId = req.params.itemId;
-		const item = await db.findOne("items", {_id:ObjectId(req.params.itemId)});
+		const item = await db.findOne("items", {_id:req.params.itemId});
 
 		const s3Data = await s3Bucket.get(`img/${req.params.itemId}/${req.params.size}`);
 		const imgBuffer = encryptor.decrypt(s3Data);

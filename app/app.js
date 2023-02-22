@@ -89,7 +89,7 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 		};
 
 	} else {
-		item = await db.findOne("items", {_id:ObjectId(existingItemId)});
+		item = await db.findOne("items", {_id:existingItemId});
 	}
 
 	if (fields.url) {
@@ -146,7 +146,7 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 		itemId = await db.insertOne("items", item);
 
 	} else {
-		const updateResult = await itemsCollection.updateOne({_id:ObjectId(existingItemId)}, {$set: item});
+		const updateResult = await itemsCollection.updateOne({_id:existingItemId}, {$set: item});
 
 		debugLog("Updated item " + existingItemId + ": " + JSON.stringify(updateResult));
 	}
@@ -188,7 +188,7 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 		item.hasImage = true;
 		item.imageSizes = processedImageSizes;
 
-		const updateResult = await itemsCollection.updateOne({_id:ObjectId(itemId)}, {$set: item});
+		const updateResult = await itemsCollection.updateOne({_id:itemId}, {$set: item});
 	}
 
 	if (fields.file) {
@@ -201,7 +201,7 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 			item.fileMetadata = fields["file.metadata"];
 		}
 
-		const updateResult = await itemsCollection.updateOne({_id:ObjectId(itemId)}, {$set: item});
+		const updateResult = await itemsCollection.updateOne({_id:itemId}, {$set: item});
 	}
 
 	return item;

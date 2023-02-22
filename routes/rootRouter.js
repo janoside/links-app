@@ -360,7 +360,7 @@ router.post("/new-note", asyncHandler(async (req, res, next) => {
 
 router.post("/edit-note/:itemId", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
-	const item = await db.findOne("items", {_id:ObjectId(itemId)});
+	const item = await db.findOne("items", {_id:itemId});
 
 	if (req.body.text) {
 		item.text = req.body.text;
@@ -415,7 +415,7 @@ router.post("/edit-note/:itemId", asyncHandler(async (req, res, next) => {
 	}
 
 	const itemsCollection = await db.getCollection("items");
-	const updateResult = await itemsCollection.updateOne({_id:ObjectId(itemId)}, {$set: item});
+	const updateResult = await itemsCollection.updateOne({_id:itemId}, {$set: item});
 
 	req.session.userMessage = "Saved!";
 	req.session.userMessageType = "success";
@@ -448,7 +448,7 @@ router.get("/item/:itemId", asyncHandler(async (req, res, next) => {
 	}
 
 	const itemId = req.params.itemId;
-	const item = await db.findOne("items", {_id:ObjectId(itemId)});
+	const item = await db.findOne("items", {_id:itemId});
 
 	if (req.session.username != item.username) {
 		req.session.userMessage = "You're not authorized to view that.";
@@ -466,7 +466,7 @@ router.get("/item/:itemId", asyncHandler(async (req, res, next) => {
 
 router.get("/item/:itemId/edit", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
-	const item = await db.findOne("items", {_id:ObjectId(itemId)});
+	const item = await db.findOne("items", {_id:itemId});
 
 	res.locals.item = item;
 
@@ -501,7 +501,7 @@ router.get("/item/:itemId/raw", asyncHandler(async (req, res, next) => {
 	}
 
 	const itemId = req.params.itemId;
-	const item = await db.findOne("items", {_id:ObjectId(itemId)});
+	const item = await db.findOne("items", {_id:itemId});
 
 	if (req.session.username != item.username) {
 		res.redirect("/");
@@ -516,7 +516,7 @@ router.get("/item/:itemId/raw", asyncHandler(async (req, res, next) => {
 
 router.get("/item/:itemId/delete", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
-	const item = await db.findOne("items", {_id:ObjectId(itemId)});
+	const item = await db.findOne("items", {_id:itemId});
 
 	if (item.locked) {
 		req.session.userMessage = "This item is locked. It must be unlocked before it may be deleted.";
@@ -534,7 +534,7 @@ router.get("/item/:itemId/delete", asyncHandler(async (req, res, next) => {
 
 router.post("/item/:itemId/delete", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
-	const item = await db.findOne("items", {_id:ObjectId(itemId)});
+	const item = await db.findOne("items", {_id:itemId});
 
 	const result = await db.deleteOne("items", {_id:item._id});
 
@@ -562,7 +562,7 @@ router.get("/item/:itemId/pin", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
 
 	const itemsCollection = await db.getCollection("items");
-	const result = await itemsCollection.updateOne({_id:ObjectId(itemId)}, {$set: {pinned: true}});
+	const result = await itemsCollection.updateOne({_id:itemId}, {$set: {pinned: true}});
 
 	req.session.userMessage = "Item pinned";
 	req.session.userMessageType = "success";
@@ -574,7 +574,7 @@ router.get("/item/:itemId/unpin", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
 
 	const itemsCollection = await db.getCollection("items");
-	const result = await itemsCollection.updateOne({_id:ObjectId(itemId)}, {$unset: {pinned: true}});
+	const result = await itemsCollection.updateOne({_id:itemId}, {$unset: {pinned: true}});
 
 	req.session.userMessage = "Item unpinned";
 	req.session.userMessageType = "success";
@@ -586,7 +586,7 @@ router.get("/item/:itemId/lock", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
 
 	const itemsCollection = await db.getCollection("items");
-	const result = await itemsCollection.updateOne({_id:ObjectId(itemId)}, {$set: {locked: true}});
+	const result = await itemsCollection.updateOne({_id:itemId}, {$set: {locked: true}});
 
 	req.session.userMessage = "Item locked";
 	req.session.userMessageType = "success";
@@ -598,7 +598,7 @@ router.get("/item/:itemId/unlock", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
 
 	const itemsCollection = await db.getCollection("items");
-	const result = await itemsCollection.updateOne({_id:ObjectId(itemId)}, {$unset: {locked: true}});
+	const result = await itemsCollection.updateOne({_id:itemId}, {$unset: {locked: true}});
 
 	req.session.userMessage = "Item unlocked";
 	req.session.userMessageType = "success";
@@ -608,7 +608,7 @@ router.get("/item/:itemId/unlock", asyncHandler(async (req, res, next) => {
 
 router.get("/share/:itemId", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
-	const item = await db.findOne("items", {_id:ObjectId(itemId)});
+	const item = await db.findOne("items", {_id:itemId});
 
 	res.locals.item = item;
 
@@ -884,7 +884,7 @@ router.get("/favorite-tags/add/:tag", asyncHandler(async (req, res, next) => {
 	req.session.user.favoriteTags.push(tag);
 	
 	const usersCollection = await db.getCollection("users");
-	const updateResult = await usersCollection.updateOne({_id:ObjectId(req.session.user._id)}, {$set:{favoriteTags:req.session.user.favoriteTags}});
+	const updateResult = await usersCollection.updateOne({_id:req.session.user._id}, {$set:{favoriteTags:req.session.user.favoriteTags}});
 
 	req.session.userMessage = "Success!";
 	req.session.userMessageType = "success";
@@ -905,7 +905,7 @@ router.get("/favorite-tags/remove/:tag", asyncHandler(async (req, res, next) => 
 	req.session.user.favoriteTags = req.session.user.favoriteTags.filter(e => { e !== tag });
 	
 	const usersCollection = await db.getCollection("users");
-	const updateResult = await usersCollection.updateOne({_id:ObjectId(req.session.user._id)}, {$set:{favoriteTags:req.session.user.favoriteTags}});
+	const updateResult = await usersCollection.updateOne({_id:req.session.user._id}, {$set:{favoriteTags:req.session.user.favoriteTags}});
 
 	req.session.userMessage = "Success!";
 	req.session.userMessageType = "success";

@@ -143,7 +143,7 @@ router.post("/set-multilogin-pin", async (req, res, next) => {
 	req.session.user.multiloginPinHash = pinHash;
 
 	const usersCollection = await db.getCollection("users");
-	const updateResult = await usersCollection.updateOne({_id:ObjectId(req.session.user._id)}, {$set:{multiloginPinHash:req.session.user.multiloginPinHash}});
+	const updateResult = await usersCollection.updateOne({_id:req.session.user._id}, {$set:{multiloginPinHash:req.session.user.multiloginPinHash}});
 
 	req.session.userMessage = "PIN updated";
 	req.session.userMessageType = "success";
