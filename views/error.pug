@@ -1,6 +1,27 @@
 extends layout
 
 block content
-	h1= message
-	h2= error.status
-	pre #{error.stack}
+	+pageTitle("Error")
+
+
+	+contentSection("Message")
+		if (message)
+			pre #{message}
+		else if (error.message)
+			| #{error.message}
+		else
+			span.text-muted (unavailable)
+
+	if (error.status)
+		+contentSection("Status")
+			| #{error.status}
+
+	+contentSection("Stack")
+		if (error.stack)
+			pre #{error.stack}
+
+		else
+			span.text-muted (unavailable)
+
+	+contentSection("Full Error")
+		pre #{JSON.stringify(error, null, 4)}

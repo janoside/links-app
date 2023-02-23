@@ -7,49 +7,39 @@ block adminContent
 	+pageTitle(`User: ${user.username}`)
 
 
-	+card
-		.mb-4
-			table.table.table-striped
-				tr
-					th Username
-					td.text-monospace #{user.username}
-
-				tr
-					th Roles
-					td.text-monospace
-						if (user.roles)
-							each role in user.roles
-								if (role == "admin")
-									span.text-warning.fw-bold.me-2 #{role}
-										i.bi-shield-lock-fill.ms-1
-								else
-									span.me-2 #{role}
+	+contentSection("Summary")
+		+summaryRow(4)
+			+summaryItem("Roles")
+				if (user.roles)
+					each role in user.roles
+						if (role == "admin")
+							span.text-warning.fw-bold.me-2 #{role}
+								i.bi-shield-lock-fill.ms-1
 						else
-							| -
-				
-				tr
-					th Created At
-					td.text-monospace #{utils.formatDate(user.createdAt)}
-				
-				tr
-					th Updated At
-					td.text-monospace #{utils.formatDate(user.updatedAt)}
+							span.me-2 #{role}
+				else
+					| -
 
-				tr
-					th Item(s)
-					td.text-monospace #{itemCount.toLocaleString()}
-		
 
-		hr
-		
+			+summaryItem("Created At")
+				| #{utils.formatDate(user.createdAt)}
+
+
+			+summaryItem("Updated At")
+				| #{utils.formatDate(user.updatedAt)}
+
+
+			+summaryItem("Item Count")
+				| #{itemCount.toLocaleString()}
+
+
+
+	+contentSection("Tools")
 		if (!user.roles.includes("admin"))
 			a.btn.btn-primary.me-3(href=`/admin/user/${user.username}/add-role/admin`) Promote to Admin
 
 		a.btn.btn-danger(href=`/admin/user/${user.username}/delete`) Delete User
 		
 
-		.mt-4
-			h4 Raw
-			hr
-			pre
-				code.json #{JSON.stringify(user, null, 4)}
+	+contentSection("Raw")
+		pre #{JSON.stringify(user, null, 4)}

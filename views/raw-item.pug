@@ -6,7 +6,5 @@ block content
 		a(href=`/item/${item._id.toString()}`) Item
 		|  &raquo; Raw Data
 
-	.card
-		.card-body
-			pre
-				code #{JSON.stringify(item, null, 4)}
+	+contentSection("Item Data")
+		pre #{JSON.stringify(item, null, 4)}
