@@ -25,13 +25,14 @@ const s3Bucket = s3Utils.createBucket(appConfig.s3Bucket, appConfig.s3PathPrefix
 
 
 router.get("/", asyncHandler(async (req, res, next) => {
-	if (req.session.user) {
-		var limit = 50;
-		var offset = 0;
-		var sort = "date-desc";
+	try {
+		if (req.session.user) {
+			let limit = 50;
+			let offset = 0;
+			let sort = "date-desc";
 
-		if (req.query.limit) {
-			limit = parseInt(req.query.limit);
+			if (req.query.limit) {
+				limit = parseInt(req.query.limit);
 		}
 
 		if (req.query.offset) {
@@ -68,12 +69,13 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			{ $match: { userId: req.session.user._id.toString() } },
 			{ $unwind: "$tags" },
 			{ $group: { _id: "$tags", count: { $sum: 1 } } },
-			{ $sort: { count: -1, _id: 1 }}
-		]).toArray();
+				{ $sort: { count: -1, _id: 1 }}
+			]).toArray();
 
-		res.locals.user = user;
-		res.locals.itemCount = itemCount;
-		res.locals.items = items;
+			
+			res.locals.user = user;
+			res.locals.itemCount = itemCount;
+			res.locals.items = items;
 		res.locals.tags = [];
 		res.locals.tagsData = tagsData;
 
@@ -85,9 +87,15 @@ router.get("/", asyncHandler(async (req, res, next) => {
 		res.render("user-items");
 
 		return;
-	}
+		}
 
-	res.render("index");
+		res.render("index");
+
+	} catch (err) {
+		utils.logError("39huegeddd", err);
+
+		res.render("user-items");
+	}
 }));
 
 router.get("/signup", asyncHandler(async (req, res, next) => {
@@ -188,7 +196,6 @@ router.post("/login", asyncHandler(async (req, res, next) => {
 		} else {
 			res.redirect("/");
 		}
-
 	} else {
 		req.session.userMessage = "Login failed - invalid username or password";
 		req.session.userMessageType = "danger";
@@ -440,9 +447,10 @@ router.post("/new-file", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/item/:itemId", asyncHandler(async (req, res, next) => {
-	if (!req.session.user) {
-		req.session.redirectUrl = req.path;
-		res.redirect("/");
+	try {
+		if (!req.session.user) {
+			req.session.redirectUrl = req.path;
+			res.redirect("/");
 
 		return;
 	}
@@ -459,9 +467,15 @@ router.get("/item/:itemId", asyncHandler(async (req, res, next) => {
 		return;
 	}
 
-	res.locals.item = item;
+		res.locals.item = item;
 
-	res.render("item");
+		res.render("item");
+
+	} catch (err) {
+		utils.logError("3284hrde", err);
+
+		res.render("item");
+	}
 }));
 
 router.get("/item/:itemId/edit", asyncHandler(async (req, res, next) => {

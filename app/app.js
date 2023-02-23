@@ -20,7 +20,7 @@ const debugLog = debug("app:main");
 
 
 async function authenticate(username, password, passwordPreHashed=false) {
-	var user = await db.findOne("users", {username:username});
+	let user = await db.findOne("users", {username:username});
 
 	if (user == null) {
 		debugLog(`User authentication failed: ${username} doesn't exist`);
