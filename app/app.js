@@ -76,6 +76,8 @@ async function verifyMultiloginPin(username, multiloginPin, preHashed=false) {
 }
 
 async function createOrUpdateItem(existingItemId, userId, username, itemType, fields) {
+	debugLog(`app.createOrUpdateItem: ${JSON.stringify(fields)}`);
+
 	//console.log(fields);
 	const itemsCollection = await db.getCollection("items");
 
