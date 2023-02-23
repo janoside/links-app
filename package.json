@@ -15,18 +15,19 @@
 		"dotenv": "^16.0.0",
 		"express": "^4.17.1",
 		"express-async-handler": "^1.1.4",
-		"express-session": "^1.17.2",
+		"express-session": "^1.17.3",
 		"http-errors": "^2.0.0",
 		"luxon": "^3.1.0",
 		"marked": "^4.0.1",
+		"memorystore": "^1.6.7",
 		"morgan": "^1.10.0",
 		"pug": "^3.0.2",
 		"sharp": "^0.31.2",
 		"simple-git": "^3.7.1"
 	},
 	"devDependencies": {
-		"sass": "^1.51.0",
-		"npm-run-all": "^4.1.5"
+		"npm-run-all": "^4.1.5",
+		"sass": "^1.51.0"
 	},
 	"scripts": {
 		"start": "node --trace-deprecation ./bin/main.js",
