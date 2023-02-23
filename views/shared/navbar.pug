@@ -7,7 +7,14 @@
 					span.fs-4.align-middle.ms-2 #{global.appConfig.siteName}
 
 			if (session.username)
-				.d-flex.gap-2
+				.d-flex.gap-3
+					form.col-12.col-lg-auto.mb-lg-0(method="get", action="/search")
+						.input-group
+							input.form-control(type="search", name="query", placeholder="Search...", value=(query))
+							button.btn.btn-primary(type="submit")
+								i.bi-search
+
+
 					if (session.user && session.user.roles && session.user.roles.includes("admin"))
 						a.btn.btn-warning.px-2(href="/admin")
 							i.bi-shield-lock.mx-1
@@ -110,12 +117,6 @@
 								i.bi-tag-fill.fs-5.text-white.align-middle
 								span.d-none.d-lg-inline.text-white.align-middle.ms-2 View Tags
 
-			if (session.username)
-				form.col-12.col-lg-auto.mb-lg-0(method="get", action="/search")
-					.input-group
-						input.form-control(type="search", name="query", placeholder="Search...", value=(query))
-						button.btn.btn-primary(type="submit")
-							i.bi-search
 
 
 	.p-0.bg-header-footer-highlight.border-bottom.d-none.d-lg-block
