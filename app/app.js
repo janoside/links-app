@@ -178,8 +178,13 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 	if (fields.fileUrl) {
 		const response = await axios.get(fields.fileUrl, { responseType: 'arraybuffer' });
 		fields.file = Buffer.from(response.data, "binary");
+		fields["file.metadata"] = {
+			mimeType:response.headers['content-type']
+		};
 
-		debugLog("Downloaded file: " + utils.descBuffer(fields.file) + ", from URL: " + fields.fileUrl);
+		item.fileSourceUrl = fields.fileUrl;
+
+		debugLog("Downloaded file: type=" + response.headers['content-type'] + ", buffer=" + utils.descBuffer(fields.file) + ", from URL: " + fields.fileUrl);
 	}
 
 	if (fields.img) {
