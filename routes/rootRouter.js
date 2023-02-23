@@ -33,42 +33,42 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 			if (req.query.limit) {
 				limit = parseInt(req.query.limit);
-		}
+			}
 
-		if (req.query.offset) {
-			offset = parseInt(req.query.offset);
-		}
+			if (req.query.offset) {
+				offset = parseInt(req.query.offset);
+			}
 
-		if (req.query.sort) {
-			sort = req.query.sort;
-		}
+			if (req.query.sort) {
+				sort = req.query.sort;
+			}
 
-		const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
+			const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
 
 
-		const user = await db.findOne("users", {username:req.session.username});
-		const items = await db.findMany(
-			"items",
-			{
-				userId: user._id.toString()
-			},
-			{
-				sort: [
-					["pinned", -1],
-					["createdAt", dateSortVal]
-				]
-			},
-			limit,
-			offset);
+			const user = await db.findOne("users", {username:req.session.username});
+			const items = await db.findMany(
+				"items",
+				{
+					userId: user._id.toString()
+				},
+				{
+					sort: [
+						["pinned", -1],
+						["createdAt", dateSortVal]
+					]
+				},
+				limit,
+				offset);
 
-		const itemsCollection = await db.getCollection("items");
+			const itemsCollection = await db.getCollection("items");
 
-		const itemCount = await itemsCollection.countDocuments({ userId: user._id.toString() });
+			const itemCount = await itemsCollection.countDocuments({ userId: user._id.toString() });
 
-		const tagsData = await itemsCollection.aggregate([
-			{ $match: { userId: req.session.user._id.toString() } },
-			{ $unwind: "$tags" },
-			{ $group: { _id: "$tags", count: { $sum: 1 } } },
+			const tagsData = await itemsCollection.aggregate([
+				{ $match: { userId: req.session.user._id.toString() } },
+				{ $unwind: "$tags" },
+				{ $group: { _id: "$tags", count: { $sum: 1 } } },
 				{ $sort: { count: -1, _id: 1 }}
 			]).toArray();
 
@@ -76,17 +76,17 @@ router.get("/", asyncHandler(async (req, res, next) => {
 			res.locals.user = user;
 			res.locals.itemCount = itemCount;
 			res.locals.items = items;
-		res.locals.tags = [];
-		res.locals.tagsData = tagsData;
+			res.locals.tags = [];
+			res.locals.tagsData = tagsData;
 
-		res.locals.limit = limit;
-		res.locals.offset = offset;
-		res.locals.sort = sort;
-		res.locals.paginationBaseUrl = `/items`;
+			res.locals.limit = limit;
+			res.locals.offset = offset;
+			res.locals.sort = sort;
+			res.locals.paginationBaseUrl = `/items`;
 
-		res.render("user-items");
+			res.render("user-items");
 
-		return;
+			return;
 		}
 
 		res.render("index");
@@ -120,7 +120,8 @@ router.post("/signup", asyncHandler(async (req, res, next) => {
 
 	let user = {
 		username: username,
-		passwordHash: passwordHash
+		passwordHash: passwordHash,
+		roles: []
 	};
 
 	const insertedUserId = await db.insertOne("users", user);
@@ -452,20 +453,20 @@ router.get("/item/:itemId", asyncHandler(async (req, res, next) => {
 			req.session.redirectUrl = req.path;
 			res.redirect("/");
 
-		return;
-	}
+			return;
+		}
 
-	const itemId = req.params.itemId;
-	const item = await db.findOne("items", {_id:itemId});
+		const itemId = req.params.itemId;
+		const item = await db.findOne("items", {_id:itemId});
 
-	if (req.session.username != item.username) {
-		req.session.userMessage = "You're not authorized to view that.";
-		req.session.userMessageType = "info";
+		if (req.session.username != item.username) {
+			req.session.userMessage = "You're not authorized to view that.";
+			req.session.userMessageType = "info";
 
-		res.redirect("/");
+			res.redirect("/");
 
-		return;
-	}
+			return;
+		}
 
 		res.locals.item = item;
 

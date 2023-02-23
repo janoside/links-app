@@ -10,7 +10,7 @@ block adminContent
 	+contentSection("Summary")
 		+summaryRow(4)
 			+summaryItem("Roles")
-				if (user.roles)
+				if (user.roles.length > 0)
 					each role in user.roles
 						if (role == "admin")
 							span.text-warning.fw-bold.me-2 #{role}
@@ -18,7 +18,7 @@ block adminContent
 						else
 							span.me-2 #{role}
 				else
-					| -
+					span.text-muted (none)
 
 
 			+summaryItem("Created At")
