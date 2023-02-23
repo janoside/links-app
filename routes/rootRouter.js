@@ -475,7 +475,7 @@ router.get("/item/:itemId", asyncHandler(async (req, res, next) => {
 	} catch (err) {
 		utils.logError("3284hrde", err);
 
-		res.render("item");
+		next(err);
 	}
 }));
 

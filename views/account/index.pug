@@ -46,8 +46,7 @@ block content
 	if (user.roles && user.roles.includes("admin"))
 		+contentSection("Admin Extensions")
 			+adminModalAndButton("Session Data")
-				pre
-					code.json #{JSON.stringify(session, null, 4)}
+				pre #{JSON.stringify(session, null, 4)}
 
 			
 							
