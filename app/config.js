@@ -21,6 +21,9 @@ global.appConfig = {
 
 	s3Bucket: process.env.S3_BUCKET,
 	s3PathPrefix: s3PathPrefix,
+	s3BucketOptions: {
+		readOnly: ((process.env.S3_BUCKET_READONLY || false) == "true")
+	},
 
 	images: {
 		widths: (process.env.IMAGE_WIDTHS || "350").split(",").map(x => parseInt(x)),
