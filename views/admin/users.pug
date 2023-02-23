@@ -14,23 +14,32 @@ block adminContent
 			thead
 				tr
 					th #
-					th ID
 					th Username
+					th Items
 					th Roles
 					th Created At
-					th Updated At
+					th Last Login
 			
 			tbody
 				each user, userIndex in users
 					tr.text-monospace
-						th #{(offset + userIndex + 1).toLocaleString()}
-						td
-							span.border-dotted(data-bs-toggle="tooltip", title=user._id) #{utils.ellipsizeFront(user._id.toLocaleString(), 8)}
+						th.fw-light.text-muted #{(offset + userIndex + 1).toLocaleString()}
+						
 						td
 							a(href=`/admin/user/${user.username}`) #{user.username}
+
+						td
+							| #{itemCountsByUserId[user._id].toLocaleString()}
+						
 						td #{user.roles ? user.roles : "-"}
+						
 						td #{utils.formatDate(user.createdAt)}
-						td #{utils.formatDate(user.updatedAt)}
+						
+						td
+							if (user.lastLogin)
+								| #{utils.formatDate(user.lastLogin)}
+							else
+								| -
 
 
 		

@@ -48,12 +48,24 @@ router.get("/users", asyncHandler(async (req, res, next) => {
 		res.locals.offset = parseInt(req.query.offset);
 	}
 
-	var userCollection = await db.getCollection("users");
-	res.locals.userCount = await userCollection.countDocuments();
+	const itemsCollection = await db.getCollection("items");
+
+	const usersCollection = await db.getCollection("users");
+	res.locals.userCount = await usersCollection.countDocuments();
 	
-	var users = await db.findMany("users", {}, {limit:res.locals.limit, skip:res.locals.offset});
+	let users = await db.findMany("users", {}, {limit:res.locals.limit, skip:res.locals.offset});
+
+	let itemCountsByUserId = {};
+	for (let i = 0; i < users.length; i++) {
+		let user = users[i];
+
+		let itemCount = await itemsCollection.countDocuments({ userId: user._id.toString() });
+
+		itemCountsByUserId[user._id.toString()] = itemCount;
+	}
 
 	res.locals.users = users;
+	res.locals.itemCountsByUserId = itemCountsByUserId;
 
 	res.locals.paginationItemCount = res.locals.userCount;
 	res.locals.paginationBaseUrl = "/admin/users";
