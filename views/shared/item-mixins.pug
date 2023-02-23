@@ -102,7 +102,28 @@ mixin itemBody(item, options)
 	if (item.hasFile)
 		div(class=(item.text ? "mb-2" : (!options.listPage ? "mb-3" : false)))
 			.text-center
-				iframe(src=`./file/item/${item._id}`, style="width: 100%; height: 800px;")
+				if (item.fileMetadata && item.fileMetadata.mimeType)
+					if (item.fileMetadata.mimeType.startsWith("image/"))
+						| image
+						img(src=`./file/item/${item._id}`, style="width: 100%;")
+
+
+					else if (item.fileMetadata.mimeType == "application/pdf")
+						| pdf
+						embed(src=`./file/item/${item._id}`, width="100%", height="800px", type="application/pdf", frameBorder="0", scrolling="auto")
+
+
+					else if (item.fileMetadata.mimeType.startsWith("video/"))
+						| video
+						video(width="100%", controls)
+							source(src=`./file/item/${item._id}`, type=item.fileMetadata.mimeType)
+
+
+					else
+						iframe(src=`./file/item/${item._id}`, style="width: 100%; height: 800px;")
+
+				else
+					iframe(src=`./file/item/${item._id}`, style="width: 100%; height: 800px;")
 
 			a.text-start(href=`./file/item/${item._id}`) view raw
 
