@@ -73,14 +73,14 @@ router.get("/users", asyncHandler(async (req, res, next) => {
 	res.render("admin/users");
 }));
 
-router.get("/user/:username", asyncHandler(async (req, res, next) => {
-	const username = req.params.username;
+router.get("/user/:userId", asyncHandler(async (req, res, next) => {
+	const userId = req.params.userId;
 	
-	const user = await db.findOne("users", {username:username});
+	const user = await db.findOne("users", {_id:userId});
 
 	const itemsCollection = await db.getCollection("items");
 
-	const itemCount = await itemsCollection.countDocuments({ username: username });
+	const itemCount = await itemsCollection.countDocuments({ userId: userId });
 
 	res.locals.user = user;
 	res.locals.itemCount = itemCount;
@@ -88,11 +88,11 @@ router.get("/user/:username", asyncHandler(async (req, res, next) => {
 	res.render("admin/user");
 }));
 
-router.get("/user/:username/add-role/:role", asyncHandler(async (req, res, next) => {
-	const username = req.params.username;
+router.get("/user/:userId/add-role/:role", asyncHandler(async (req, res, next) => {
+	const userId = req.params.userId;
 	const role = req.params.role;
 
-	const user = await db.findOne("users", {username:username});
+	const user = await db.findOne("users", {_id:userId});
 
 	if (!user.roles) {
 		user.roles = [];
@@ -103,18 +103,42 @@ router.get("/user/:username/add-role/:role", asyncHandler(async (req, res, next)
 	const usersCollection = await db.getCollection("users");
 	const updateResult = await usersCollection.updateOne({_id:user._id}, {$set: user});
 
-	req.session.userMessage = `Modified '${username}'`;
+	req.session.userMessage = `Modified user ${userId} ('${user.username}')`;
 	req.session.userMessageType = "success";
 
-	res.redirect(`/admin/user/${username}`);
+	res.redirect(`/admin/user/${userId}`);
 }));
 
-router.get("/user/:username/delete", asyncHandler(async (req, res, next) => {
-	const username = req.params.username;
+router.get("/user/:userId/delete", asyncHandler(async (req, res, next) => {
+	const userId = req.params.userId;
 
-	await db.deleteOne("users", {username:username});
+	if (userId == req.session.user._id.toString()) {
+		req.session.userMessageType = "danger";
+		req.session.userMessage = "You can't delete your own account!";
 
-	req.session.userMessage = `Deleted user '${username}'`;
+		res.redirect("/admin/users");
+
+		return;
+	}
+
+	const user = await db.findOne("users", {_id:userId});
+
+	const itemsCollection = await db.getCollection("items");
+
+	const itemCount = await itemsCollection.countDocuments({ userId: userId });
+
+	res.locals.user = user;
+	res.locals.itemCount = itemCount;
+
+	res.render("admin/delete-user");
+}));
+
+router.post("/user/:userId/delete", asyncHandler(async (req, res, next) => {
+	const userId = req.params.userId;
+
+	await db.deleteOne("users", {_id:userId});
+
+	req.session.userMessage = `Deleted user ${userId}`;
 	req.session.userMessageType = "success";
 
 	res.redirect("/admin/users");

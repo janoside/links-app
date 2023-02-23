@@ -1,0 +1,22 @@
+extends adminLayout
+
+
+block headBlock
+	title Admin: Delete User - #{user.username}
+
+
+block adminContent
+
+
+	+card
+		h6 Are you sure you want to delete this user?
+
+		form(method="post")
+			button.btn.btn-danger.me-3(type="submit") Yes, delete
+		
+			a.btn.btn-primary(href=`/admin/user/${user._id}`) No, don't delete
+
+	+contentSection("Raw")
+		pre #{JSON.stringify(user, null, 4)}
+
+		

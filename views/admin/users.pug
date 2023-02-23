@@ -26,7 +26,7 @@ block adminContent
 						th.fw-light.text-muted #{(offset + userIndex + 1).toLocaleString()}
 						
 						td
-							a(href=`/admin/user/${user.username}`) #{user.username}
+							a(href=`/admin/user/${user._id}`) #{user.username}
 
 						td
 							| #{itemCountsByUserId[user._id].toLocaleString()}

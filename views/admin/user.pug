@@ -36,9 +36,9 @@ block adminContent
 
 	+contentSection("Tools")
 		if (!user.roles.includes("admin"))
-			a.btn.btn-primary.me-3(href=`/admin/user/${user.username}/add-role/admin`) Promote to Admin
+			a.btn.btn-primary.me-3(href=`/admin/user/${user._id}/add-role/admin`) Promote to Admin
 
-		a.btn.btn-danger(href=`/admin/user/${user.username}/delete`) Delete User
+		a.btn.btn-danger(href=`/admin/user/${user._id}/delete`) Delete User
 		
 
 	+contentSection("Raw")
