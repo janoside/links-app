@@ -7,6 +7,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const session = require("express-session");
+const MemoryStore = require('memorystore')(session);
 const { marked } = require("marked");
 const { DateTime } = require("luxon");
 const app = require("./app/app.js");
@@ -78,7 +79,7 @@ expressApp.set("view engine", "pug");
 
 expressApp.disable("x-powered-by");
 
-const sessionCookieConfig = {
+const sessionConfig = {
 	secret: appConfig.cookiePassword,
 	resave: false,
 	saveUninitialized: true,
@@ -90,12 +91,16 @@ const sessionCookieConfig = {
 
 // Helpful reference for production: nginx HTTPS proxy:
 // https://gist.github.com/nikmartin/5902176
-debugLog(`Session cookie config: ${JSON.stringify(sessionCookieConfig)}`);
+debugLog(`Session config: ${JSON.stringify(sessionConfig)}`);
+
+sessionConfig.store = new MemoryStore({
+	checkPeriod: 86400000 // prune expired entries every 24h
+});
 
 expressApp.enable("trust proxy");
 expressApp.set("trust proxy", 1); // trust first proxy, needed for {cookie:{secure:true}} below
 
-expressApp.use(session(sessionCookieConfig));
+expressApp.use(session(sessionConfig));
 
 global.projectRootDir = __dirname;
 global.uploadsDir = path.join(global.projectRootDir, "uploads");
