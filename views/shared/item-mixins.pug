@@ -104,17 +104,18 @@ mixin itemBody(item, options)
 			.text-center
 				if (item.fileMetadata && item.fileMetadata.mimeType)
 					if (item.fileMetadata.mimeType.startsWith("image/"))
-						| image
-						img(src=`./file/item/${item._id}`, style="width: 100%;")
+						// file=image
+						a(href=`./item/${item._id}`)
+							img.rounded-1(data-lazysrc=`./file/item/${item._id}`, style="max-width: 100%;")
 
 
 					else if (item.fileMetadata.mimeType == "application/pdf")
-						| pdf
+						// file=pdf
 						embed(src=`./file/item/${item._id}`, width="100%", height="800px", type="application/pdf", frameBorder="0", scrolling="auto")
 
 
 					else if (item.fileMetadata.mimeType.startsWith("video/"))
-						| video
+						// file=video
 						video(width="100%", controls)
 							source(src=`./file/item/${item._id}`, type=item.fileMetadata.mimeType)
 
