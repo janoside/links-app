@@ -39,21 +39,16 @@ router.get("/item/:itemId", asyncHandler(async (req, res, next) => {
 			return;
 		}
 
-		const s3Data = await s3Bucket.get(`file/${req.params.itemId}`);
-		const fileBuffer = encryptor.decrypt(s3Data);
 
-		let contentType = "application/octet-stream";
-		if (item.fileMetadata && item.fileMetadata.mimeType) {
-			contentType = item.fileMetadata.mimeType;
-		}
+		const fileData = await app.getItemFileData(item);
 
 		res.writeHead(200, {
-			'Content-Type': contentType,
-			'Content-Length': fileBuffer.length,
+			'Content-Type': fileData.contentType,
+			'Content-Length': fileData.byteSize,
 			"Cache-Control": `max-age=${60 * 60 * 24 * 365}`
 		});
 
-		res.end(fileBuffer, "binary");
+		res.end(fileData.dataBuffer, "binary");
 
 	} catch (err) {
 		utils.logError("238ryewgww", err);
@@ -67,21 +62,16 @@ router.get("/item-share/:itemId", asyncHandler(async (req, res, next) => {
 		const itemId = req.params.itemId;
 		const item = await db.findOne("items", {_id:req.params.itemId});
 
-		const s3Data = await s3Bucket.get(`file/${req.params.itemId}`);
-		const fileBuffer = encryptor.decrypt(s3Data);
 
-		let contentType = "application/octet-stream";
-		if (item.fileMetadata && item.fileMetadata.mimeType) {
-			contentType = item.fileMetadata.mimeType;
-		}
+		const fileData = await app.getItemFileData(item);
 
 		res.writeHead(200, {
-			'Content-Type': contentType,
-			'Content-Length': fileBuffer.length,
+			'Content-Type': fileData.contentType,
+			'Content-Length': fileData.byteSize,
 			"Cache-Control": `max-age=${60 * 60 * 24 * 365}`
 		});
 
-		res.end(fileBuffer, "binary");
+		res.end(fileData.dataBuffer, "binary");
 
 	} catch (err) {
 		utils.logError("3208h4weuedrdd", err);

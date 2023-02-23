@@ -256,10 +256,29 @@ async function uploadFile(fileBuffer, itemId) {
 	return filepath;
 }
 
+async function getItemFileData(item) {
+	const s3Data = await s3Bucket.get(`file/${item._id}`);
+	const fileBuffer = encryptor.decrypt(s3Data);
+
+	let contentType = "application/octet-stream";
+	if (item.fileMetadata && item.fileMetadata.mimeType) {
+		contentType = item.fileMetadata.mimeType;
+	}
+
+	debugLog(`Item(${item._id}).File: contentType=${contentType}, size=${fileBuffer.length}`);
+
+	return {
+		contentType: contentType,
+		dataBuffer: fileBuffer,
+		byteSize: fileBuffer.length
+	};
+}
+
 
 module.exports = {
 	authenticate: authenticate,
 	verifyMultiloginPin: verifyMultiloginPin,
 	createOrUpdateItem: createOrUpdateItem,
-	processAndUploadImages: processAndUploadImages
+	processAndUploadImages: processAndUploadImages,
+	getItemFileData: getItemFileData
 }
