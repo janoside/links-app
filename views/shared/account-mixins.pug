@@ -13,7 +13,7 @@ mixin pinEntry(postPath, buttonText)
 			// •
 			$("#pin-input").val($("#pin-input").val() + "" + i);
 			$("#pin-text").text(bullets($("#pin-input").val().length));
-			$("#pin-text2").text($("#pin-input").val().length.toLocaleString());
+			//$("#pin-text2").text($("#pin-input").val().length.toLocaleString());
 		}
 
 		function pinBackspace() {
@@ -24,7 +24,7 @@ mixin pinEntry(postPath, buttonText)
 
 			$("#pin-input").val(pinVal);
 			$("#pin-text").text(bullets($("#pin-input").val().length));
-			$("#pin-text2").text($("#pin-input").val().length.toLocaleString());
+			//$("#pin-text2").text($("#pin-input").val().length.toLocaleString());
 		}
 
 	- var buttonNumberColumns = [ [1, 4, 7], [2, 5, 8, 0], [3, 6, 9, "del"] ];
