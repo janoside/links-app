@@ -175,12 +175,19 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 		const response = await axios.get(fields.imgUrl, { responseType: 'arraybuffer' });
 		fields.img = Buffer.from(response.data, "binary");
 
+		fields["img.metadata"] = {
+			mimeType:response.headers['content-type']
+		};
+
+		item.imageSourceUrl = fields.imgUrl;
+
 		debugLog("Downloaded image: " + utils.descBuffer(fields.img) + ", from URL: " + fields.imgUrl);
 	}
 
 	if (fields.fileUrl) {
 		const response = await axios.get(fields.fileUrl, { responseType: 'arraybuffer' });
 		fields.file = Buffer.from(response.data, "binary");
+		
 		fields["file.metadata"] = {
 			mimeType:response.headers['content-type']
 		};
@@ -191,7 +198,11 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 	}
 
 	if (fields.img) {
-		const processedImageSizes = await processAndUploadImages(fields.img, itemId);
+		if (fields["img.metadata"]) {
+			item.imageMetadata = fields["img.metadata"];
+		}
+
+		const processedImageSizes = await processAndUploadImages(fields.img, itemId, item.imageMetadata || {});
 
 		item.hasImage = true;
 		item.imageSizes = processedImageSizes;
@@ -233,12 +244,12 @@ async function processAndUploadImages(imageBuffer, itemId, imageMetadata) {
 		for (let i = 0; i < appConfig.images.widths.length; i++) {
 			let width = appConfig.images.widths[i];
 			if (metadata.width > width) {
-			let bufferX = await sharp(imageBuffer).resize({width: width, fit: "inside"}).png().toBuffer();
-			let ciphertextX = encryptor.encrypt(bufferX);
+				let bufferX = await sharp(imageBuffer).resize({width: width, fit: "inside"}).png().toBuffer();
+				let ciphertextX = encryptor.encrypt(bufferX);
 
-			debugLog("Resized img: w=" + width + ", " + utils.descBuffer(bufferX));
-			
-			await s3Bucket.put(ciphertextX, `img/${itemId}/w${width}`);
+				debugLog("Resized img: w=" + width + ", " + utils.descBuffer(bufferX));
+				
+				await s3Bucket.put(ciphertextX, `img/${itemId}/w${width}`);
 
 				imageSizes.push(`w${width}`);
 			}
