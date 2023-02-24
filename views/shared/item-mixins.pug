@@ -106,25 +106,25 @@ mixin itemBody(item, options)
 					if (item.fileMetadata.mimeType.startsWith("image/"))
 						// file=image
 						a(href=`./item/${item._id}`)
-							img.rounded-1(data-lazysrc=`./file/item/${item._id}`, style="max-width: 100%;")
+							img.rounded-1(data-lazysrc=`./file/item${options.publicShare ? "-share" : ""}/${item._id}`, style="max-width: 100%;")
 
 
 					else if (item.fileMetadata.mimeType == "application/pdf")
 						// file=pdf
-						embed(src=`./file/item/${item._id}`, width="100%", height="800px", type="application/pdf", frameBorder="0", scrolling="auto")
+						embed(src=`./file/item${options.publicShare ? "-share" : ""}/${item._id}`, width="100%", height="800px", type="application/pdf", frameBorder="0", scrolling="auto")
 
 
 					else if (item.fileMetadata.mimeType.startsWith("video/"))
 						// file=video
 						video(width="100%", controls)
-							source(src=`./file/item/${item._id}`, type=item.fileMetadata.mimeType)
+							source(src=`./file/item${options.publicShare ? "-share" : ""}/${item._id}`, type=item.fileMetadata.mimeType)
 
 
 					else
-						iframe(src=`./file/item/${item._id}`, style="width: 100%; height: 800px;")
+						iframe(src=`./file/item${options.publicShare ? "-share" : ""}/${item._id}`, style="width: 100%; height: 800px;")
 
 				else
-					iframe(src=`./file/item/${item._id}`, style="width: 100%; height: 800px;")
+					iframe(src=`./file/item${options.publicShare ? "-share" : ""}/${item._id}`, style="width: 100%; height: 800px;")
 
 			a.text-start(href=`./file/item/${item._id}`) view raw
 
