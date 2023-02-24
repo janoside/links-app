@@ -1,5 +1,18 @@
 extends layout
 
+block headBlock
+	if (item.type == "link")
+		title Link Data: #{item.url}
+
+	else if (item.type == "note")
+		title Note Data: #{item._id}
+
+	else if (item.type == "image")
+		title Image Data: #{item._id}
+
+	else
+		title Item Data: #{item._id}
+
 block content
 
 	h5
