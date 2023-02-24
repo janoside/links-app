@@ -793,11 +793,11 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/search", asyncHandler(async (req, res, next) => {
-	const query = req.query.query;
+	const queryString = req.query.query;
 
-	var limit = 25;
-	var offset = 0;
-	var sort = "date-desc";
+	let limit = 25;
+	let offset = 0;
+	let sort = "date-desc";
 
 	if (req.query.limit) {
 		limit = parseInt(req.query.limit);
@@ -814,20 +814,33 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
 
 
-	const regex = new RegExp(query, "i");
+	let advancedQueryPrefix = "adv:";
+	
+	let query = {};
+	if (queryString.startsWith(advancedQueryPrefix)) {
+		let advancedQueryString = queryString.substring(advancedQueryPrefix.length);
+		
+		query = JSON.parse(advancedQueryString);
+
+	} else {
+		const regex = new RegExp(queryString, "i");
+
+		query = {
+			$or:[
+				{ text: regex },
+				{ url: regex },
+				{ tags: regex }
+			]
+		};
+	}
+
 	
 	const items = await db.findMany(
 		"items",
 		{
 			$and: [
 				{ userId: req.session.user._id.toString() },
-				{
-					$or:[
-						{ text: regex },
-						{ url: regex },
-						{ tags: regex }
-					]
-				}
+				query
 			]
 		},
 		{
@@ -843,13 +856,7 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 	const itemCount = await itemsCollection.countDocuments({
 		$and: [
 			{ userId: req.session.user._id.toString() },
-			{
-				$or:[
-					{ text: regex },
-					{ url: regex },
-					{ tags: regex }
-				]
-			}
+			query
 		]
 	});
 
@@ -860,7 +867,7 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 		{ $sort: { count: -1, _id: 1 }}
 	]).toArray();
 	
-	res.locals.query = query;
+	res.locals.query = queryString;
 	res.locals.itemCount = itemCount;
 	res.locals.items = items;
 	res.locals.tags = [];
