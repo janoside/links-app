@@ -4,6 +4,7 @@
 	"description": "A cool links app.",
 	"main": "app.js",
 	"dependencies": {
+		"animated-gif-detector": "^1.2.0",
 		"app-utils": "file:./app/app-utils",
 		"aws-sdk": "^2.1026.0",
 		"axios": "^1.1.3",

@@ -4,6 +4,7 @@ const { DateTime } = require("luxon");
 const sharp = require("sharp");
 const ObjectId = require("mongodb").ObjectId;
 const axios = require("axios");
+const isGifAnimated = require("animated-gif-detector");
 
 const appConfig = require("./config.js");
 
@@ -215,17 +216,23 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 }
 
 
-async function processAndUploadImages(imageBuffer, itemId) {
+async function processAndUploadImages(imageBuffer, itemId, imageMetadata) {
 	let imageObj = sharp(imageBuffer);
 	let metadata = await imageObj.metadata();
 	
 	debugLog(`Processing image buffer (${metadata.width}x${metadata.height}): ${utils.descBuffer(imageBuffer)}`);
 
+	let animatedGif = false;
+	if (imageMetadata && imageMetadata.mimeType == "image/gif") {
+		animatedGif = isGifAnimated(imageBuffer);
+	}
+
 	let imageSizes = [];
 
-	for (let i = 0; i < appConfig.images.widths.length; i++) {
-		let width = appConfig.images.widths[i];
-		if (metadata.width > width) {
+	if (!animatedGif) {
+		for (let i = 0; i < appConfig.images.widths.length; i++) {
+			let width = appConfig.images.widths[i];
+			if (metadata.width > width) {
 			let bufferX = await sharp(imageBuffer).resize({width: width, fit: "inside"}).png().toBuffer();
 			let ciphertextX = encryptor.encrypt(bufferX);
 
@@ -233,7 +240,8 @@ async function processAndUploadImages(imageBuffer, itemId) {
 			
 			await s3Bucket.put(ciphertextX, `img/${itemId}/w${width}`);
 
-			imageSizes.push(`w${width}`);
+				imageSizes.push(`w${width}`);
+			}
 		}
 	}
 
