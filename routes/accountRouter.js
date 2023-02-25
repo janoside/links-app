@@ -47,8 +47,7 @@ router.post("/add-account", async (req, res, next) => {
 
 		user.lastLogin = new Date();
 
-		const usersCollection = await db.getCollection("users");
-		const updateResult = await usersCollection.updateOne({_id:user._id}, {$set:{lastLogin:user.lastLogin}});
+		const updateResult = await db.updateOne("users", {_id:user._id}, {$set:{lastLogin:user.lastLogin}});
 
 		if (!req.session.accounts) {
 			req.session.accounts = [req.session.user];
@@ -142,8 +141,7 @@ router.post("/set-multilogin-pin", async (req, res, next) => {
 
 	req.session.user.multiloginPinHash = pinHash;
 
-	const usersCollection = await db.getCollection("users");
-	const updateResult = await usersCollection.updateOne({_id:req.session.user._id}, {$set:{multiloginPinHash:req.session.user.multiloginPinHash}});
+	const updateResult = await db.updateOne("users", {_id:req.session.user._id}, {$set:{multiloginPinHash:req.session.user.multiloginPinHash}});
 
 	req.session.userMessage = "PIN updated";
 	req.session.userMessageType = "success";

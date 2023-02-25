@@ -48,10 +48,7 @@ router.get("/users", asyncHandler(async (req, res, next) => {
 		res.locals.offset = parseInt(req.query.offset);
 	}
 
-	const itemsCollection = await db.getCollection("items");
-
-	const usersCollection = await db.getCollection("users");
-	res.locals.userCount = await usersCollection.countDocuments();
+	res.locals.userCount = await db.countDocuments("users");
 	
 	let users = await db.findMany("users", {}, {limit:res.locals.limit, skip:res.locals.offset});
 
@@ -59,7 +56,7 @@ router.get("/users", asyncHandler(async (req, res, next) => {
 	for (let i = 0; i < users.length; i++) {
 		let user = users[i];
 
-		let itemCount = await itemsCollection.countDocuments({ userId: user._id.toString() });
+		let itemCount = await db.countDocuments("items", { userId: user._id.toString() });
 
 		itemCountsByUserId[user._id.toString()] = itemCount;
 	}
@@ -78,9 +75,7 @@ router.get("/user/:userId", asyncHandler(async (req, res, next) => {
 	
 	const user = await db.findOne("users", {_id:userId});
 
-	const itemsCollection = await db.getCollection("items");
-
-	const itemCount = await itemsCollection.countDocuments({ userId: userId });
+	const itemCount = await db.countDocuments("items", { userId: userId });
 
 	res.locals.user = user;
 	res.locals.itemCount = itemCount;
@@ -100,8 +95,7 @@ router.get("/user/:userId/add-role/:role", asyncHandler(async (req, res, next) =
 
 	user.roles.push(role);
 
-	const usersCollection = await db.getCollection("users");
-	const updateResult = await usersCollection.updateOne({_id:user._id}, {$set: user});
+	const updateResult = await db.updateOne("users", {_id:user._id}, {$set: user});
 
 	req.session.userMessage = `Modified user ${userId} ('${user.username}')`;
 	req.session.userMessageType = "success";
@@ -123,9 +117,7 @@ router.get("/user/:userId/delete", asyncHandler(async (req, res, next) => {
 
 	const user = await db.findOne("users", {_id:userId});
 
-	const itemsCollection = await db.getCollection("items");
-
-	const itemCount = await itemsCollection.countDocuments({ userId: userId });
+	const itemCount = await db.countDocuments("items", { userId: userId });
 
 	res.locals.user = user;
 	res.locals.itemCount = itemCount;
@@ -146,8 +138,7 @@ router.post("/user/:userId/delete", asyncHandler(async (req, res, next) => {
 
 
 router.get("/data-migrations", asyncHandler(async (req, res, next) => {
-	const dataMigrationsCollection = await db.getCollection("dataMigrations");
-	res.locals.dataMigrationsCount = await dataMigrationsCollection.countDocuments();
+	res.locals.dataMigrationsCount = await db.countDocuments("dataMigrations");
 	
 	const dataMigrations = await db.findMany("dataMigrations", {});
 

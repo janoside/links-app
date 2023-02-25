@@ -61,16 +61,16 @@ router.get("/", asyncHandler(async (req, res, next) => {
 				limit,
 				offset);
 
-			const itemsCollection = await db.getCollection("items");
+			const itemCount = await db.countDocuments("items", { userId: user._id.toString() });
 
-			const itemCount = await itemsCollection.countDocuments({ userId: user._id.toString() });
-
-			const tagsData = await itemsCollection.aggregate([
-				{ $match: { userId: req.session.user._id.toString() } },
-				{ $unwind: "$tags" },
-				{ $group: { _id: "$tags", count: { $sum: 1 } } },
-				{ $sort: { count: -1, _id: 1 }}
-			]).toArray();
+			const tagsData = await db.aggregate(
+				"items",
+				[
+					{ $match: { userId: req.session.user._id.toString() } },
+					{ $unwind: "$tags" },
+					{ $group: { _id: "$tags", count: { $sum: 1 } } },
+					{ $sort: { count: -1, _id: 1 }}
+				]).toArray();
 
 			
 			res.locals.user = user;
@@ -160,8 +160,7 @@ router.post("/login", asyncHandler(async (req, res, next) => {
 	if (user) {
 		user.lastLogin = new Date();
 
-		const usersCollection = await db.getCollection("users");
-		const updateResult = await usersCollection.updateOne({_id:user._id}, {$set:{lastLogin:user.lastLogin}});
+		const updateResult = await db.updateOne("users", {_id:user._id}, {$set:{lastLogin:user.lastLogin}});
 
 		req.session.username = user.username;
 		req.session.user = user;
@@ -422,8 +421,7 @@ router.post("/edit-note/:itemId", asyncHandler(async (req, res, next) => {
 		}
 	}
 
-	const itemsCollection = await db.getCollection("items");
-	const updateResult = await itemsCollection.updateOne({_id:itemId}, {$set: item});
+	const updateResult = await db.updateOne("items", {_id:itemId}, {$set: item});
 
 	req.session.userMessage = "Saved!";
 	req.session.userMessageType = "success";
@@ -576,8 +574,7 @@ router.post("/item/:itemId/delete", asyncHandler(async (req, res, next) => {
 router.get("/item/:itemId/pin", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
 
-	const itemsCollection = await db.getCollection("items");
-	const result = await itemsCollection.updateOne({_id:itemId}, {$set: {pinned: true}});
+	const result = await db.updateOne("items", {_id:itemId}, {$set: {pinned: true}});
 
 	req.session.userMessage = "Item pinned";
 	req.session.userMessageType = "success";
@@ -588,8 +585,7 @@ router.get("/item/:itemId/pin", asyncHandler(async (req, res, next) => {
 router.get("/item/:itemId/unpin", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
 
-	const itemsCollection = await db.getCollection("items");
-	const result = await itemsCollection.updateOne({_id:itemId}, {$unset: {pinned: true}});
+	const result = await db.updateOne("items", {_id:itemId}, {$unset: {pinned: false}});
 
 	req.session.userMessage = "Item unpinned";
 	req.session.userMessageType = "success";
@@ -600,8 +596,7 @@ router.get("/item/:itemId/unpin", asyncHandler(async (req, res, next) => {
 router.get("/item/:itemId/lock", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
 
-	const itemsCollection = await db.getCollection("items");
-	const result = await itemsCollection.updateOne({_id:itemId}, {$set: {locked: true}});
+	const result = await db.updateOne("items", {_id:itemId}, {$set: {locked: true}});
 
 	req.session.userMessage = "Item locked";
 	req.session.userMessageType = "success";
@@ -612,8 +607,7 @@ router.get("/item/:itemId/lock", asyncHandler(async (req, res, next) => {
 router.get("/item/:itemId/unlock", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
 
-	const itemsCollection = await db.getCollection("items");
-	const result = await itemsCollection.updateOne({_id:itemId}, {$unset: {locked: true}});
+	const result = await db.updateOne("items", {_id:itemId}, {$unset: {locked: false}});
 
 	req.session.userMessage = "Item unlocked";
 	req.session.userMessageType = "success";
@@ -670,16 +664,17 @@ router.get("/items", asyncHandler(async (req, res, next) => {
 		limit,
 		offset);
 
-	const itemsCollection = await db.getCollection("items");
+	
+	const itemCount = await db.countDocuments("items", { userId: user._id.toString() });
 
-	const itemCount = await itemsCollection.countDocuments({ userId: user._id.toString() });
-
-	const tagsData = await itemsCollection.aggregate([
-		{ $match: { userId: req.session.user._id.toString() } },
-		{ $unwind: "$tags" },
-		{ $group: { _id: "$tags", count: { $sum: 1 } } },
-		{ $sort: { count: -1, _id: 1 }}
-	]).toArray();
+	const tagsData = await db.aggregate(
+		"items",
+		[
+			{ $match: { userId: req.session.user._id.toString() } },
+			{ $unwind: "$tags" },
+			{ $group: { _id: "$tags", count: { $sum: 1 } } },
+			{ $sort: { count: -1, _id: 1 }}
+		]).toArray();
 
 	res.locals.user = user;
 	res.locals.itemCount = itemCount;
@@ -708,19 +703,22 @@ router.get("/pinned", asyncHandler(async (req, res, next) => {
 			]
 		});
 
-	const itemsCollection = await db.getCollection("items");
+	
+	const itemCount = await db.countDocuments(
+		"items",
+		{
+			userId: req.session.user._id.toString(),
+			pinned: true
+		});
 
-	const itemCount = await itemsCollection.countDocuments({
-		userId: req.session.user._id.toString(),
-		pinned: true
-	});
-
-	const tagsData = await itemsCollection.aggregate([
-		{ $match: { userId: req.session.user._id.toString(), pinned: true } },
-		{ $unwind: "$tags" },
-		{ $group: { _id: "$tags", count: { $sum: 1 } } },
-		{ $sort: { count: -1, _id: 1 }}
-	]).toArray();
+	const tagsData = await db.aggregate(
+		"items",
+		[
+			{ $match: { userId: req.session.user._id.toString(), pinned: true } },
+			{ $unwind: "$tags" },
+			{ $group: { _id: "$tags", count: { $sum: 1 } } },
+			{ $sort: { count: -1, _id: 1 }}
+		]).toArray();
 
 	res.locals.itemCount = itemCount;
 	res.locals.items = items;
@@ -765,19 +763,22 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 		limit,
 		offset);
 
-	const itemsCollection = await db.getCollection("items");
+	
+	const itemCount = await db.countDocuments(
+		"items",
+		{
+			userId: req.session.user._id.toString(),
+			tags: { $all: tags }
+		});
 
-	const itemCount = await itemsCollection.countDocuments({
-		userId: req.session.user._id.toString(),
-		tags: { $all: tags }
-	});
-
-	const tagsData = await itemsCollection.aggregate([
-		{ $match: { userId: req.session.user._id.toString(), tags: { $all: tags } } },
-		{ $unwind: "$tags" },
-		{ $group: { _id: "$tags", count: { $sum: 1 } } },
-		{ $sort: { count: -1, _id: 1 }}
-	]).toArray();
+	const tagsData = await db.aggregate(
+		"items",
+		[
+			{ $match: { userId: req.session.user._id.toString(), tags: { $all: tags } } },
+			{ $unwind: "$tags" },
+			{ $group: { _id: "$tags", count: { $sum: 1 } } },
+			{ $sort: { count: -1, _id: 1 }}
+		]).toArray();
 
 	res.locals.tags = tags;
 	res.locals.itemCount = itemCount;
@@ -851,21 +852,24 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 		limit,
 		offset);
 
-	const itemsCollection = await db.getCollection("items");
+	
+	const itemCount = await db.countDocuments(
+		"items",
+		{
+			$and: [
+				{ userId: req.session.user._id.toString() },
+				query
+			]
+		});
 
-	const itemCount = await itemsCollection.countDocuments({
-		$and: [
-			{ userId: req.session.user._id.toString() },
-			query
-		]
-	});
-
-	const tagsData = await itemsCollection.aggregate([
-		{ $match: { userId: req.session.user._id.toString(), $or: [ { text: new RegExp(query, "i") }, { url: new RegExp(query, "i") }, { tags: new RegExp(query, "i") } ] } },
-		{ $unwind: "$tags" },
-		{ $group: { _id: "$tags", count: { $sum: 1 } } },
-		{ $sort: { count: -1, _id: 1 }}
-	]).toArray();
+	const tagsData = await db.aggregate(
+		"items",
+		[
+			{ $match: { userId: req.session.user._id.toString(), $or: [ { text: new RegExp(query, "i") }, { url: new RegExp(query, "i") }, { tags: new RegExp(query, "i") } ] } },
+			{ $unwind: "$tags" },
+			{ $group: { _id: "$tags", count: { $sum: 1 } } },
+			{ $sort: { count: -1, _id: 1 }}
+		]).toArray();
 	
 	res.locals.query = queryString;
 	res.locals.itemCount = itemCount;
@@ -882,13 +886,14 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/tags", asyncHandler(async (req, res, next) => {
-	const itemsCollection = await db.getCollection("items");
-	const tagsData = await itemsCollection.aggregate([
-		{ $match: { userId: req.session.user._id.toString() } },
-		{ $unwind: "$tags" },
-		{ $group: { _id: "$tags", count: { $sum: 1 } } },
-		{ $sort: { count: -1, _id: 1 }}
-	]).toArray();
+	const tagsData = await db.aggregate(
+		"items",
+		[
+			{ $match: { userId: req.session.user._id.toString() } },
+			{ $unwind: "$tags" },
+			{ $group: { _id: "$tags", count: { $sum: 1 } } },
+			{ $sort: { count: -1, _id: 1 }}
+		]).toArray();
 
 	res.locals.tagsData = tagsData;
 	
@@ -905,8 +910,7 @@ router.get("/favorite-tags/add/:tag", asyncHandler(async (req, res, next) => {
 
 	req.session.user.favoriteTags.push(tag);
 	
-	const usersCollection = await db.getCollection("users");
-	const updateResult = await usersCollection.updateOne({_id:req.session.user._id}, {$set:{favoriteTags:req.session.user.favoriteTags}});
+	const updateResult = await db.updateOne("users", {_id:req.session.user._id}, {$set:{favoriteTags:req.session.user.favoriteTags}});
 
 	req.session.userMessage = "Success!";
 	req.session.userMessageType = "success";
@@ -926,8 +930,7 @@ router.get("/favorite-tags/remove/:tag", asyncHandler(async (req, res, next) => 
 
 	req.session.user.favoriteTags = req.session.user.favoriteTags.filter(e => { e !== tag });
 	
-	const usersCollection = await db.getCollection("users");
-	const updateResult = await usersCollection.updateOne({_id:req.session.user._id}, {$set:{favoriteTags:req.session.user.favoriteTags}});
+	const updateResult = await db.updateOne("users", {_id:req.session.user._id}, {$set:{favoriteTags:req.session.user.favoriteTags}});
 
 	req.session.userMessage = "Success!";
 	req.session.userMessageType = "success";
