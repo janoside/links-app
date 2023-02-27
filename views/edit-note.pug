@@ -23,27 +23,32 @@ block content
 						label(for="url") URL
 						input#url.form-control(name="url", placeholder="URL", value=item.url)
 
-			fieldset.mb-3
-				.row
-					.col-md-4
-						label(for="dueDate") Due Date
-						input#imgUrl.form-control(name="dueDate", placeholder="Due date", value=item.dueDate)
 
-					.col-md-4
-						label(for="startDate") Start Date
-						input#imgUrl.form-control(name="startDate", placeholder="Start date", value=item.startDate)
+			p
+				a.mb-4(href="javascript:void(0)", onclick=`$("#extra-fields").show(); $(this).parent().hide(); return false;`) Advanced...
 
-					.col-md-4
-						label(for="endDate") End Date
-						input#imgUrl.form-control(name="endDate", placeholder="End date", value=item.endDate)
+			#extra-fields(style="display: none;")
+				fieldset.mb-3
+					.row
+						.col-md-4
+							label(for="dueDate") Due Date
+							input#imgUrl.form-control(name="dueDate", placeholder="Due date", value=item.dueDate)
 
-			fieldset.mb-3
-				.form-check.form-check-inline
-					input.form-check-input(type="radio", name="textType", id="textTypeMarkdown", value="markdown", checked=(item.textType == "markdown" ? "checked" : false))
-					label.form-check-label(for="textTypeMarkdown") Markdown
-				.form-check.form-check-inline
-					input.form-check-input(type="radio", name="textType", id="textTypePlaintext", value="plaintext", checked=(item.textType == "plaintext" ? "checked" : false))
-					label.form-check-label(for="textTypePlaintext") Plaintext
+						.col-md-4
+							label(for="startDate") Start Date
+							input#imgUrl.form-control(name="startDate", placeholder="Start date", value=item.startDate)
+
+						.col-md-4
+							label(for="endDate") End Date
+							input#imgUrl.form-control(name="endDate", placeholder="End date", value=item.endDate)
+
+				fieldset.mb-3
+					.form-check.form-check-inline
+						input.form-check-input(type="radio", name="textType", id="textTypeMarkdown", value="markdown", checked=(item.textType == "markdown" ? "checked" : false))
+						label.form-check-label(for="textTypeMarkdown") Markdown
+					.form-check.form-check-inline
+						input.form-check-input(type="radio", name="textType", id="textTypePlaintext", value="plaintext", checked=(item.textType == "plaintext" ? "checked" : false))
+						label.form-check-label(for="textTypePlaintext") Plaintext
 
 			.d-grid
 				button.btn.btn-primary(type="submit") Save

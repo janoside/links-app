@@ -40,7 +40,10 @@ block content
 						label(for="imgUrl") Image URL
 						input#imgUrl.form-control(name="imgUrl", placeholder="Image URL")
 
-			fieldset.mb-4
+			p
+				a.mb-4(href="javascript:void(0)", onclick=`$("#extra-fields").show(); $(this).parent().hide(); return false;`) Advanced...
+
+			fieldset.mb-4#extra-fields(style="display: none;")
 				.row
 					.col-md-4
 						label(for="dueDate") Due Date

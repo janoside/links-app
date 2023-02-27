@@ -44,7 +44,10 @@ block content
 				input#text.form-control(name="text", placeholder="Text / Description", value=item.text)
 
 
-			fieldset.mb-3
+			p
+				a(href="javascript:void(0)", onclick=`$("#extra-fields").show(); $(this).parent().hide(); return false;`) Advanced...
+
+			fieldset.mb-3#extra-fields(style="display: none;")
 				.row
 					.col-md-4
 						label(for="dueDate") Due Date
