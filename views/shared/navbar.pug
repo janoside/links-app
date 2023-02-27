@@ -8,7 +8,7 @@
 
 			if (session.username)
 				.d-flex.gap-3
-					form.col-12.col-lg-auto.mb-lg-0(method="get", action="/search")
+					form.col-12.col-lg-auto.mb-lg-0.d-none.d-lg-block(method="get", action="/search")
 						.input-group
 							input.form-control(type="search", name="query", placeholder="Search...", value=(query))
 							button.btn.btn-primary(type="submit")
@@ -117,6 +117,14 @@
 							a.nav-link.pb-lg-0(href="/tags", title="View All Tags", data-bs-toggle="tooltip", data-bs-placement="bottom")
 								i.bi-tag-fill.fs-5.text-white.align-middle
 								span.d-none.d-lg-inline.text-white.align-middle.ms-2 View Tags
+
+
+			if (session.username)
+				form.col-12.col-lg-auto.mb-lg-0.d-block.d-lg-none(method="get", action="/search")
+					.input-group
+						input.form-control(type="search", name="query", placeholder="Search...", value=(query))
+						button.btn.btn-primary(type="submit")
+							i.bi-search
 
 
 
