@@ -142,6 +142,15 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 		}
 	}
 
+	// manually set file type
+	if (fields.fileType) {
+		if (!item.fileMetadata) {
+			item.fileMetadata = {};
+		}
+
+		item.fileMetadata.mimeType = fields.fileType;
+	}
+
 
 	let itemId = existingItemId;
 	if (existingItemId == null) {
