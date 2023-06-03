@@ -15,7 +15,7 @@ const encryptionUtils = appUtils.encryptionUtils;
 const s3Utils = appUtils.s3Utils;
 
 const encryptor = encryptionUtils.encryptor(appConfig.encryptionPassword, appConfig.pbkdf2Salt);
-const s3Bucket = s3Utils.createBucket(appConfig.s3Bucket, appConfig.s3PathPrefix, appConfig.s3BucketOptions);
+const s3Bucket = appConfig.createAppBucket();
 
 const debugLog = debug("app:main");
 
@@ -292,9 +292,11 @@ async function uploadFile(fileBuffer, itemId) {
 
 async function getItemFileData(item) {
 	const s3Data = await s3Bucket.get(`file/${item._id}`);
-	const fileBuffer = encryptor.decrypt(s3Data);
 
-	let contentType = "application/octet-stream";
+	try {
+		const fileBuffer = encryptor.decrypt(s3Data);
+
+		let contentType = "application/octet-stream";
 	if (item.fileMetadata && item.fileMetadata.mimeType) {
 		contentType = item.fileMetadata.mimeType;
 	}
@@ -303,9 +305,14 @@ async function getItemFileData(item) {
 
 	return {
 		contentType: contentType,
-		dataBuffer: fileBuffer,
-		byteSize: fileBuffer.length
-	};
+			dataBuffer: fileBuffer,
+			byteSize: fileBuffer.length
+		};
+	} catch (err) {
+		utils.logError("0387yhedsdu", err, {item:item, s3Data:s3Data});
+
+		throw err;
+	}
 }
 
 

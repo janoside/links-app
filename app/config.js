@@ -1,5 +1,13 @@
 require("dotenv").config();
 
+
+const appUtils = require("./app-utils");
+const utils = appUtils.utils;
+const passwordUtils = appUtils.passwordUtils;
+const encryptionUtils = appUtils.encryptionUtils;
+const s3Utils = appUtils.s3Utils;
+
+
 var debug = require("debug");
 debug.enable(process.env.DEBUG || "app:*");
 
@@ -20,6 +28,7 @@ global.appConfig = {
 	pbkdf2Salt: process.env.PBKDF2_SALT,
 
 	s3Bucket: process.env.S3_BUCKET,
+	s3BucketRegion: process.env.S3_BUCKET_REGION,
 	s3PathPrefix: s3PathPrefix,
 	s3BucketOptions: {
 		readOnly: ((process.env.S3_BUCKET_READONLY || false) == "true")
@@ -44,6 +53,10 @@ global.appConfig = {
 			password: process.env.ADMIN_PASSWORD || "admin"
 		}
 	}
+};
+
+global.appConfig.createAppBucket = () => {
+	return s3Utils.createBucket(appConfig.s3Bucket, appConfig.s3BucketRegion, appConfig.s3PathPrefix, appConfig.s3BucketOptions);
 };
 
 if (!global.appConfig.baseUrl) {

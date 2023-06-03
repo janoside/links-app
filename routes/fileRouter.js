@@ -17,7 +17,7 @@ const encryptionUtils = appUtils.encryptionUtils;
 const s3Utils = appUtils.s3Utils;
 
 const encryptor = encryptionUtils.encryptor(appConfig.encryptionPassword, appConfig.pbkdf2Salt);
-const s3Bucket = s3Utils.createBucket(appConfig.s3Bucket, appConfig.s3PathPrefix, appConfig.s3BucketOptions);
+const s3Bucket = appConfig.createAppBucket();
 
 
 router.get("/item/:itemId", asyncHandler(async (req, res, next) => {
