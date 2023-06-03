@@ -184,7 +184,8 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 		fields.img = Buffer.from(response.data, "binary");
 
 		fields["img.metadata"] = {
-			mimeType:response.headers['content-type']
+			mimeType: response.headers['content-type'],
+			bytes: response.data.length
 		};
 
 		item.imageSourceUrl = fields.imgUrl;
@@ -197,7 +198,8 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 		fields.file = Buffer.from(response.data, "binary");
 		
 		fields["file.metadata"] = {
-			mimeType:response.headers['content-type']
+			mimeType: response.headers['content-type'],
+			bytes: response.data.length
 		};
 
 		item.fileSourceUrl = fields.fileUrl;
