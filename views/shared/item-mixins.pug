@@ -100,13 +100,20 @@ mixin itemBody(item, options)
 				img.rounded-1.text-center(data-lazysrc=`./img/item${options.publicShare ? "-share" : ""}/${item._id.toString()}/${imageSize}`, style="max-width: 100%;")
 
 	if (item.hasFile)
+		style.
+			textarea {
+				white-space: pre;
+				overflow-wrap: normal;
+				overflow-x: scroll;
+			}
+
 		div(class=(item.text ? "mb-2" : (!options.listPage ? "mb-3" : false)))
 			.text-center
 				if (item.fileMetadata && item.fileMetadata.mimeType)
 					if (item.fileMetadata.mimeType.startsWith("image/"))
 						// file=image
 						a(href=`./item/${item._id}`)
-							img.rounded-1(data-lazysrc=`./file/item${options.publicShare ? "-share" : ""}/${item._id}`, style="max-width: 100%;")
+							img.rounded-1(data-lazysrc=`./file/item${options.publicShare ? "-share" : ""}/${item._id}`, style="max-width: 100%;", alt=item.text)
 
 
 					else if (item.fileMetadata.mimeType == "application/pdf")
@@ -119,6 +126,15 @@ mixin itemBody(item, options)
 						video(width="100%", controls)
 							source(src=`./file/item${options.publicShare ? "-share" : ""}/${item._id}`, type=item.fileMetadata.mimeType)
 
+					else if (item.fileMetadata.mimeType.startsWith("text/"))
+						if (item.fileData)
+							- let fileDataString = item.fileData.dataBuffer.toString();
+							- let lineCount = fileDataString.split("\n").length;
+							if (lineCount > 20)
+								- lineCount = 20;
+
+							textarea.form-control(style="width: 100%;", rows=lineCount, wrap="off") #{fileDataString}
+							span.text-muted.text-start (lines: #{fileDataString.split("\n").length.toLocaleString()} / bytes: #{fileDataString.length.toLocaleString()})
 
 					else
 						iframe(src=`./file/item${options.publicShare ? "-share" : ""}/${item._id}`, style="width: 100%; height: 800px;")

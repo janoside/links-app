@@ -76,6 +76,47 @@ async function verifyMultiloginPin(username, multiloginPin, preHashed=false) {
 	return user;
 }
 
+async function getItem(predicate) {
+	const item = await db.findOne("items", predicate);
+
+	await preloadItemFileDataIfAppropriate(item);
+
+	return item;
+}
+
+async function getItems(predicate, sort, limit=-1, offset=0) {
+	let items = null;
+
+	if (limit > 0) {
+		items = await db.findMany(
+			"items",
+			predicate,
+			sort,
+			limit,
+			offset);
+
+	} else {
+		items = await db.findMany(
+			"items",
+			predicate,
+			sort);
+	}
+
+	for (let i = 0; i < items.length; i++) {
+		let item = items[i];
+
+		await preloadItemFileDataIfAppropriate(item);
+	}
+
+	return items;
+}
+
+async function preloadItemFileDataIfAppropriate(item) {
+	if (item.fileMetadata && item.fileMetadata.mimeType.startsWith("text/")) {
+		item.fileData = await getItemFileData(item);
+	}
+}
+
 async function createOrUpdateItem(existingItemId, userId, username, itemType, fields) {
 	debugLog(`app.createOrUpdateItem: ${JSON.stringify(fields)}`);
 
@@ -323,5 +364,7 @@ module.exports = {
 	verifyMultiloginPin: verifyMultiloginPin,
 	createOrUpdateItem: createOrUpdateItem,
 	processAndUploadImages: processAndUploadImages,
-	getItemFileData: getItemFileData
+	getItemFileData: getItemFileData,
+	getItem: getItem,
+	getItems: getItems
 }

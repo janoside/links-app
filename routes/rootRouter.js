@@ -47,11 +47,13 @@ router.get("/", asyncHandler(async (req, res, next) => {
 
 
 			const user = await db.findOne("users", {username:req.session.username});
-			const items = await db.findMany(
-				"items",
-				{
-					userId: user._id.toString()
-				},
+
+			let itemsPredicate = {
+				userId: user._id.toString()
+			};
+
+			const items = await app.getItems(
+				itemsPredicate,
 				{
 					sort: [
 						["pinned", -1],
@@ -61,12 +63,12 @@ router.get("/", asyncHandler(async (req, res, next) => {
 				limit,
 				offset);
 
-			const itemCount = await db.countDocuments("items", { userId: user._id.toString() });
+			const itemCount = await db.countDocuments("items", itemsPredicate);
 
 			const tagsData = await db.aggregate(
 				"items",
 				[
-					{ $match: { userId: req.session.user._id.toString() } },
+					{ $match: itemsPredicate },
 					{ $unwind: "$tags" },
 					{ $group: { _id: "$tags", count: { $sum: 1 } } },
 					{ $sort: { count: -1, _id: 1 }}
@@ -367,7 +369,7 @@ router.post("/new-note", asyncHandler(async (req, res, next) => {
 
 router.post("/edit-note/:itemId", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
-	const item = await db.findOne("items", {_id:itemId});
+	const item = await app.getItem({_id:itemId});
 
 	if (req.body.text) {
 		item.text = req.body.text;
@@ -455,7 +457,7 @@ router.get("/item/:itemId", asyncHandler(async (req, res, next) => {
 		}
 
 		const itemId = req.params.itemId;
-		const item = await db.findOne("items", {_id:itemId});
+		const item = await app.getItem({_id:itemId});
 
 		if (req.session.username != item.username) {
 			req.session.userMessage = "You're not authorized to view that.";
@@ -479,7 +481,7 @@ router.get("/item/:itemId", asyncHandler(async (req, res, next) => {
 
 router.get("/item/:itemId/edit", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
-	const item = await db.findOne("items", {_id:itemId});
+	const item = await app.getItem({_id:itemId});
 
 	res.locals.item = item;
 
@@ -514,7 +516,7 @@ router.get("/item/:itemId/raw", asyncHandler(async (req, res, next) => {
 	}
 
 	const itemId = req.params.itemId;
-	const item = await db.findOne("items", {_id:itemId});
+	const item = await app.getItem({_id:itemId});
 
 	if (req.session.username != item.username) {
 		res.redirect("/");
@@ -529,7 +531,7 @@ router.get("/item/:itemId/raw", asyncHandler(async (req, res, next) => {
 
 router.get("/item/:itemId/delete", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
-	const item = await db.findOne("items", {_id:itemId});
+	const item = await app.getItem({_id:itemId});
 
 	if (item.locked) {
 		req.session.userMessage = "This item is locked. It must be unlocked before it may be deleted.";
@@ -547,7 +549,7 @@ router.get("/item/:itemId/delete", asyncHandler(async (req, res, next) => {
 
 router.post("/item/:itemId/delete", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
-	const item = await db.findOne("items", {_id:itemId});
+	const item = await app.getItem({_id:itemId});
 
 	const result = await db.deleteOne("items", {_id:item._id});
 
@@ -617,7 +619,7 @@ router.get("/item/:itemId/unlock", asyncHandler(async (req, res, next) => {
 
 router.get("/share/:itemId", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
-	const item = await db.findOne("items", {_id:itemId});
+	const item = await app.getItem({_id:itemId});
 
 	res.locals.item = item;
 
@@ -651,8 +653,7 @@ router.get("/items", asyncHandler(async (req, res, next) => {
 
 
 	const user = await db.findOne("users", {username:req.session.username});
-	const items = await db.findMany(
-		"items",
+	const items = await app.getItems(
 		{
 			userId: user._id.toString()
 		},
@@ -691,12 +692,13 @@ router.get("/items", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/pinned", asyncHandler(async (req, res, next) => {
-	const items = await db.findMany(
-		"items",
-		{
-			userId: req.session.user._id.toString(),
-			pinned: true
-		},
+	let itemsPredicate = {
+		userId: req.session.user._id.toString(),
+		pinned: true
+	};
+
+	const items = await app.getItems(
+		itemsPredicate,
 		{
 			sort: [
 				["createdAt", -1]
@@ -706,15 +708,12 @@ router.get("/pinned", asyncHandler(async (req, res, next) => {
 	
 	const itemCount = await db.countDocuments(
 		"items",
-		{
-			userId: req.session.user._id.toString(),
-			pinned: true
-		});
+		itemsPredicate);
 
 	const tagsData = await db.aggregate(
 		"items",
 		[
-			{ $match: { userId: req.session.user._id.toString(), pinned: true } },
+			{ $match: itemsPredicate },
 			{ $unwind: "$tags" },
 			{ $group: { _id: "$tags", count: { $sum: 1 } } },
 			{ $sort: { count: -1, _id: 1 }}
@@ -748,13 +747,13 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 
 	const dateSortVal = sort.startsWith("date-") ? (sort.endsWith("-desc") ? -1 : 1) : -1;
 
+	let itemsPredicate = {
+		userId: req.session.user._id.toString(),
+		tags: { $all: tags }
+	};
 
-	const items = await db.findMany(
-		"items",
-		{
-			userId: req.session.user._id.toString(),
-			tags: { $all: tags }
-		},
+	const items = await app.getItems(
+		itemsPredicate,
 		{
 			sort: [
 				["createdAt", dateSortVal]
@@ -766,15 +765,12 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 	
 	const itemCount = await db.countDocuments(
 		"items",
-		{
-			userId: req.session.user._id.toString(),
-			tags: { $all: tags }
-		});
+		itemsPredicate);
 
 	const tagsData = await db.aggregate(
 		"items",
 		[
-			{ $match: { userId: req.session.user._id.toString(), tags: { $all: tags } } },
+			{ $match: itemsPredicate },
 			{ $unwind: "$tags" },
 			{ $group: { _id: "$tags", count: { $sum: 1 } } },
 			{ $sort: { count: -1, _id: 1 }}
@@ -836,14 +832,15 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 	}
 
 	
-	const items = await db.findMany(
-		"items",
-		{
-			$and: [
-				{ userId: req.session.user._id.toString() },
-				query
-			]
-		},
+	let itemsPredicate = {
+		$and: [
+			{ userId: req.session.user._id.toString() },
+			query
+		]
+	};
+
+	const items = await app.getItems(
+		itemsPredicate,
 		{
 			sort: [
 				["createdAt", dateSortVal]
@@ -855,17 +852,12 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 	
 	const itemCount = await db.countDocuments(
 		"items",
-		{
-			$and: [
-				{ userId: req.session.user._id.toString() },
-				query
-			]
-		});
+		itemsPredicate);
 
 	const tagsData = await db.aggregate(
 		"items",
 		[
-			{ $match: { userId: req.session.user._id.toString(), $or: [ { text: new RegExp(query, "i") }, { url: new RegExp(query, "i") }, { tags: new RegExp(query, "i") } ] } },
+			{ $match: itemsPredicate },
 			{ $unwind: "$tags" },
 			{ $group: { _id: "$tags", count: { $sum: 1 } } },
 			{ $sort: { count: -1, _id: 1 }}
