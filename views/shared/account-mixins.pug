@@ -27,7 +27,7 @@ mixin pinEntry(postPath, buttonText)
 			//$("#pin-text2").text($("#pin-input").val().length.toLocaleString());
 		}
 
-	- var buttonNumberColumns = [ [1, 4, 7], [2, 5, 8, 0], [3, 6, 9, "del"] ];
+	- var buttonNumberColumns = [ [1, 4, 7, "del"], [2, 5, 8, 0], [3, 6, 9, "ok"] ];
 
 	form(method="post", action=postPath)
 		.d-block
@@ -39,6 +39,11 @@ mixin pinEntry(postPath, buttonText)
 								if (buttonNumber == "del")
 									a#delete-button.btn.btn-danger.btn-lg.mb-4(style="width: 55px;", onclick=`pinBackspace(); return false;`)
 										i.bi-arrow-left
+
+								else if (buttonNumber == "ok")
+									button#ok-button.btn.btn-success.btn-lg.mb-4(type="submit", style="width: 55px;")
+										i.bi-check
+
 								else
 									a.btn.btn-primary.btn-lg.mb-4.number-button(data-number=`${buttonNumber}`, onclick=`pinNumber(${buttonNumber}); return false;`, style="width: 55px;") #{buttonNumber}
 
@@ -47,7 +52,3 @@ mixin pinEntry(postPath, buttonText)
 				span.ms-3#pin-text2.lead
 
 			input#pin-input(type="hidden", name="multiloginPin")
-
-		
-		.d-grid
-			button.btn.btn-primary(type="submit") #{buttonText}
