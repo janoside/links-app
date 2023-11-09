@@ -1,0 +1,44 @@
+extends layout
+
+block headBlock
+	if (item.type == "link")
+		title Link History: #{item.url}
+
+	else if (item.type == "note")
+		title Note History: #{item._id}
+
+	else if (item.type == "image")
+		title Image History: #{item._id}
+
+	else
+		title Item History: #{item._id}
+
+block content
+	.center-col
+		.d-block.d-lg-none.card.shadow-sm.mb-3
+			.card-body.mx-3.mx-lg-2
+				+itemAdminMenu(item, {orientation:"h"})
+				
+		.d-lg-flex.flex-lg-row
+			.d-none.d-lg-block.card.shadow-sm.me-2(style="min-width: 52px; height: 350px;")
+				.card-body.my-3.my-lg-2(style="height: 100%;")
+					+itemAdminMenu(item, {orientation:"v"})
+			
+			.flex-grow-1
+				h1.fw-light Item History
+				each historyItem, historyItemIndex in item.history.text.reverse()
+					if (historyItem.text_gz_b64)
+						- var historyItemText = linksUtils.gzipBase64Inverse(historyItem.text_gz_b64)
+						- var realIndex = (item.history.text.length - historyItemIndex);
+
+						.card.shadow-sm.mb-2
+							.card-body
+								div.text-muted.text-tiny
+									a(href=`/item/${item._id.toString()}/v/${realIndex}`)
+										span Version ##{realIndex}
+										span &nbsp;&nbsp;—&nbsp;&nbsp;
+										span #{utils.formatDate(historyItem.changedAt, "MMM d, yyyy (h:mm:ssa)")}
+										span &nbsp;&nbsp;—&nbsp;&nbsp;
+										span #{historyItemText.length} bytes
+
+								| #{utils.ellipsize(historyItemText, 200)}

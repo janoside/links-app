@@ -1,5 +1,5 @@
 mixin itemCard(item, options={})
-	.card.shadow-sm.mb-3
+	.card.shadow-sm.mb-3(style=(options.listPage ? false : "min-height: 350px;"))
 		.card-body(class=(options.listPage ? false : "m-lg-4"))
 			if (options.topTagsAndDate)
 				.mt-lg-n3.mx-lg-n3
@@ -38,6 +38,10 @@ mixin itemAdminMenuInternal(item, options={})
 	else
 		a(href=`/item/${item._id}/pin`, title="Pin this item", data-bs-toggle="tooltip")
 			i.bi-pin-angle-fill.text-primary
+
+	if (item.history)
+		a(href=`/item/${item._id}/history`, title="View past versions of this item", data-bs-toggle="tooltip")
+			i.bi-clock-history.text-primary
 
 	if (item.locked)
 		a(href=`/item/${item._id}/unlock`, title="Unlock this item", data-bs-toggle="tooltip")
@@ -83,7 +87,16 @@ mixin itemTagsAndDate(item, options={})
 					
 
 		if (item.createdAt && !options.listPage)
-			.text-end #{utils.formatDate(item.createdAt, "MMM d, yyyy")}
+			.text-end
+				if (versionIndex)
+					span.badge.text-bg-info.me-2 version: #{versionIndex}
+
+				| #{utils.formatDate(item.createdAt, "MMM d, yyyy")}
+				span.ms-1.text-muted.text-tiny #{utils.formatDate(item.createdAt, "(h:mm:ssa)")}
+
+				if (versionIndex)
+					a.ms-2(href=`/item/${item._id.toString()}`, title="View latest version", data-bs-toggle="tooltip")
+						i.bi-arrow-right-circle
 
 mixin itemBody(item, options)
 	if (item.dueDate)
@@ -147,6 +160,10 @@ mixin itemBody(item, options)
 	- var articleTagIncluded = (item.tags && ["article", "essay"].some(x => item.tags.includes(x)));
 	.item-body(class=(options.listPage ? false : articleTagIncluded ? `article` : false))
 		if (item.text)
+			- var itemText = item.text;
+			if (versionIndex)
+				- itemText = linksUtils.gzipBase64Inverse(item.history.text[parseInt(versionIndex) - 1].text_gz_b64)
+
 			div
 				if (options.listPage)
 					- var ellipsizeLength = 400;
@@ -154,30 +171,30 @@ mixin itemBody(item, options)
 					a.text-reset.text-decoration-none(href=`./item/${item._id}`)
 						if (item.textType)
 							if (item.textType == "plaintext")
-								pre #{utils.ellipsize(item.text, ellipsizeLength)}
+								pre #{utils.ellipsize(itemText, ellipsizeLength)}
 
 							else if (item.textType == "markdown")
-								article.markdown-body !{marked.parse(utils.ellipsize(item.text, ellipsizeLength))}
+								article.markdown-body !{marked.parse(utils.ellipsize(itemText, ellipsizeLength))}
 
 							else
 								span.text-danger Unknown textType: #{item.textType}
 
 						else
-							| #{utils.ellipsize(item.text, ellipsizeLength)}
+							| #{utils.ellipsize(itemText, ellipsizeLength)}
 
 
 				else
 					if (item.textType)
 						if (item.textType == "plaintext")
-							pre #{item.text}
+							pre #{itemText}
 
 						else if (item.textType == "markdown")
-							article.markdown-body !{marked.parse(item.text)}
+							article.markdown-body !{marked.parse(itemText)}
 
 						else
 							span.text-danger Unknown textType: #{item.textType}
 					else
-						| #{item.text}
+						| #{itemText}
 
 
 		else if (!item.hasImage)

@@ -5,6 +5,7 @@ const sharp = require("sharp");
 const ObjectId = require("mongodb").ObjectId;
 const axios = require("axios");
 const isGifAnimated = require("animated-gif-detector");
+const zlib = require('zlib');
 
 const appConfig = require("./config.js");
 
@@ -140,11 +141,30 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 	}
 
 	if (fields.text) {
+		if (item.text && item.text != fields.text) {
+			if (!item.history) {
+				item.history = {};
+			}
+
+			if (!item.history.text) {
+				item.history.text = [];
+			}
+
+			const gzippedData = zlib.gzipSync(item.text);
+			const base64Data = gzippedData.toString('base64');
+
+			item.history.text.push({text_gz_b64:base64Data, changedAt:new Date()});
+		}
+
 		item.text = fields.text;
 	}
 
 	if (fields.tags) {
 		item.tags = fields.tags.split(",").map(x => x.trim().toLowerCase());
+	}
+
+	if (fields.textType) {
+		item.textType = fields.textType;
 	}
 
 	if (fields.dueDate) {

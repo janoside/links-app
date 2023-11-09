@@ -8,15 +8,20 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const session = require("express-session");
 const MemoryStore = require('memorystore')(session);
-const { marked } = require("marked");
 const { DateTime } = require("luxon");
 const app = require("./app/app.js");
+
+const { marked } = require("marked");
+marked.use({
+	headerIds: false
+});
 
 const simpleGit = require('simple-git');
 simpleGit().clean(simpleGit.CleanOptions.FORCE);
 
 const appUtils = require("./app/app-utils");
 const utils = appUtils.utils;
+const linksUtils = require("./app/utils.js");
 
 const debugLog = require("debug")("app:app");
 
@@ -251,6 +256,7 @@ expressApp.use(function(err, req, res, next) {
 expressApp.locals.marked = marked;
 expressApp.locals.DateTime = DateTime;
 expressApp.locals.utils = utils;
+expressApp.locals.linksUtils = linksUtils;
 
 
 module.exports = expressApp;

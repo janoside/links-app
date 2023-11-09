@@ -96,7 +96,7 @@ router.get("/", asyncHandler(async (req, res, next) => {
 	} catch (err) {
 		utils.logError("39huegeddd", err);
 
-		res.render("user-items");
+		throw err;
 	}
 }));
 
@@ -301,129 +301,23 @@ router.get("/new-note", asyncHandler(async (req, res, next) => {
 }));
 
 router.post("/new-note", asyncHandler(async (req, res, next) => {
-	const item = {
-		userId: req.session.user._id.toString(),
-		username: req.session.user.username,
-		type: "note"
-	};
+	const userId = req.session.user._id.toString();
+	const username = req.session.user.username;
 
-	if (req.body.text) {
-		item.text = req.body.text;
-	}
-
-	if (req.body.url) {
-		item.url = req.body.url;
-	}
-
-	if (req.body.textType) {
-		item.textType = req.body.textType;
-	}
-
-	if (req.body.tags) {
-		item.tags = req.body.tags.split(",").map(x => x.trim().toLowerCase());
-	}
-
-	if (req.body.dueDate) {
-		let dueDate = DateTime.fromISO(req.body.dueDate);
-		
-		if (dueDate.invalid) {
-			dueDate = DateTime.fromSQL(req.body.dueDate);
-		}
-
-		if (!dueDate.invalid) {
-			item.dueDate = dueDate;
-		}
-	}
-
-	if (req.body.startDate) {
-		let startDate = DateTime.fromISO(req.body.startDate);
-		
-		if (startDate.invalid) {
-			startDate = DateTime.fromSQL(req.body.startDate);
-		}
-
-		if (!startDate.invalid) {
-			item.startDate = startDate;
-		}
-	}
-
-	if (req.body.endDate) {
-		let endDate = DateTime.fromISO(req.body.endDate);
-		
-		if (endDate.invalid) {
-			endDate = DateTime.fromSQL(req.body.endDate);
-		}
-
-		if (!endDate.invalid) {
-			item.endDate = endDate;
-		}
-	}
-
-	const savedItemId = await db.insertOne("items", item);
+	const item = await app.createOrUpdateItem(null, userId, username, "note", req.body);
 
 	req.session.userMessage = "Saved!";
 	req.session.userMessageType = "success";
 
-	res.redirect(`/item/${savedItemId}`);
+	res.redirect(`/item/${item._id.toString()}`);
 }));
 
 router.post("/edit-note/:itemId", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
-	const item = await app.getItem({_id:itemId});
+	const userId = req.session.user._id.toString();
+	const username = req.session.user.username;
 
-	if (req.body.text) {
-		item.text = req.body.text;
-	}
-
-	if (req.body.url) {
-		item.url = req.body.url;
-	}
-
-	if (req.body.tags) {
-		item.tags = req.body.tags.split(",").map(x => x.trim().toLowerCase());
-	}
-
-	if (req.body.textType) {
-		item.textType = req.body.textType;
-	}
-
-	if (req.body.dueDate) {
-		let dueDate = DateTime.fromISO(req.body.dueDate);
-		
-		if (dueDate.invalid) {
-			dueDate = DateTime.fromSQL(req.body.dueDate);
-		}
-
-		if (!dueDate.invalid) {
-			item.dueDate = dueDate;
-		}
-	}
-
-	if (req.body.startDate) {
-		let startDate = DateTime.fromISO(req.body.startDate);
-		
-		if (startDate.invalid) {
-			startDate = DateTime.fromSQL(req.body.startDate);
-		}
-
-		if (!startDate.invalid) {
-			item.startDate = startDate;
-		}
-	}
-
-	if (req.body.endDate) {
-		let endDate = DateTime.fromISO(req.body.endDate);
-		
-		if (endDate.invalid) {
-			endDate = DateTime.fromSQL(req.body.endDate);
-		}
-
-		if (!endDate.invalid) {
-			item.endDate = endDate;
-		}
-	}
-
-	const updateResult = await db.updateOne("items", {_id:itemId}, {$set: item});
+	const item = await app.createOrUpdateItem(itemId, userId, username, "note", req.body);
 
 	req.session.userMessage = "Saved!";
 	req.session.userMessageType = "success";
@@ -474,6 +368,73 @@ router.get("/item/:itemId", asyncHandler(async (req, res, next) => {
 
 	} catch (err) {
 		utils.logError("3284hrde", err);
+
+		next(err);
+	}
+}));
+
+router.get("/item/:itemId/history", asyncHandler(async (req, res, next) => {
+	try {
+		if (!req.session.user) {
+			req.session.redirectUrl = req.path;
+			res.redirect("/");
+
+			return;
+		}
+
+		const itemId = req.params.itemId;
+		const item = await app.getItem({_id:itemId});
+
+		if (req.session.username != item.username) {
+			req.session.userMessage = "You're not authorized to view that.";
+			req.session.userMessageType = "info";
+
+			res.redirect("/");
+
+			return;
+		}
+
+		res.locals.item = item;
+
+		res.render("item-history");
+
+	} catch (err) {
+		utils.logError("pq93rewuf", err);
+
+		next(err);
+	}
+}));
+
+router.get("/item/:itemId/v/:versionIndex", asyncHandler(async (req, res, next) => {
+	try {
+		if (!req.session.user) {
+			req.session.redirectUrl = req.path;
+			res.redirect("/");
+
+			return;
+		}
+
+		const itemId = req.params.itemId;
+		const item = await app.getItem({_id:itemId});
+		const versionIndex = req.params.versionIndex;
+
+		res.locals.versionIndex = versionIndex;
+
+		if (req.session.username != item.username) {
+			req.session.userMessage = "You're not authorized to view that.";
+			req.session.userMessageType = "info";
+
+			res.redirect("/");
+
+			return;
+		}
+
+		res.locals.item = item;
+
+		res.render("item");
+
+	} catch (err) {
+		utils.logError("23084hweusd", err);
 
 		next(err);
 	}
