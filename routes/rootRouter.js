@@ -362,6 +362,15 @@ router.get("/item/:itemId", asyncHandler(async (req, res, next) => {
 			return;
 		}
 
+		if (!item.viewCount) {
+			item.viewCount = 0;
+		}
+
+		item.viewCount++;
+
+		const updateResult = await db.updateOne("items", {_id:itemId}, {$set: item});
+
+
 		res.locals.item = item;
 
 		res.render("item");
@@ -581,6 +590,14 @@ router.get("/item/:itemId/unlock", asyncHandler(async (req, res, next) => {
 router.get("/share/:itemId", asyncHandler(async (req, res, next) => {
 	const itemId = req.params.itemId;
 	const item = await app.getItem({_id:itemId});
+
+	if (!item.publicViewCount) {
+		item.publicViewCount = 0;
+	}
+
+	item.publicViewCount++;
+
+	const updateResult = await db.updateOne("items", {_id:itemId}, {$set: item});
 
 	res.locals.item = item;
 

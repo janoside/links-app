@@ -212,12 +212,17 @@ async function createOrUpdateItem(existingItemId, userId, username, itemType, fi
 		item.fileMetadata.mimeType = fields.fileType;
 	}
 
+	if (!item.editCount) {
+		item.editCount = 0;
+	}
 
 	let itemId = existingItemId;
 	if (existingItemId == null) {
 		itemId = await db.insertOne("items", item);
 
 	} else {
+		item.editCount++;
+		
 		const updateResult = await db.updateOne("items", {_id:existingItemId}, {$set: item});
 
 		debugLog("Updated item " + existingItemId + ": " + JSON.stringify(updateResult));
