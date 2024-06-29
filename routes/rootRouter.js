@@ -850,7 +850,7 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 	res.locals.limit = limit;
 	res.locals.offset = offset;
 	res.locals.sort = sort;
-	res.locals.paginationBaseUrl = `/search?query=${query}`;
+	res.locals.paginationBaseUrl = `/search?query=${queryString}`;
 
 	res.render("search-items");
 }));
