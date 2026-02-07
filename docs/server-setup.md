@@ -1,6 +1,6 @@
 # Server Setup
 
-(Start with Ubuntu 20.04 image)
+(Start with Ubuntu 24 image)
 
 
 Basic setup
@@ -9,7 +9,7 @@ Basic setup
 	apt upgrade
 	
 	# install NodeVersionManager (nvm)
-	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 	
 	# install misc tools
 	apt install net-tools iotop ncdu unzip
@@ -26,28 +26,47 @@ Basic setup
 	# set hostname
 	hostnamectl set-hostname XXX_HOSTNAME
 
+	# increase open files limit
+	vim /etc/security/limits.conf
+	# add:
+	# root            soft    nofile          262143
+	# root            hard    nofile          262143
+	vim /etc/pam.d/common-session
+	# add:
+	# session required pam_limits.so
+	# logout, log back in...
+	ulimit -n
+
 Install MongoDB
-	  
-	# install mongodb
-	# ref: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
-	wget -qO - https://www.mongodb.org/static/pgp/server-6.0.asc |  gpg --dearmor | sudo tee /usr/share/keyrings/mongodb.gpg > /dev/null
-	echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+
+	# ref https://www.mongodb.com/docs/v8.0/tutorial/install-mongodb-on-ubuntu/
+	curl -fsSL https://www.mongodb.org/static/pgp/server-8.0.asc | \
+		sudo gpg -o /usr/share/keyrings/mongodb-server-8.0.gpg \
+		--dearmor
+
+	echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu noble/mongodb-org/8.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+	
 	apt update
-	apt-get install -y mongodb-org
+	sudo apt-get install -y mongodb-org
 	systemctl start mongod
 
 Configure MongoDB
-	  
+
 	# configure admin user and enable authentication
 	# ref: https://www.digitalocean.com/community/tutorials/how-to-secure-mongodb-on-ubuntu-20-04
 	# ref2 (for 4 superuser roles): https://stackoverflow.com/questions/22638258/create-superuser-in-mongo
+	
 	mongosh   # launches mongo shell
 	  
 	mongosh >
 	{
 	use admin
-	db.createUser({user: "admin", pwd: passwordPrompt(), roles: [{ role: "userAdminAnyDatabase", db: "admin" }, { role: "readWriteAnyDatabase", db: "admin" }, { role: "dbAdminAnyDatabase", db: "admin" }, { role: "clusterAdmin", db: "admin" }]})
-	db.createUser({user: "backups", pwd: passwordPrompt(), roles: [{ role: "readAnyDatabase", db: "admin" }]})
+	
+	let p = "TYPE/PASTE PASSWORD FOR admin HERE" # this is to get around a situation where pasted text includes "bracketed paste mode special characters"
+	db.createUser({user: "admin", pwd: p, roles: [{ role: "userAdminAnyDatabase", db: "admin" }, { role: "readWriteAnyDatabase", db: "admin" }, { role: "dbAdminAnyDatabase", db: "admin" }, { role: "clusterAdmin", db: "admin" }]})
+	
+	let p = "TYPE/PASTE PASSWORD FOR backups HERE"
+	db.createUser({user: "backups", pwd: p, roles: [{ role: "readAnyDatabase", db: "admin" }]})
 	exit
 	}
 	  
@@ -66,7 +85,7 @@ Configure MongoDB
 	
 
 Clone and Start
-	
+
 	git clone https://github.com/janoside/links-app
 	cd links-app
 	npm i
@@ -74,8 +93,7 @@ Clone and Start
 
 Configure Nginx
 
-	wget "https://raw.githubusercontent.com/janoside/links-app/master/docs/nginx-config-v2.txt"
-	mv nginx-config-v2.txt /etc/nginx/sites-available/links.rest
+	ln -s /root/links.rest/conf/nginx.conf /etc/nginx/sites-available/links.rest
 	cd /etc/nginx/sites-enabled/
 	certbot -d links.rest
 	ln -s ../sites-available/links.rest .
