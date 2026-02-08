@@ -15,13 +15,39 @@ const passwordUtils = appUtils.passwordUtils;
 const encryptionUtils = appUtils.encryptionUtils;
 const s3Utils = appUtils.s3Utils;
 
-const encryptor = encryptionUtils.encryptor(appConfig.encryptionPassword, appConfig.pbkdf2Salt);
-const s3Bucket = appConfig.createAppBucket();
+const createDefaultEncryptor = () => encryptionUtils.encryptor(appConfig.encryptionPassword, appConfig.pbkdf2Salt);
+const createDefaultS3Bucket = () => appConfig.createAppBucket();
+
+let encryptor = createDefaultEncryptor();
+let s3Bucket = createDefaultS3Bucket();
 
 const debugLog = debug("app:main");
 
+const getDb = () => global.db;
+
+const setTestDependencies = (deps = {}) => {
+	if (deps.db !== undefined) {
+		global.db = deps.db;
+	}
+
+	if (deps.encryptor !== undefined) {
+		encryptor = deps.encryptor;
+	}
+
+	if (deps.s3Bucket !== undefined) {
+		s3Bucket = deps.s3Bucket;
+	}
+};
+
+const resetTestDependencies = () => {
+	encryptor = createDefaultEncryptor();
+	s3Bucket = createDefaultS3Bucket();
+};
+
 
 async function authenticate(username, password, passwordPreHashed=false) {
+	const db = getDb();
+
 	let user = await db.findOne("users", {username:username});
 
 	if (user == null) {
@@ -50,6 +76,8 @@ async function authenticate(username, password, passwordPreHashed=false) {
 }
 
 async function verifyMultiloginPin(username, multiloginPin, preHashed=false) {
+	const db = getDb();
+
 	var user = await db.findOne("users", {username:username});
 
 	if (user == null) {
@@ -78,6 +106,8 @@ async function verifyMultiloginPin(username, multiloginPin, preHashed=false) {
 }
 
 async function getItem(predicate) {
+	const db = getDb();
+
 	const item = await db.findOne("items", predicate);
 
 	await preloadItemFileDataIfAppropriate(item);
@@ -86,6 +116,8 @@ async function getItem(predicate) {
 }
 
 async function getItems(predicate, sort, limit=-1, offset=0) {
+	const db = getDb();
+
 	let items = null;
 
 	if (limit > 0) {
@@ -119,6 +151,8 @@ async function preloadItemFileDataIfAppropriate(item) {
 }
 
 async function createOrUpdateItem(existingItemId, userId, username, itemType, fields) {
+	const db = getDb();
+
 	debugLog(`app.createOrUpdateItem: ${JSON.stringify(fields)}`);
 
 	//console.log(fields);
@@ -384,6 +418,8 @@ async function getItemFileData(item) {
 }
 
 async function deleteUserAccount(userId) {
+	const db = getDb();
+
 	const userIdString = userId.toString();
 
 	const items = await db.findMany("items", { userId: userIdString }, {
@@ -435,5 +471,7 @@ module.exports = {
 	getItemFileData: getItemFileData,
 	getItem: getItem,
 	getItems: getItems,
-	deleteUserAccount: deleteUserAccount
+	deleteUserAccount: deleteUserAccount,
+	__setTestDependencies: setTestDependencies,
+	__resetTestDependencies: resetTestDependencies
 }

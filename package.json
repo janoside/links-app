@@ -31,7 +31,10 @@
 	},
 	"scripts": {
 		"start": "node --trace-deprecation ./bin/main.js",
-		"test": "node --trace-deprecation ./bin/test.js",
+		"test": "node --test --test-reporter=spec \"test/**/*.test.js\"",
+		"test:watch": "node --test --watch --test-reporter=spec \"test/**/*.test.js\"",
+		"test:coverage": "node --test --experimental-test-coverage --test-reporter=spec \"test/**/*.test.js\"",
+		"test:image-debug": "node --trace-deprecation ./bin/test.js",
 		"integrity": "node ./bin/frontend-resource-integrity.js",
 		"css-light-debug": "sass --style expanded --source-map scss ./public/scss/light.scss ./public/style/light.css",
 		"css-dark-debug": "sass --style expanded --source-map scss ./public/scss/dark.scss ./public/style/dark.css",
