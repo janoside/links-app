@@ -12,7 +12,7 @@ Basic setup
 	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 	
 	# install misc tools
-	apt install net-tools iotop ncdu unzip
+	apt install net-tools iotop ncdu unzip python3-pip python3.12-venv
 	
 	# install npm, nginx, certbot
 	apt install nginx python3-certbot-nginx python3-certbot-dns-route53
@@ -115,13 +115,12 @@ Configure Backups
 	./aws/install
 	aws --version
 	aws configure # enter AWS credentials
-	
-	wget "https://raw.githubusercontent.com/janoside/links-app/master/docs/backup.sh"
-	# edit backup.sh:
-	# enter mongodb "backups" user password and AWS profile name (from ~/.aws/credentials file)
+
+	python3 -m venv /root/links.rest/tools
+	/root/links.rest/tools/bin/pip install -r /root/links.rest/tools/requirements.txt
 	
 	crontab -e
 	# configuration helper: https://crontab.guru/
-	# add line like below (run every 3 hrs, 17-min after the hour)
-	# 5 0,12 * * * /root/links-app/backup.sh > /root/links-app/backup.log 2>&1
+	# add line like below (run daily at 3:05)
+	# 5 3 * * * /root/links.rest/tools/bin/python /root/links.rest/tools/backup-db.py > /root/links.rest/backup.log 2>&1
 
