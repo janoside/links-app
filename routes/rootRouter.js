@@ -768,7 +768,7 @@ router.get("/tags/:tags", asyncHandler(async (req, res, next) => {
 }));
 
 router.get("/search", asyncHandler(async (req, res, next) => {
-	const queryString = req.query.query;
+	const queryString = req.query.query || "";
 
 	let limit = 25;
 	let offset = 0;
@@ -798,15 +798,53 @@ router.get("/search", asyncHandler(async (req, res, next) => {
 		query = JSON.parse(advancedQueryString);
 
 	} else {
-		const regex = new RegExp(queryString, "i");
-
-		query = {
-			$or:[
-				{ text: regex },
-				{ url: regex },
-				{ tags: regex }
-			]
+		const escapeRegex = (text) => {
+			return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 		};
+
+		const queryParts = queryString
+			.split(",")
+			.map(x => x.trim())
+			.filter(x => x.length > 0);
+
+		const queryAndComponents = [];
+		for (let i = 0; i < queryParts.length; i++) {
+			const escapedPart = escapeRegex(queryParts[i]);
+			const regex = new RegExp(escapedPart, "i");
+
+			queryAndComponents.push({
+				$or: [
+					{ text: regex },
+					{ url: regex },
+					{ tags: regex },
+					{ imageSourceUrl: regex },
+					{
+						$expr: {
+							$regexMatch: {
+								input: { $toString: "$createdAt" },
+								regex: escapedPart,
+								options: "i"
+							}
+						}
+					},
+					{
+						$expr: {
+							$regexMatch: {
+								input: { $toString: "$updatedAt" },
+								regex: escapedPart,
+								options: "i"
+							}
+						}
+					}
+				]
+			});
+		}
+
+		if (queryAndComponents.length > 0) {
+			query = {
+				$and: queryAndComponents
+			};
+		}
 	}
 
 	
