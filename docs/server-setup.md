@@ -15,7 +15,7 @@ Basic setup
 	apt install net-tools iotop ncdu unzip
 	
 	# install npm, nginx, certbot
-	apt install nginx python3-certbot-nginx
+	apt install nginx python3-certbot-nginx python3-certbot-dns-route53
 	
 	# install pm2
 	npm install -g pm2
@@ -86,17 +86,20 @@ Configure MongoDB
 
 Clone and Start
 
-	git clone https://github.com/janoside/links-app
+	git clone https://github.com/janoside/links-app links.rest
 	cd links-app
+	git submodule update --init --recursive
 	npm i
 	pm2 start bin/main.js --name links
+
+Certbot
+
+	certbot certonly --dns-route53 -d links.rest
 
 Configure Nginx
 
 	ln -s /root/links.rest/conf/nginx.conf /etc/nginx/sites-available/links.rest
-	cd /etc/nginx/sites-enabled/
-	certbot -d links.rest
-	ln -s ../sites-available/links.rest .
+	ln -s /etc/nginx/sites-available/links.rest /etc/nginx/sites-enabled/links.rest
 	unlink default
 	service nginx restart
 	  
