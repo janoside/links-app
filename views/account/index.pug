@@ -43,6 +43,12 @@ block content
 		.mt-3.text-muted It may be useful to use multiple accounts to organize different sets of links. A <i>Multi-Login PIN</i> facilitates easier switching among multiple accounts. Once a PIN is configured, you can have multiple accounts logged in simultaneously, and just use your shorter PIN to switch, instead of your full password.
 
 
+	+contentSection("Danger Zone")
+		.d-flex.justify-content-between.align-items-center
+			span.text-muted Permanently delete this account and all its items.
+			a.btn.btn-danger(href="/account/delete") Delete Account
+
+
 	if (user.roles && user.roles.includes("admin"))
 		+contentSection("Admin Extensions")
 			+adminModalAndButton("Session Data")

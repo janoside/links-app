@@ -128,9 +128,18 @@ router.get("/user/:userId/delete", asyncHandler(async (req, res, next) => {
 router.post("/user/:userId/delete", asyncHandler(async (req, res, next) => {
 	const userId = req.params.userId;
 
-	await db.deleteOne("users", {_id:userId});
+	if (userId == req.session.user._id.toString()) {
+		req.session.userMessageType = "danger";
+		req.session.userMessage = "You can't delete your own account!";
 
-	req.session.userMessage = `Deleted user ${userId}`;
+		res.redirect("/admin/users");
+
+		return;
+	}
+
+	const deleteResult = await app.deleteUserAccount(userId);
+
+	req.session.userMessage = `Deleted user ${userId} and ${deleteResult.itemsDeleteResult.deletedCount} item(s)`;
 	req.session.userMessageType = "success";
 
 	res.redirect("/admin/users");

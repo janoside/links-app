@@ -1,0 +1,21 @@
+extends ../layout
+
+block headBlock
+	title Delete Account
+
+block content
+	+pageTitle("Delete Account")
+
+	.center-col
+		.card.shadow-sm.mb-3
+			.card-body
+				h6.mb-3 Are you sure you want to delete your account?
+				p.text-muted.mb-3 This permanently deletes your account and all of your items.
+
+				form(method="post", action="/account/delete")
+					.mb-3
+						label.form-label(for="password") Confirm with password
+						input#password.form-control(type="password", name="password", required=true, autocomplete="current-password")
+
+					button.btn.btn-danger.me-3(type="submit") Yes, delete account
+					a.btn.btn-primary(href="/account") No, keep account

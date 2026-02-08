@@ -23,6 +23,19 @@ const encryptor = encryptionUtils.encryptor(appConfig.encryptionPassword, appCon
 const s3Bucket = appConfig.createAppBucket();
 
 
+router.use("*", asyncHandler(async (req, res, next) => {
+	if (!req.session.user) {
+		req.session.userMessage = "You need to log in first.";
+		req.session.userMessageType = "info";
+
+		res.redirect("/");
+
+		return;
+	}
+
+	next();
+}));
+
 
 router.get("/", asyncHandler(async (req, res, next) => {
 	res.render("account/index");
@@ -148,6 +161,36 @@ router.post("/set-multilogin-pin", async (req, res, next) => {
 
 	res.redirect("/account");
 });
+
+router.get("/delete", asyncHandler(async (req, res, next) => {
+	res.render("account/delete-account");
+}));
+
+router.post("/delete", asyncHandler(async (req, res, next) => {
+	const user = await app.authenticate(req.session.user.username, req.body.password);
+	if (!user) {
+		req.session.userMessage = "Incorrect password.";
+		req.session.userMessageType = "danger";
+
+		res.redirect("/account/delete");
+
+		return;
+	}
+
+	await app.deleteUserAccount(req.session.user._id);
+
+	req.session.username = null;
+	req.session.user = null;
+	req.session.accounts = null;
+
+	res.clearCookie("rememberme");
+	res.clearCookie("remembermeAccounts");
+
+	req.session.userMessage = "Account deleted.";
+	req.session.userMessageType = "success";
+
+	res.redirect("/");
+}));
 
 
 module.exports = router;

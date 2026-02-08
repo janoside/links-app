@@ -383,6 +383,49 @@ async function getItemFileData(item) {
 	}
 }
 
+async function deleteUserAccount(userId) {
+	const userIdString = userId.toString();
+
+	const items = await db.findMany("items", { userId: userIdString }, {
+		projection: {
+			_id: 1,
+			hasImage: 1,
+			imageSizes: 1,
+			hasFile: 1
+		}
+	});
+
+	for (let i = 0; i < items.length; i++) {
+		const item = items[i];
+		const itemId = item._id.toString();
+
+		if (item.hasImage) {
+			let imageSizes = item.imageSizes;
+			if (!imageSizes || imageSizes.length == 0) {
+				imageSizes = ["raw", ...appConfig.images.widths.map(x => `w${x}`)];
+			}
+
+			for (let j = 0; j < imageSizes.length; j++) {
+				await s3Bucket.del(`img/${itemId}/${imageSizes[j]}`);
+			}
+		}
+
+		if (item.hasFile) {
+			await s3Bucket.del(`file/${itemId}`);
+		}
+	}
+
+	const itemsDeleteResult = await db.deleteMany("items", { userId: userIdString });
+	const userDeleteResult = await db.deleteOne("users", { _id: userId });
+
+	debugLog(`Deleted user account ${userIdString}: userDeleteCount=${userDeleteResult.deletedCount}, itemDeleteCount=${itemsDeleteResult.deletedCount}`);
+
+	return {
+		userDeleteResult: userDeleteResult,
+		itemsDeleteResult: itemsDeleteResult
+	};
+}
+
 
 module.exports = {
 	authenticate: authenticate,
@@ -391,5 +434,6 @@ module.exports = {
 	processAndUploadImages: processAndUploadImages,
 	getItemFileData: getItemFileData,
 	getItem: getItem,
-	getItems: getItems
+	getItems: getItems,
+	deleteUserAccount: deleteUserAccount
 }
