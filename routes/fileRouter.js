@@ -42,11 +42,19 @@ router.get("/item/:itemId", asyncHandler(async (req, res, next) => {
 
 		const fileData = await app.getItemFileData(item);
 
-		res.writeHead(200, {
-			'Content-Type': fileData.contentType,
-			'Content-Length': fileData.byteSize,
+		const headers = {
+			"Content-Type": fileData.contentType,
+			"Content-Length": fileData.byteSize,
 			"Cache-Control": `max-age=${60 * 60 * 24 * 365}`
-		});
+		};
+
+		if (fileData.contentType === "application/octet-stream") {
+			// Avoid browser download prompt for unknown binaries.
+			headers["Content-Type"] = "text/plain; charset=utf-8";
+			headers["Content-Disposition"] = "inline; filename=\"file.txt\"";
+		}
+
+		res.writeHead(200, headers);
 
 		res.end(fileData.dataBuffer, "binary");
 
@@ -65,11 +73,19 @@ router.get("/item-share/:itemId", asyncHandler(async (req, res, next) => {
 
 		const fileData = await app.getItemFileData(item);
 
-		res.writeHead(200, {
-			'Content-Type': fileData.contentType,
-			'Content-Length': fileData.byteSize,
+		const headers = {
+			"Content-Type": fileData.contentType,
+			"Content-Length": fileData.byteSize,
 			"Cache-Control": `max-age=${60 * 60 * 24 * 365}`
-		});
+		};
+
+		if (fileData.contentType === "application/octet-stream") {
+			// Avoid browser download prompt for unknown binaries.
+			headers["Content-Type"] = "text/plain; charset=utf-8";
+			headers["Content-Disposition"] = "inline; filename=\"file.txt\"";
+		}
+
+		res.writeHead(200, headers);
 
 		res.end(fileData.dataBuffer, "binary");
 
