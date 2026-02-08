@@ -8,6 +8,7 @@
 		],
 		"deny": [
 			"Bash(curl *)",
+			"Bash(git:*)",
 
 			"Read(**/.env)",
 			"Edit(**/.env)"
